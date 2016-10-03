@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/phaser/build/phaser.js"></script>
+    <script src="js/classes/ItemContainer.js"></script>
+    <script src="js/classes/Item.js"></script>
+    <script src="js/classes/Intersect.js"></script>
+    <script src="js/classes/ContainerGap.js"></script>
+    <script src="js/Beaver.js"></script>
+    <script src="js/Boot.js"></script>
+    <script src="js/classes/ItemVisual.js"></script>
+</head>
+
+<body>
+    <script>
+        var arranger = new Beaver();
+
+        $(function()
+        {
+            var game = new Phaser.Game(710, 410, Phaser.AUTO, '');
+            game.state.add('Boot', Boot);
+            game.state.add('Beaver', arranger);
+            game.state.start('Boot');
+
+            $("#add-cabinet").click(function()
+            {
+                arranger.addItem(
+                {
+                    realWidth: 600,
+                    realHeight: 1800,
+                    image: 'cabinet',
+                    compatibleItems: [1],
+                    id: 1
+                });
+            });
+
+            $("#add-large-cabinet").click(function()
+            {
+                arranger.addItem(
+                {
+                    realWidth: 900,
+                    realHeight: 1800,
+                    image: 'large_cabinet',
+                    id: 2
+                });
+            });
+
+            $("#add-small-cabinet").click(function()
+            {
+                arranger.addItem(
+                {
+                    realWidth: 900,
+                    realHeight: 890,
+                    image: 'small_cabinet',
+                    id: 3
+                });
+            });
+
+            $("#add-small-cabinet-with-bench").click(function()
+            {
+                arranger.addItem(
+                {
+                    realWidth: 1800,
+                    realHeight: 900,
+                    image: 'small_cabinet_double_with_bench',
+                    id: 4
+                });
+            });
+
+            $("#add-wall-bay-600-2400").click(function()
+            {
+                arranger.addItem(
+                {
+                    realWidth: 600,
+                    realHeight: 2400,
+                    image: 'wall_bay_600_2400',
+                    marginRight: 15,
+                    marginLeft: 15,
+                    id: 5,
+                    collapseTypes: [5],
+                    compatibleItemOverlaps: [6],
+                    allowedIntersections: [
+                        ITEM_EXTREMITIES_OUTSIDE
+                    ]
+                });
+            });
+
+            $("#add-pillar").click(function()
+            {
+                arranger.addItem(
+                {
+                    realWidth: 300,
+                    realHeight: 2500,
+                    image: 'pillar',
+                    id: 6
+                });
+            });
+
+        });
+    </script>
+    <div style="float:left; padding:20px;">
+        <p><a href="#" id="add-cabinet">Add Cabinet</a>
+        </p>
+        <p><a href="#" id="add-small-cabinet">Add Small Cabinet</a>
+        </p>
+        <p><a href="#" id="add-large-cabinet">Add Large Cabinet</a>
+        </p>
+        <p><a href="#" id="add-small-cabinet-with-bench">Add Small Cabinets with Bench</a>
+        </p>
+        <p><a href="#" id="add-wall-bay-600-2400">Add 600x2400mm Wall Bay</a>
+        </p>
+        <p><a href="#" id="add-pillar">Add Pillar</a>
+        </p>
+    </div>
+</body>
+
+</html>
