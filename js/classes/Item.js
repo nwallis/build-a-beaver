@@ -71,13 +71,13 @@ Item.prototype.checkIntersect = function(item) {
 }
 
 Item.prototype.checkRightSnap = function(testPosition) {
-    if (testPosition > this.getBounds().right && testPosition < this.getBounds().right + this.snapDistance)
+    if (testPosition >= this.getBounds().right && testPosition < this.getBounds().right + this.snapDistance)
         return true;
     return false;
 }
 
 Item.prototype.checkLeftSnap = function(testPosition) {
-    if (testPosition > this.getBounds().left - this.snapDistance && testPosition < this.getBounds().left)
+    if (testPosition > this.getBounds().left - this.snapDistance && testPosition <= this.getBounds().left)
         return true;
     return false;
 }
