@@ -59,7 +59,7 @@ Item.prototype.checkIntersect = function(item) {
 
     if (this.getBounds().left > item.getBounds().left && this.getBounds().left < item.getBounds().right) intersections.push(ITEM_LEFT_SIDE);
     if (this.getBounds().right < item.getInnerBounds().right && this.getBounds().right > item.getInnerBounds().left) intersections.push(ITEM_RIGHT_SIDE);
-    if (this.getInnerBounds().left < item.getBounds().left && this.getInnerBounds().right > item.getBounds().right) intersections.push(ITEM_EXTREMITIES_OUTSIDE);
+    if (this.getBounds().left < item.getBounds().left && this.getBounds().right > item.getBounds().right) intersections.push(ITEM_EXTREMITIES_OUTSIDE);
     if (this.getBounds().left == item.getBounds().left) intersections.push(ITEM_LEFT_SIDE_EXACT);
     if (this.getBounds().right == item.getBounds().right) intersections.push(ITEM_RIGHT_SIDE_EXACT);
     if (this.getBounds().left > item.getInnerBounds().right && this.getBounds().left < item.getBounds().right) intersections.push(ITEM_LEFT_SIDE_IN_RIGHT_MARGIN);

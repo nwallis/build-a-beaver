@@ -329,7 +329,7 @@
         });
 
         it('should not move an Item when dragged outside the wall boundaries', function() {
-            expect(wall.moveItem(item1, -10).position).toBe(700);
+            expect(wall.moveItem(item1, -10).position).toBe(0);
         });
 
         it('should snap when left hand edge of Item is close to right hand edge of other Item', function() {

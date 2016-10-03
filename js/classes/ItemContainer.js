@@ -97,6 +97,7 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
     var snapAmount = 0;
     var isCompatible = false;
     var compatibleChild;
+    var collapse = false;
 
     //It may not have an x position as moveItem is also called by addItem
     var originalX = (item.realX == undefined) ? xPosition : item.realX;
@@ -104,9 +105,40 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
     //'move' the item there to see how it will go
     item.realX = xPosition;
 
+    if (item.getBounds().right >= this.realWidth - this.snapDistance) {
+        snapAmount = this.realWidth - item.getBounds().right;
+    }
+
+    this.children.forEach(function(child) {
+        if (child != item) {
+            if (child.checkRightSnap(item.getBounds().left)) {
+                if (item.checkCollapse(child) && child.checkCollapse(item)) {
+                    snapAmount -= item.getInnerBounds().left - child.getInnerBounds().right;
+                    collapse = true;
+                } else {
+                    snapAmount -= item.getBounds().left - child.getBounds().right;
+                }
+            } else if (child.checkLeftSnap(item.getBounds().right)) {
+                if (item.checkCollapse(child) && child.checkCollapse(item)) {
+                    snapAmount = child.getInnerBounds().left - item.getInnerBounds().right;
+                    collapse = true;
+                } else {
+                    snapAmount = child.getBounds().left - item.getBounds().right;
+                }
+            }
+        }
+
+    });
+
+    if (item.getBounds().left < this.snapDistance) {
+        snapAmount = -item.getBounds().left;
+    }
+
+    item.realX = moveTo = item.getBounds().left + snapAmount;
+
     if (item.getBounds().left >= 0 && item.getBounds().right <= this.realWidth) {
         this.children.forEach(function(child) {
-            if (child != item && moveResult) {
+            if (child != item) {
 
                 var intersections = item.checkIntersect(child);
                 var intersectResult = false;
@@ -114,7 +146,7 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
                 if (!intersections.lookFor(ITEM_NO_INTERSECT)) {
                     if (item.compatibleItems.length) {
                         item.compatibleItems.forEach(function(itemID) {
-                            if (child.id == itemID) {
+                            if (child.id == itemID && child.id != item.id) {
                                 isCompatible = true;
                                 compatibleChild = child;
                             }
@@ -125,6 +157,7 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
                     }
 
                     if (moveResult) moveResult = intersectResult;
+
                 }
             }
         });
@@ -133,44 +166,16 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
         moveResult = false;
     }
 
-    if (moveResult) {
-
+    if (moveResult || collapse) {
         if (isCompatible) {
             moveTo = compatibleChild.getInnerBounds().left;
-        } else {
-            if (item.getBounds().right >= this.realWidth - this.snapDistance) snapAmount = this.realWidth - item.getBounds().right;
-            this.children.forEach(function(child) {
-                if (child != item) {
-                    if (child.checkRightSnap(item.getBounds().left)) {
-                        if (item.checkCollapse(child) && child.checkCollapse(item)) {
-                            snapAmount -= item.getInnerBounds().left - child.getInnerBounds().right;
-                        } else {
-                            snapAmount -= item.getBounds().left - child.getBounds().right;
-                        }
-                    } else if (child.checkLeftSnap(item.getBounds().right)) {
-                        if (item.checkCollapse(child) && child.checkCollapse(item)) {
-                            snapAmount = child.getInnerBounds().left - item.getInnerBounds().right;
-                        } else {
-                            snapAmount = child.getBounds().left - item.getBounds().right;
-                        }
-                    }
-                }
-
-            });
-
-            if (item.getBounds().left < this.snapDistance) snapAmount = -item.getBounds().left;
-
-            moveTo = item.getBounds().left + snapAmount;
         }
-
         item.realX = moveTo;
-
     } else {
         item.realX = originalX;
     }
 
     this.sortChildren();
-
     return {
         position: item.realX,
         valid: moveResult

@@ -33,7 +33,7 @@ ItemVisual = function(game, container, item, startPos) {
     };
 
     this.debugText = this.game.make.text(0, 20, 'testing', style);
-    //this.addChild(this.debugText);
+    this.addChild(this.debugText);
 
     //    this.events.onInputOver.add(this.itemOver,this);
     //   this.events.onInputOut.add(this.itemOut,this);
