@@ -133,9 +133,6 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
         moveResult = false;
     }
 
-    console.clear();
-    console.log(originalX);
-    console.log(moveResult);
     if (moveResult) {
 
         if (isCompatible) {
