@@ -12,6 +12,11 @@ Beaver.prototype.create = function(wallWidth) {
     this.wallHeightPixels = this.stage.height;
     this.game.world.setBounds(0, 0, this.wallWidthPixels, this.wallHeightPixels);
 
+    //Background image for the wall
+    this.wallOutline = this.game.add.graphics(0, 0);
+    this.wallOutline.beginFill(0x444444);
+    this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), this.game.stage.height);
+
     this.layerContainer = this.game.add.group();
     this.addWallLayer();
    

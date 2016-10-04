@@ -2,15 +2,10 @@ var ItemContainerVisual = function (game, engine, model, container){
 
     Phaser.Group.call(this, game);
 
+    //References to the model and engine
     this.engine = engine;
     this.model = model;
     
-    //Create wall outline
-    this.wallOutline = game.add.graphics(0, 0);
-    //this.wallOutline.beginFill(0x444444);
-    //this.wallOutline.drawRect(0, 0, this.engine.mmToPixels(DEBUG_WALL_WIDTH), game.stage.height);
-    this.add(this.wallOutline);
-
     //Layer for the gap graphics
     this.gapGraphics = game.make.graphics(0, 0);
     this.add(this.gapGraphics);
