@@ -33,7 +33,7 @@ ItemVisual = function(game, container, item, startPos) {
     };
 
     this.debugText = this.game.make.text(0, 20, 'testing', style);
-    this.addChild(this.debugText);
+    //this.addChild(this.debugText);
 
     //    this.events.onInputOver.add(this.itemOver,this);
     //   this.events.onInputOut.add(this.itemOut,this);
@@ -87,9 +87,22 @@ ItemVisual.prototype.update = function() {
 }
 
 ItemVisual.prototype.itemDragUpdate = function() {
-    this.x = this.container.mmToPixels(this.container.wall.moveItem(this.item, this.container.pixelsToMM(this.x)).position);
+    this.moveResult = this.container.wall.moveItem(this.item, this.container.pixelsToMM(this.x));
+    if (this.moveResult.valid) {
+        this.x = this.container.mmToPixels(this.moveResult.position);
+        this.itemVisual.tint = 0xFFFFFF;
+    } else {
+        this.itemVisual.tint = 0xFF0000;
+    }
     this.container.drawGaps();
 }
 
-ItemVisual.prototype.startItemDrag = function() {}
-ItemVisual.prototype.stopItemDrag = function() {}
+ItemVisual.prototype.startItemDrag = function() {
+    this.itemVisual.bringToTop();
+    this.dragStartPosition = this.x;
+}
+ItemVisual.prototype.stopItemDrag = function() {
+    this.x = (this.moveResult.valid) ? this.container.mmToPixels(this.moveResult.position) : this.dragStartPosition;
+    this.container.drawGaps();
+    this.itemVisual.tint = 0xFFFFFF;
+}

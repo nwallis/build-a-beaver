@@ -1,4 +1,7 @@
 var ContainerGap = function(params){
-    this.gapStart = params.gapStart;
-    this.gapWidth = params.gapWidth;
+    this.realX = params.gapStart;
+    this.realWidth = params.gapWidth;
 }
+
+ContainerGap.prototype = Object.create(Item.prototype);
+ContainerGap.prototype.constructor = ContainerGap;

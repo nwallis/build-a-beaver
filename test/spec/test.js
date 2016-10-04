@@ -9,13 +9,15 @@
         item1 = new Item({
             realWidth: 600,
             realHeight: 900,
-            id:1
+            id: 1,
+            itemType:'cupboards'
         });
 
         item2 = new Item({
             realWidth: 450,
             realHeight: 900,
-            id: 2
+            id: 2,
+            itemType:'cupboards'
         });
 
         item1CompatibleItem = new Item({
@@ -31,7 +33,7 @@
             realWidth: 100,
             realHeight: 900,
             id: 4,
-            collapseTypes: [5,6]
+            collapseTypes: [5, 6]
         });
 
         wall = new ItemContainer({
@@ -48,6 +50,18 @@
         wall.moveItem(item1CompatibleItem, 2200);
         wall.moveItem(item2, 1500);
         wall.moveItem(item1, 700);
+
+    });
+
+    describe('Collation of container children', function() {
+
+        it('should return an array of items that represent the space occupied by particular objects', function() {
+            console.log("DOING IT");
+            var cupboardGaps = wall.getGaps('cupboards');
+            var negativeCupboardGaps = wall.getGaps(undefined, cupboardGaps);
+            expect(negativeCupboardGaps.length).toBe(3);
+        });
+
 
     });
 
@@ -101,7 +115,7 @@
                 realWidth: 100,
                 realHeight: 900,
                 id: 5,
-                collapseTypes: [4,5,6]
+                collapseTypes: [4, 5, 6]
             });
             thirdItemWithMargin = new Item({
                 marginRight: 50,
@@ -109,7 +123,7 @@
                 realWidth: 100,
                 realHeight: 900,
                 id: 6,
-                collapseTypes: [4,5,6]
+                collapseTypes: [4, 5, 6]
             });
 
             wall.addItem(secondItemWithMargin);
@@ -259,7 +273,6 @@
         });
 
         it('should snap compatible items inside parent container', function() {
-            console.log("DOING IT");
             expect(wall.moveItem(item1CompatibleItem, 1295).position).toBe(700);
         });
 

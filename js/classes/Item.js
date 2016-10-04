@@ -20,6 +20,7 @@ var Item = function(params) {
     this.collapseTypes = params.collapseTypes || [];
     this.allowedIntersections = params.allowedIntersections || [];
     this.compatibleItemOverlaps = params.compatibleItemOverlaps || [];
+    this.itemType = params.itemType || null;
 };
 
 Item.prototype.checkCollapse = function(item) {
