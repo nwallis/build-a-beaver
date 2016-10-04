@@ -26,9 +26,9 @@ ItemContainer.prototype.addItem = function(item) {
     }
 }
 
-ItemContainer.prototype.getChildren = function(itemType){
+ItemContainer.prototype.getChildren = function(itemType) {
     var items = [];
-    this.children.forEach(function(item){
+    this.children.forEach(function(item) {
         if (item.itemType == itemType) items.push(item);
     });
     return items;
@@ -101,7 +101,7 @@ ItemContainer.prototype.findGap = function(desiredWidth) {
     return foundGap;
 }
 
-ItemContainer.prototype.moveItem = function(item, xPosition) {
+ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
 
     var moveResult = true;
     var moveTo = 0;
@@ -174,6 +174,14 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
 
     } else {
         moveResult = false;
+    }
+
+    //there are some places a cupboard just shouldn't go - used for cross layer comparison
+    if (noGoZones) {
+        noGoZones.forEach(function(zone) {
+            var zoneIntersect = item.checkIntersect(zone);
+            if (moveResult && !zoneIntersect.lookFor(ITEM_NO_INTERSECT)) moveResult = false;
+        });
     }
 
     if (moveResult || collapse) {

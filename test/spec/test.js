@@ -59,6 +59,7 @@
             var negativeCupboardGaps = wall.getGaps(undefined, cupboardGaps);
             expect(negativeCupboardGaps.length).toBe(2);
         });
+
     });
 
     describe('Overlapping items', function() {
@@ -275,6 +276,15 @@
     });
 
     describe('Drag testing', function() {
+
+        it('should not allow items to be placed in the no go zones - even if they will fit', function(){
+           var gaps = wall.getGaps(); 
+           var smallItemThatShouldFitButWont = new Item({
+                realWidth: 20
+           });
+           wall.addItem(smallItemThatShouldFitButWont);
+           expect(wall.moveItem(smallItemThatShouldFitButWont, 1360, gaps).valid).toBe(false);
+        });
 
         it('should snap all items together when moved away and then back', function() {
             var newWall = new ItemContainer({
