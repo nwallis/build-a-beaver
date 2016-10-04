@@ -1,35 +1,98 @@
 const GAME_HEIGHT_MM = 2500;
 const DEBUG_WALL_WIDTH = 10000;
 
-var Beaver = function() {}
+var Beaver = function() {
+    this.wallLayers = [];
+}
 
 Beaver.prototype.create = function(wallWidth) {
 
     //Figure out how many pixels wide the world needs to be
     this.wallWidthPixels = this.mmToPixels(DEBUG_WALL_WIDTH);
     this.wallHeightPixels = this.stage.height;
-    this.game.world.setBounds(150, 0, this.wallWidthPixels, this.wallHeightPixels);
+    this.game.world.setBounds(0, 0, this.wallWidthPixels, this.wallHeightPixels);
 
-    this.wall = new ItemContainer({
+    this.layerContainer = this.game.add.group();
+    this.addWallLayer();
+   
+    //UI Javascript 
+    $("#add-cabinet").click(function() {
+        arranger.addItem({
+            realWidth: 600,
+            realHeight: 1800,
+            image: 'cabinet',
+            compatibleItems: [5],
+            id: 1
+        });
+    });
+
+    $("#add-large-cabinet").click(function() {
+        arranger.addItem({
+            realWidth: 900,
+            realHeight: 1800,
+            image: 'large_cabinet',
+            id: 2
+        });
+    });
+
+    $("#add-small-cabinet").click(function() {
+        arranger.addItem({
+            realWidth: 900,
+            realHeight: 890,
+            image: 'small_cabinet',
+            id: 3
+        });
+    });
+
+    $("#add-small-cabinet-with-bench").click(function() {
+        arranger.addItem({
+            realWidth: 1800,
+            realHeight: 900,
+            image: 'small_cabinet_double_with_bench',
+            id: 4
+        });
+    });
+
+    $("#add-wall-bay-600-2400").click(function() {
+        arranger.addItem({
+            realWidth: 600,
+            realHeight: 2400,
+            image: 'wall_bay_600_2400',
+            marginRight: 15,
+            marginLeft: 15,
+            id: 5,
+            collapseTypes: [5],
+            compatibleItemOverlaps: [6],
+            allowedIntersections: [
+                ITEM_EXTREMITIES_OUTSIDE
+            ]
+        });
+    });
+
+    $("#add-pillar").click(function() {
+        arranger.addItem({
+            realWidth: 300,
+            realHeight: 2500,
+            image: 'pillar',
+            id: 6
+        });
+    });
+}
+
+Beaver.prototype.addWallLayer = function() {
+
+    //Create the model
+    var newWall = new ItemContainer({
         realWidth: DEBUG_WALL_WIDTH,
         realHeight: GAME_HEIGHT_MM
     });
 
-    //Parent layer for everything on the wall
-    this.wallContainer = this.game.add.group();
+    var newLayerVisual = new ItemContainerVisual(this.game, this, newWall);
+    this.wallLayers.push(newLayerVisual);
+}
 
-    //Graphics layer to draw wall 
-    this.wallOutline = this.game.add.graphics(0, 0);
-    this.wallOutline.beginFill(0x444444);
-    this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), this.stage.height);
-    this.wallContainer.add(this.wallOutline);
-
-    //Graphics layer to draw gaps
-    this.gapGraphics = this.game.add.graphics(0, 0);
-    this.wallContainer.add(this.gapGraphics);
-
-    //Update the gaps
-    this.drawGaps();
+Beaver.prototype.currentLayer = function(){
+    return this.wallLayers[this.wallLayers.length-1];
 }
 
 Beaver.prototype.deleteItem = function(item) {
@@ -42,36 +105,22 @@ Beaver.prototype.addItem = function(params) {
     var startPos;
     var item = new Item(params);
 
-    try {
-        startPos = this.wall.addItem(item).position;
-    } catch (error) {
-        alert(error.message);
-        return false;
-    }
+    //try {
+        //add the item to the model
+        startPos = this.currentLayer().model.addItem(item).position;
 
-    //create the visual to represent the item
-    var itemVisual = new ItemVisual(this.game, this, item, startPos);
-    this.wallContainer.addChild(itemVisual);
+        //add the item to the visual
+        this.currentLayer().addItem(item, startPos);
+    //} catch (error) {
+     //   alert(error.message);
+     //   return false;
+    //}
 
-    //update the gaps
-    this.drawGaps();
-}
-
-Beaver.prototype.drawGaps = function() {
-    this.gapGraphics.clear();
-    var wallGaps = this.wall.getGaps();
-    wallGaps.forEach(function(gap) {
-        this.gapGraphics.lineStyle(2, 0xffffff, 1);
-        this.gapGraphics.moveTo(this.mmToPixels(gap.getBounds().left), 150);
-        this.gapGraphics.lineTo(this.mmToPixels(gap.getBounds().right), 150);
-    }, this);
 }
 
 Beaver.prototype.update = function() {}
 
-Beaver.prototype.render = function() {
-    //this.game.debug.cameraInfo(this.game.camera, 32, 32);
-}
+Beaver.prototype.render = function() {}
 
 Beaver.prototype.pixelsToMM = function(distance) {
     return (GAME_HEIGHT_MM / this.stage.height) * distance;

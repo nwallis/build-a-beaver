@@ -1,13 +1,13 @@
 const ICON_MARGIN = 5;
 
-ItemVisual = function(game, container, item, startPos) {
+ItemVisual = function(game, engine, model, startPos, container) {
 
-    Phaser.Sprite.call(this, game, container.mmToPixels(startPos), 0);
+    Phaser.Sprite.call(this, game, engine.mmToPixels(startPos), 0);
 
-    this.itemVisual = this.game.make.sprite(0, 0, item.image);
-    this.itemVisual.width = container.mmToPixels(item.getInnerSize().width);
-    this.itemVisual.height = container.mmToPixels(item.realHeight);
-    this.itemVisual.x = container.mmToPixels(item.marginLeft);
+    this.itemVisual = this.game.make.sprite(0, 0, model.image);
+    this.itemVisual.width = engine.mmToPixels(model.getInnerSize().width);
+    this.itemVisual.height = engine.mmToPixels(model.realHeight);
+    this.itemVisual.x = engine.mmToPixels(model.marginLeft);
     this.itemVisual.y = game.stage.height - this.itemVisual.height;
     this.addChild(this.itemVisual);
 
@@ -16,8 +16,9 @@ ItemVisual = function(game, container, item, startPos) {
     this.input.useHandCursor = true;
     this.input.setDragLock(true, false);
     this.input.enableDrag(false, false);
+    this.engine = engine;
     this.container = container;
-    this.item = item;
+    this.model = model;
     this.events.onDragStart.add(this.startItemDrag, this);
     this.events.onDragUpdate.add(this.itemDragUpdate, this);
     this.events.onDragStop.add(this.stopItemDrag, this);
@@ -58,7 +59,7 @@ ItemVisual.prototype.itemOut = function() {
 
 ItemVisual.prototype.deleteClicked = function() {
     this.parent.removeChild(this);
-    this.container.deleteItem(this.item);
+    this.engine.deleteItem(this.model);
 }
 
 ItemVisual.prototype.addIcon = function(icon, clickHandler) {
@@ -82,14 +83,13 @@ ItemVisual.prototype.layoutIcons = function() {
 }
 
 ItemVisual.prototype.update = function() {
-    this.debugText.text = "width: " + this.item.getSize().width + "\nrealX: " + this.item.getBounds().left + "\ninner left: " + this.item.getInnerBounds().left;
-    //this.itemVisual.x = this.container.mmToPixels(this.item.marginLeft);
+    this.debugText.text = "width: " + this.model.getSize().width + "\nrealX: " + this.model.getBounds().left + "\ninner left: " + this.model.getInnerBounds().left;
 }
 
 ItemVisual.prototype.itemDragUpdate = function() {
-    this.moveResult = this.container.wall.moveItem(this.item, this.container.pixelsToMM(this.x));
+    this.moveResult = this.container.moveItem(this.model, this.engine.pixelsToMM(this.x));
     if (this.moveResult.valid) {
-        this.x = this.container.mmToPixels(this.moveResult.position);
+        this.x = this.engine.mmToPixels(this.moveResult.position);
         this.itemVisual.tint = 0xFFFFFF;
     } else {
         this.itemVisual.tint = 0xFF0000;
@@ -102,7 +102,7 @@ ItemVisual.prototype.startItemDrag = function() {
     this.dragStartPosition = this.x;
 }
 ItemVisual.prototype.stopItemDrag = function() {
-    this.x = (this.moveResult.valid) ? this.container.mmToPixels(this.moveResult.position) : this.dragStartPosition;
+    this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
     this.container.drawGaps();
     this.itemVisual.tint = 0xFFFFFF;
 }
