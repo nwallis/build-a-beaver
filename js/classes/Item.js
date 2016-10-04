@@ -9,6 +9,7 @@ const ITEM_RIGHT_SIDE_IN_LEFT_MARGIN = 7;
 const ITEM_SNAP_DISTANCE = 50;
 
 var Item = function(params) {
+    this.realX = params.realX;
     this.realWidth = params.realWidth;
     this.realHeight = params.realHeight;
     this.snapDistance = ITEM_SNAP_DISTANCE;

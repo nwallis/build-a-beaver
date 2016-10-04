@@ -54,15 +54,11 @@
     });
 
     describe('Collation of container children', function() {
-
         it('should return an array of items that represent the space occupied by particular objects', function() {
-            console.log("DOING IT");
             var cupboardGaps = wall.getGaps('cupboards');
             var negativeCupboardGaps = wall.getGaps(undefined, cupboardGaps);
-            expect(negativeCupboardGaps.length).toBe(3);
+            expect(negativeCupboardGaps.length).toBe(2);
         });
-
-
     });
 
     describe('Overlapping items', function() {
@@ -226,7 +222,7 @@
 
         it('the gap between the wall left and first object should be correct', function() {
             var firstGap = wall.findGap(100);
-            expect(firstGap.gapWidth).toBe(700);
+            expect(firstGap.getBounds().left).toBe(0);
         });
 
         it('should use margins when next start', function() {
@@ -246,7 +242,7 @@
 
         it('should return a suitable gap if one exists', function() {
             var potentialGap = wall.findGap(100);
-            expect(potentialGap.gapStart).toBe(0);
+            expect(potentialGap.getBounds().left).toBe(0);
         });
 
         it('should allow for item margins calculating the gap width', function() {
@@ -257,7 +253,7 @@
             });
             var addPosition = wall.addItem(anotherItemWithMargin);
             var potentialGap = wall.findGap(100);
-            expect(potentialGap.gapWidth).toBe(500);
+            expect(potentialGap.getSize().width).toBe(500);
         });
 
         it('should allow item margins when finding a gap', function() {
@@ -269,7 +265,7 @@
 
             var addPosition = wall.addItem(anotherItemWithMargin);
             var potentialGap = wall.findGap(100);
-            expect(potentialGap.gapStart).toBe(200);
+            expect(potentialGap.getBounds().left).toBe(200);
         });
 
         it('should snap compatible items inside parent container', function() {

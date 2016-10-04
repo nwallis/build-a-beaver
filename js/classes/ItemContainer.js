@@ -16,31 +16,42 @@ ItemContainer.prototype.deleteItem = function(item) {
 }
 
 ItemContainer.prototype.addItem = function(item) {
-
-    var gap = this.findGap(item.realWidth);
+    var gap = this.findGap(item.getSize().width);
 
     if (gap) {
         this.children.push(item);
-        return this.moveItem(item, gap.gapStart);
+        return this.moveItem(item, gap.getBounds().left);
     } else {
         throw new Error("There is no space on the wall for this item");
     }
 }
 
-ItemContainer.prototype.getGaps = function() {
+ItemContainer.prototype.getChildren = function(itemType){
+    var items = [];
+    this.children.forEach(function(item){
+        if (item.itemType == itemType) items.push(item);
+    });
+    return items;
+}
+
+ItemContainer.prototype.getGaps = function(itemType, itemArray) {
 
     var child;
     var gaps = [];
+    var itemType = itemType || false;
+    var childrenToIterate = (itemType) ? this.getChildren(itemType) : this.children;
+    //array of passed items overrides all
+    childrenToIterate = itemArray || childrenToIterate;
 
-    if (this.children.length > 0) {
+    if (childrenToIterate.length > 0) {
 
-        this.children.forEach(function(item) {
+        childrenToIterate.forEach(function(item) {
             if (child) {
                 var gapWidth = item.getBounds().left - child.getBounds().right
                 if (gapWidth > 0) {
                     gaps.push(new ContainerGap({
-                        gapWidth: gapWidth,
-                        gapStart: child.getBounds().right
+                        realWidth: gapWidth,
+                        realX: child.getBounds().right
                     }));
                 }
             }
@@ -48,16 +59,16 @@ ItemContainer.prototype.getGaps = function() {
         });
 
         //is there a gap between left of wall and first object?
-        if (this.children[0].realX > 0) gaps.push(new ContainerGap({
-            gapStart: 0,
-            gapWidth: this.children[0].getBounds().left
+        if (childrenToIterate[0].realX > 0) gaps.push(new ContainerGap({
+            realX: 0,
+            realWidth: childrenToIterate[0].getBounds().left
         }));
 
         //is there a gap between right of wall and last object
-        var lastItem = this.children[this.children.length - 1];
+        var lastItem = childrenToIterate[childrenToIterate.length - 1];
         if (lastItem.getBounds().right < this.realWidth) gaps.push(new ContainerGap({
-            gapStart: lastItem.getBounds().right,
-            gapWidth: this.realWidth - lastItem.getBounds().right
+            realX: lastItem.getBounds().right,
+            realWidth: this.realWidth - lastItem.getBounds().right
         }));
 
     }
@@ -74,17 +85,17 @@ ItemContainer.prototype.findGap = function(desiredWidth) {
         gaps = this.getGaps();
     } else {
         gaps.push(new ContainerGap({
-            gapStart: 0,
-            gapWidth: this.realWidth
+            realX: 0,
+            realWidth: this.realWidth
         }));
     }
 
     gaps.sort(function(a, b) {
-        return a.gapStart - b.gapStart;
+        return a.getBounds().left - b.getBounds().left;
     });
 
     gaps.forEach(function(gap) {
-        if (gap.gapWidth >= desiredWidth && !foundGap) foundGap = gap;
+        if (gap.realWidth >= desiredWidth && !foundGap) foundGap = gap;
     });
 
     return foundGap;
@@ -127,7 +138,6 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
                 }
             }
         }
-
     });
 
     if (item.getBounds().left < this.snapDistance) {
@@ -171,6 +181,8 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
             moveTo = compatibleChild.getInnerBounds().left;
         }
         item.realX = moveTo;
+        //not quite handly collapsing elegantly yet, make it a valid move in case collapse was triggered
+        moveResult = true;
     } else {
         item.realX = originalX;
     }

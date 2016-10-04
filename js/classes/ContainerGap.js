@@ -1,6 +1,5 @@
 var ContainerGap = function(params){
-    this.realX = params.gapStart;
-    this.realWidth = params.gapWidth;
+    Item.call(this, params);
 }
 
 ContainerGap.prototype = Object.create(Item.prototype);

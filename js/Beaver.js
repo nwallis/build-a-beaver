@@ -62,8 +62,8 @@ Beaver.prototype.drawGaps = function() {
     var wallGaps = this.wall.getGaps();
     wallGaps.forEach(function(gap) {
         this.gapGraphics.lineStyle(2, 0xffffff, 1);
-        this.gapGraphics.moveTo(this.mmToPixels(gap.gapStart), 150);
-        this.gapGraphics.lineTo(this.mmToPixels(gap.gapStart + gap.gapWidth), 150);
+        this.gapGraphics.moveTo(this.mmToPixels(gap.getBounds().left), 150);
+        this.gapGraphics.lineTo(this.mmToPixels(gap.getBounds().right), 150);
     }, this);
 }
 
