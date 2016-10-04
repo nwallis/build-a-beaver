@@ -8,7 +8,7 @@ Beaver.prototype.create = function(wallWidth) {
     //Figure out how many pixels wide the world needs to be
     this.wallWidthPixels = this.mmToPixels(DEBUG_WALL_WIDTH);
     this.wallHeightPixels = this.stage.height;
-    this.game.world.setBounds(0, 0, this.wallWidthPixels, this.wallHeightPixels);
+    this.game.world.setBounds(150, 0, this.wallWidthPixels, this.wallHeightPixels);
 
     this.wall = new ItemContainer({
         realWidth: DEBUG_WALL_WIDTH,

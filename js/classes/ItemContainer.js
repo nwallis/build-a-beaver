@@ -1,9 +1,10 @@
 var ItemContainer = function(params) {
-    this.realWidth = params.realWidth;
-    this.realHeight = params.realHeight;
+    Item.call(this, params);
     this.children = (params.children) ? params.children : [];
-    this.snapDistance = ITEM_SNAP_DISTANCE;
 };
+
+ItemContainer.prototype = Object.create(Item.prototype);
+ItemContainer.prototype.constructor = ItemContainer;
 
 ItemContainer.prototype.sortChildren = function() {
     this.children.sort(function(a, b) {
@@ -22,7 +23,7 @@ ItemContainer.prototype.addItem = function(item) {
         this.children.push(item);
         return this.moveItem(item, gap.getBounds().left);
     } else {
-        throw new Error("There is no space on the wall for this item");
+        throw new Error("There is no space for this item");
     }
 }
 
