@@ -11,6 +11,7 @@ Boot.prototype.preload = function() {
     this.game.load.image('large_cabinet', 'images/large_cabinet.jpg');
     this.game.load.image('small_cabinet_double_with_bench', 'images/small_cabinet_double_with_bench.jpg');
     this.game.load.image('wall_bay_600_2400', 'images/wall_bay_600_2400.jpg');
+    this.game.load.image('pillar_cover_600_2400', 'images/pillar_cover_600_2400.jpg');
     this.game.load.image('pillar', 'images/pillar.jpg');
 }
 

@@ -10,21 +10,24 @@
             realWidth: 600,
             realHeight: 900,
             id: 1,
-            itemType:'cupboards'
+            itemType:'cupboards',
+            image:'item1'
         });
 
         item2 = new Item({
             realWidth: 450,
             realHeight: 900,
             id: 2,
-            itemType:'cupboards'
+            itemType:'cupboards',
+            image:'item2'
         });
 
         item1CompatibleItem = new Item({
             realWidth: 600,
             realHeight: 900,
             id: 3,
-            compatibleItems: [1]
+            compatibleItems: [1],
+            image:'item1CompatibleItem'
         });
 
         itemWithMargin = new Item({
@@ -33,7 +36,8 @@
             realWidth: 100,
             realHeight: 900,
             id: 4,
-            collapseTypes: [5, 6]
+            collapseTypes: [5, 6],
+            image:'itemWithMargin'
         });
 
         wall = new ItemContainer({
@@ -270,7 +274,7 @@
         });
 
         it('should snap compatible items inside parent container', function() {
-            expect(wall.moveItem(item1CompatibleItem, 1295).position).toBe(700);
+            expect(wall.moveItem(item1CompatibleItem, item1.getBounds().left + ITEM_SNAP_DISTANCE + 10).position).toBe(700);
         });
 
     });

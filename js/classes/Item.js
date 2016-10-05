@@ -6,7 +6,8 @@ const ITEM_LEFT_SIDE_EXACT = 4;
 const ITEM_RIGHT_SIDE_EXACT = 5;
 const ITEM_LEFT_SIDE_IN_RIGHT_MARGIN = 6;
 const ITEM_RIGHT_SIDE_IN_LEFT_MARGIN = 7;
-const ITEM_SNAP_DISTANCE = 50;
+const ITEM_SITTING_ON_TOP = 8;
+const ITEM_SNAP_DISTANCE = 200;
 
 var Item = function(params) {
     this.realX = params.realX;
@@ -60,12 +61,13 @@ Item.prototype.checkIntersect = function(item) {
     var intersections = [];
 
     if (this.getBounds().left > item.getBounds().left && this.getBounds().left < item.getBounds().right) intersections.push(ITEM_LEFT_SIDE);
-    if (this.getBounds().right < item.getInnerBounds().right && this.getBounds().right > item.getInnerBounds().left) intersections.push(ITEM_RIGHT_SIDE);
+    if (this.getBounds().right < item.getBounds().right && this.getBounds().right > item.getBounds().left) intersections.push(ITEM_RIGHT_SIDE);
     if (this.getBounds().left < item.getBounds().left && this.getBounds().right > item.getBounds().right) intersections.push(ITEM_EXTREMITIES_OUTSIDE);
     if (this.getBounds().left == item.getBounds().left) intersections.push(ITEM_LEFT_SIDE_EXACT);
     if (this.getBounds().right == item.getBounds().right) intersections.push(ITEM_RIGHT_SIDE_EXACT);
     if (this.getBounds().left > item.getInnerBounds().right && this.getBounds().left < item.getBounds().right) intersections.push(ITEM_LEFT_SIDE_IN_RIGHT_MARGIN);
     if (this.getBounds().right > item.getBounds().left && this.getBounds().right < item.getInnerBounds().left) intersections.push(ITEM_RIGHT_SIDE_IN_LEFT_MARGIN);
+    if (this.getBounds().right == item.getBounds().right && this.getBounds().left == item.getBounds().left) intersections.push(ITEM_SITTING_ON_TOP);
     if (!intersections.length) intersections.push(ITEM_NO_INTERSECT);
 
     intersections = new Intersect(intersections);
@@ -73,13 +75,13 @@ Item.prototype.checkIntersect = function(item) {
 }
 
 Item.prototype.checkRightSnap = function(testPosition) {
-    if (testPosition >= this.getBounds().right && testPosition < this.getBounds().right + this.snapDistance)
+    if (testPosition >= this.getBounds().right - this.snapDistance && testPosition < this.getBounds().right + this.snapDistance)
         return true;
     return false;
 }
 
 Item.prototype.checkLeftSnap = function(testPosition) {
-    if (testPosition > this.getBounds().left - this.snapDistance && testPosition <= this.getBounds().left)
+    if (testPosition > this.getBounds().left - this.snapDistance && testPosition <= this.getBounds().left + this.snapDistance)
         return true;
     return false;
 }

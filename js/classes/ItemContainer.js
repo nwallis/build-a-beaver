@@ -1,6 +1,7 @@
 var ItemContainer = function(params) {
     Item.call(this, params);
     this.children = (params.children) ? params.children : [];
+    this.layerCollisions = params.layerCollisions || [];
 };
 
 ItemContainer.prototype = Object.create(Item.prototype);
@@ -17,7 +18,9 @@ ItemContainer.prototype.deleteItem = function(item) {
 }
 
 ItemContainer.prototype.addItem = function(item) {
-    var gap = this.findGap(item.getSize().width);
+
+    var combinedCollisions = this.layerCollisions.concat(this.children);
+    var gap = this.findGap(item.getSize().width, combinedCollisions);
 
     if (gap) {
         this.children.push(item);
@@ -41,7 +44,6 @@ ItemContainer.prototype.getGaps = function(itemType, itemArray) {
     var gaps = [];
     var itemType = itemType || false;
     var childrenToIterate = (itemType) ? this.getChildren(itemType) : this.children;
-    //array of passed items overrides all
     childrenToIterate = itemArray || childrenToIterate;
 
     if (childrenToIterate.length > 0) {
@@ -77,13 +79,19 @@ ItemContainer.prototype.getGaps = function(itemType, itemArray) {
     return gaps;
 }
 
-ItemContainer.prototype.findGap = function(desiredWidth) {
+ItemContainer.prototype.findGap = function(desiredWidth, itemArray) {
 
     var foundGap = false;
     var gaps = [];
+    var childrenToIterate = (itemArray) ? itemArray : this.children;
 
-    if (this.children.length > 0) {
-        gaps = this.getGaps();
+    //As items are from a variety of layers, they need to be re-sorted
+    childrenToIterate.sort(function(a,b){
+        return a.getBounds().left - b.getBounds().left;
+    });
+
+    if (childrenToIterate.length > 0) {
+        gaps = this.getGaps(false,childrenToIterate);
     } else {
         gaps.push(new ContainerGap({
             realX: 0,
@@ -109,7 +117,7 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
     var snapAmount = 0;
     var isCompatible = false;
     var compatibleChild;
-    var collapse = false;
+    var collapsedItems = [];
 
     //It may not have an x position as moveItem is also called by addItem
     var originalX = (item.realX == undefined) ? xPosition : item.realX;
@@ -126,14 +134,16 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
             if (child.checkRightSnap(item.getBounds().left)) {
                 if (item.checkCollapse(child) && child.checkCollapse(item)) {
                     snapAmount -= item.getInnerBounds().left - child.getInnerBounds().right;
-                    collapse = true;
+                    collapsedItems.push(child);
                 } else {
                     snapAmount -= item.getBounds().left - child.getBounds().right;
                 }
-            } else if (child.checkLeftSnap(item.getBounds().right)) {
+            }
+
+            if (child.checkLeftSnap(item.getBounds().right)) {
                 if (item.checkCollapse(child) && child.checkCollapse(item)) {
                     snapAmount = child.getInnerBounds().left - item.getInnerBounds().right;
-                    collapse = true;
+                    collapsedItems.push(child);
                 } else {
                     snapAmount = child.getBounds().left - item.getBounds().right;
                 }
@@ -148,26 +158,30 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
     item.realX = moveTo = item.getBounds().left + snapAmount;
 
     if (item.getBounds().left >= 0 && item.getBounds().right <= this.realWidth) {
-        this.children.forEach(function(child) {
+
+        var combinedCollisions = this.layerCollisions.concat(this.children);
+        combinedCollisions.forEach(function(child) {
             if (child != item) {
 
                 var intersections = item.checkIntersect(child);
                 var intersectResult = false;
 
                 if (!intersections.lookFor(ITEM_NO_INTERSECT)) {
-                    if (item.compatibleItems.length) {
-                        item.compatibleItems.forEach(function(itemID) {
-                            if (child.id == itemID && child.id != item.id) {
-                                isCompatible = true;
-                                compatibleChild = child;
-                            }
-                        });
-                        intersectResult = isCompatible;
-                    } else if (item.compatibleItemOverlaps.length && intersections.lookFor(item.allowedIntersections) && item.compatibleItemOverlaps.indexOf(child.id) != -1) {
-                        intersectResult = true;
-                    }
+                    if (collapsedItems.length == 0 || collapsedItems.indexOf(child) == -1) {
+                        if (item.compatibleItems.length) {
+                            item.compatibleItems.forEach(function(itemID) {
+                                if (child.id == itemID && child.id != item.id) {
+                                    isCompatible = true;
+                                    compatibleChild = child;
+                                }
+                            });
+                            intersectResult = isCompatible;
+                        } else if (item.compatibleItemOverlaps.length && intersections.lookFor(item.allowedIntersections) && item.compatibleItemOverlaps.indexOf(child.id) != -1) {
+                            intersectResult = true;
+                        }
 
-                    if (moveResult) moveResult = intersectResult;
+                        if (moveResult) moveResult = intersectResult;
+                    }
 
                 }
             }
@@ -185,13 +199,11 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
         });
     }
 
-    if (moveResult || collapse) {
+    if (moveResult) {
         if (isCompatible) {
             moveTo = compatibleChild.getInnerBounds().left;
         }
         item.realX = moveTo;
-        //not quite handly collapsing elegantly yet, make it a valid move in case collapse was triggered
-        moveResult = true;
     } else {
         item.realX = originalX;
     }

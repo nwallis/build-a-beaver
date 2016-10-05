@@ -58,6 +58,22 @@ Beaver.prototype.create = function(wallWidth) {
         });
     });
 
+    $("#add-pillar-cover-600-2400").click(function() {
+        arranger.addItem({
+            realWidth: 600,
+            realHeight: 2400,
+            image: 'pillar_cover_600_2400',
+            marginRight: 15,
+            marginLeft: 15,
+            id: 10,
+            collapseTypes: [5,10],
+            compatibleItemOverlaps: [6],
+            allowedIntersections: [
+                ITEM_EXTREMITIES_OUTSIDE
+            ]
+        });
+    });
+
     $("#add-wall-bay-600-2400").click(function() {
         arranger.addItem({
             realWidth: 600,
@@ -66,11 +82,7 @@ Beaver.prototype.create = function(wallWidth) {
             marginRight: 15,
             marginLeft: 15,
             id: 5,
-            collapseTypes: [5],
-            compatibleItemOverlaps: [6],
-            allowedIntersections: [
-                ITEM_EXTREMITIES_OUTSIDE
-            ]
+            collapseTypes: [5,10]
         });
     });
 
@@ -86,10 +98,18 @@ Beaver.prototype.create = function(wallWidth) {
 
 Beaver.prototype.addWallLayer = function() {
 
+    var layerCollisions = [];
+    this.wallLayers.forEach(function(layer){
+        layer.model.children.forEach(function(child){
+            layerCollisions.push(child);
+        });
+    });
+
     //Create the model
     var newWall = new ItemContainer({
         realWidth: DEBUG_WALL_WIDTH,
-        realHeight: GAME_HEIGHT_MM
+        realHeight: GAME_HEIGHT_MM,
+        layerCollisions: layerCollisions 
     });
 
     var newLayerVisual = new ItemContainerVisual(this.game, this, newWall);
