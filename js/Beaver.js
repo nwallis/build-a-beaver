@@ -83,7 +83,8 @@ Beaver.prototype.create = function(wallWidth) {
             realHeight: 900,
             image: 'small_cabinet_double_with_bench',
             compatibleItems: [100],
-            id: 4
+            id: 4,
+            additionalCompatibleItems: 1,
         });
     });
 
@@ -139,7 +140,7 @@ Beaver.prototype.create = function(wallWidth) {
     });
 }
 
-Beaver.prototype.addWallLayer = function(layerCollisions,noGoZones) {
+Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
 
 
     //Create the model

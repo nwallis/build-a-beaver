@@ -23,7 +23,7 @@ var Item = function(params) {
     this.allowedIntersections = params.allowedIntersections || [];
     this.compatibleItemOverlaps = params.compatibleItemOverlaps || [];
     this.itemType = params.itemType || null;
-    this.compatibleQuantity == params.compatibleQuantity || 0;
+    this.additionalCompatibleItems = params.additionalCompatibleItems || 0;
 };
 
 Item.prototype.saveSnapReferences = function() {

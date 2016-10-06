@@ -6,6 +6,10 @@ Intersect.prototype.add = function(intersection) {
     this.intersections.push(intersection);
 }
 
+Intersect.prototype.onlyLookFor = function(lookFor) {
+    return this.intersections.length == 1 && this.lookFor(lookFor);
+}
+
 Intersect.prototype.lookFor = function(lookFor) {
 
     var searchResult = false;

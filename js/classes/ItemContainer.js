@@ -21,7 +21,7 @@ ItemContainer.prototype.deleteItem = function(item) {
 ItemContainer.prototype.addItem = function(item) {
 
     var combinedCollisions = this.layerCollisions.concat(this.children);
-    var gap = this.findGap(item.getSize().width, combinedCollisions);
+    var gap = this.findGap(item.getSize().width, this.children); //combinedCollisions);
 
     if (gap) {
         this.children.push(item);
@@ -185,8 +185,15 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
 
                             item.compatibleItems.forEach(function(itemID) {
                                 if (child.id == itemID && child.id != item.id && intersections.lookFor(ITEM_LEFT_SIDE)) {
+
                                     isCompatible = true;
-                                    snapAmount = -(item.getBounds().left - child.getInnerBounds().left);
+                                    var nextChild = child;
+                                    for (var additionalCount = 0; additionalCount < item.additionalCompatibleItems; additionalCount++) {
+                                        if (nextChild) nextChild = nextChild.itemSnappedToRight;
+                                        if (!nextChild || nextChild.id != itemID) isCompatible = false;
+                                    }
+
+                                    if (isCompatible) snapAmount = -(item.getBounds().left - child.getInnerBounds().left);
                                 }
                             });
 

@@ -350,22 +350,21 @@
                     realHeight: 900,
                     id: 300,
                     compatibleItems: [200],
-                    compatibleQuantity: 2,
+                    additionalCompatibleItems: 1,
                     image: 'multiParentItem'
                 });
 
                 wall.addItem(parent1);
                 wall.addItem(parent2);
                 wall.addItem(parent3);
-                console.clear();
-                console.log(wall.addItem(multiParentItem));
+
+                var multiStartPos = wall.addItem(multiParentItem).position;
                 wall.moveItem(parent1, 6000);
-                wall.moveItem(parent2, 6500);
-                wall.moveItem(parent3, 7000);
+                wall.moveItem(parent2, 6400);
+                wall.moveItem(parent3, 6800);
 
-                expect(wall.moveItem(multiParentItem, 6000).position).toBe(7050);
-
-                //expect(wall.moveItem(item1CompatibleItem, item1.getBounds().left + ITEM_SNAP_DISTANCE + 10).position).toBe(7050);
+                expect(wall.moveItem(multiParentItem, 7100).position).toBe(multiStartPos);
+                expect(wall.moveItem(multiParentItem, 6150).position).toBe(6050);
 
             });
 
