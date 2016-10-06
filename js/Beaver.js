@@ -3,6 +3,32 @@ const DEBUG_WALL_WIDTH = 10000;
 
 var Beaver = function() {
     this.wallLayers = [];
+    this.stepNumber = 0;
+}
+
+Beaver.prototype.nextStep = function() {
+
+    this.stepNumber++;
+
+    var layerCollisions = [];
+    var noGoZones = [];
+
+    this.wallLayers.forEach(function(layer) {
+        layer.model.children.forEach(function(child) {
+            layerCollisions.push(child);
+        });
+    });
+
+    switch (this.stepNumber) {
+
+        case 3:
+            noGoZones = this.wallLayers[1].model.getGaps('wall-bay');
+            break;
+
+    }
+
+    this.addWallLayer(layerCollisions, noGoZones);
+
 }
 
 Beaver.prototype.create = function(wallWidth) {
@@ -18,8 +44,8 @@ Beaver.prototype.create = function(wallWidth) {
     this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), this.game.stage.height);
 
     this.layerContainer = this.game.add.group();
-    this.addWallLayer();
-   
+    this.nextStep();
+
     //UI Javascript 
     $("#add-cabinet").click(function() {
         arranger.addItem({
@@ -36,6 +62,7 @@ Beaver.prototype.create = function(wallWidth) {
             realWidth: 900,
             realHeight: 1800,
             image: 'large_cabinet',
+            compatibleItems: [100],
             id: 2
         });
     });
@@ -45,6 +72,7 @@ Beaver.prototype.create = function(wallWidth) {
             realWidth: 900,
             realHeight: 890,
             image: 'small_cabinet',
+            compatibleItems: [100],
             id: 3
         });
     });
@@ -54,6 +82,7 @@ Beaver.prototype.create = function(wallWidth) {
             realWidth: 1800,
             realHeight: 900,
             image: 'small_cabinet_double_with_bench',
+            compatibleItems: [100],
             id: 4
         });
     });
@@ -66,7 +95,7 @@ Beaver.prototype.create = function(wallWidth) {
             marginRight: 15,
             marginLeft: 15,
             id: 10,
-            collapseTypes: [5,10],
+            collapseTypes: [5, 10, 100],
             compatibleItemOverlaps: [6],
             allowedIntersections: [
                 ITEM_EXTREMITIES_OUTSIDE
@@ -82,7 +111,21 @@ Beaver.prototype.create = function(wallWidth) {
             marginRight: 15,
             marginLeft: 15,
             id: 5,
-            collapseTypes: [5,10]
+            collapseTypes: [5, 10, 100],
+            itemType: "wall-bay"
+        });
+    });
+
+    $("#add-wall-bay-900-2400").click(function() {
+        arranger.addItem({
+            realWidth: 900,
+            realHeight: 2400,
+            image: 'wall_bay_600_2400',
+            marginRight: 15,
+            marginLeft: 15,
+            id: 100,
+            collapseTypes: [5, 10, 100],
+            itemType: "wall-bay"
         });
     });
 
@@ -96,28 +139,23 @@ Beaver.prototype.create = function(wallWidth) {
     });
 }
 
-Beaver.prototype.addWallLayer = function() {
+Beaver.prototype.addWallLayer = function(layerCollisions,noGoZones) {
 
-    var layerCollisions = [];
-    this.wallLayers.forEach(function(layer){
-        layer.model.children.forEach(function(child){
-            layerCollisions.push(child);
-        });
-    });
 
     //Create the model
     var newWall = new ItemContainer({
         realWidth: DEBUG_WALL_WIDTH,
         realHeight: GAME_HEIGHT_MM,
-        layerCollisions: layerCollisions 
+        layerCollisions: layerCollisions,
+        noGoZones: noGoZones
     });
 
     var newLayerVisual = new ItemContainerVisual(this.game, this, newWall);
     this.wallLayers.push(newLayerVisual);
 }
 
-Beaver.prototype.currentLayer = function(){
-    return this.wallLayers[this.wallLayers.length-1];
+Beaver.prototype.currentLayer = function() {
+    return this.wallLayers[this.wallLayers.length - 1];
 }
 
 Beaver.prototype.deleteItem = function(item) {
@@ -131,14 +169,14 @@ Beaver.prototype.addItem = function(params) {
     var item = new Item(params);
 
     //try {
-        //add the item to the model
-        startPos = this.currentLayer().model.addItem(item).position;
+    //add the item to the model
+    startPos = this.currentLayer().model.addItem(item).position;
 
-        //add the item to the visual
-        this.currentLayer().addItem(item, startPos);
+    //add the item to the visual
+    this.currentLayer().addItem(item, startPos);
     //} catch (error) {
-     //   alert(error.message);
-     //   return false;
+    //   alert(error.message);
+    //   return false;
     //}
 
 }

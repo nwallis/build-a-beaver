@@ -83,7 +83,10 @@ ItemVisual.prototype.layoutIcons = function() {
 }
 
 ItemVisual.prototype.update = function() {
-    this.debugText.text = "width: " + this.model.getSize().width + "\nrealX: " + this.model.getBounds().left + "\ninner left: " + this.model.getInnerBounds().left;
+    var snapLeftName = (this.model.itemSnappedToLeft) ? this.model.itemSnappedToLeft.image : 'none';
+    var snapRightName = (this.model.itemSnappedToRight) ? this.model.itemSnappedToRight.image : 'none';
+
+    this.debugText.text = "width: " + this.model.getSize().width + "\nrealX: " + this.model.getBounds().left + "\ninner left: " + this.model.getInnerBounds().left + "\nsnap left: " + snapLeftName + "\nsnapped right: " + snapRightName;
 }
 
 ItemVisual.prototype.itemDragUpdate = function() {

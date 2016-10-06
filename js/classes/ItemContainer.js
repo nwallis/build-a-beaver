@@ -2,6 +2,7 @@ var ItemContainer = function(params) {
     Item.call(this, params);
     this.children = (params.children) ? params.children : [];
     this.layerCollisions = params.layerCollisions || [];
+    this.noGoZones = params.noGoZones || [];
 };
 
 ItemContainer.prototype = Object.create(Item.prototype);
@@ -86,12 +87,12 @@ ItemContainer.prototype.findGap = function(desiredWidth, itemArray) {
     var childrenToIterate = (itemArray) ? itemArray : this.children;
 
     //As items are from a variety of layers, they need to be re-sorted
-    childrenToIterate.sort(function(a,b){
+    childrenToIterate.sort(function(a, b) {
         return a.getBounds().left - b.getBounds().left;
     });
 
     if (childrenToIterate.length > 0) {
-        gaps = this.getGaps(false,childrenToIterate);
+        gaps = this.getGaps(false, childrenToIterate);
     } else {
         gaps.push(new ContainerGap({
             realX: 0,
@@ -110,13 +111,13 @@ ItemContainer.prototype.findGap = function(desiredWidth, itemArray) {
     return foundGap;
 }
 
-ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
+ItemContainer.prototype.moveItem = function(item, xPosition) {
 
     var moveResult = true;
     var moveTo = 0;
     var snapAmount = 0;
     var isCompatible = false;
-    var compatibleChild;
+    //var compatibleChild;
     var collapsedItems = [];
 
     //It may not have an x position as moveItem is also called by addItem
@@ -125,6 +126,10 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
     //'move' the item there to see how it will go
     item.realX = xPosition;
 
+    //save any snap references on item and left and right of item
+    item.saveSnapReferences();
+
+    //check snapping
     if (item.getBounds().right >= this.realWidth - this.snapDistance) {
         snapAmount = this.realWidth - item.getBounds().right;
     }
@@ -133,11 +138,13 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
         if (child != item) {
             if (child.checkRightSnap(item.getBounds().left)) {
                 if (item.checkCollapse(child) && child.checkCollapse(item)) {
-                    snapAmount -= item.getInnerBounds().left - child.getInnerBounds().right;
+                    snapAmount = -(item.getInnerBounds().left - child.getInnerBounds().right);
                     collapsedItems.push(child);
                 } else {
-                    snapAmount -= item.getBounds().left - child.getBounds().right;
+                    snapAmount = -(item.getBounds().left - child.getBounds().right);
                 }
+                item.itemSnappedToLeft = child;
+                child.itemSnappedToRight = item;
             }
 
             if (child.checkLeftSnap(item.getBounds().right)) {
@@ -147,6 +154,8 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
                 } else {
                     snapAmount = child.getBounds().left - item.getBounds().right;
                 }
+                item.itemSnappedToRight = child;
+                child.itemSnappedToLeft = item;
             }
         }
     });
@@ -155,8 +164,11 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
         snapAmount = -item.getBounds().left;
     }
 
+    //Move the item based on the snap amount
     item.realX = moveTo = item.getBounds().left + snapAmount;
+    snapAmount = 0;
 
+    //Now check if its a valid move
     if (item.getBounds().left >= 0 && item.getBounds().right <= this.realWidth) {
 
         var combinedCollisions = this.layerCollisions.concat(this.children);
@@ -168,14 +180,18 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
 
                 if (!intersections.lookFor(ITEM_NO_INTERSECT)) {
                     if (collapsedItems.length == 0 || collapsedItems.indexOf(child) == -1) {
+
                         if (item.compatibleItems.length) {
+
                             item.compatibleItems.forEach(function(itemID) {
-                                if (child.id == itemID && child.id != item.id) {
+                                if (child.id == itemID && child.id != item.id && intersections.lookFor(ITEM_LEFT_SIDE)) {
                                     isCompatible = true;
-                                    compatibleChild = child;
+                                    snapAmount = -(item.getBounds().left - child.getInnerBounds().left);
                                 }
                             });
+
                             intersectResult = isCompatible;
+
                         } else if (item.compatibleItemOverlaps.length && intersections.lookFor(item.allowedIntersections) && item.compatibleItemOverlaps.indexOf(child.id) != -1) {
                             intersectResult = true;
                         }
@@ -191,24 +207,28 @@ ItemContainer.prototype.moveItem = function(item, xPosition, noGoZones) {
         moveResult = false;
     }
 
+    //Move the item based on the snap amount - more snapping may have been applied (snapping into parents etc...)
+    item.realX = item.getBounds().left + snapAmount;
+
     //there are some places a cupboard just shouldn't go - used for cross layer comparison
-    if (noGoZones) {
-        noGoZones.forEach(function(zone) {
+    if (this.noGoZones) {
+        this.noGoZones.forEach(function(zone) {
             var zoneIntersect = item.checkIntersect(zone);
             if (moveResult && !zoneIntersect.lookFor(ITEM_NO_INTERSECT)) moveResult = false;
         });
     }
 
-    if (moveResult) {
-        if (isCompatible) {
-            moveTo = compatibleChild.getInnerBounds().left;
-        }
-        item.realX = moveTo;
-    } else {
+    if (!moveResult) {
+
+        //Put item back where it was
         item.realX = originalX;
+
+        //put all snap references back if move is not valid
+        item.restoreSnapReferences();
     }
 
     this.sortChildren();
+
     return {
         position: item.realX,
         valid: moveResult

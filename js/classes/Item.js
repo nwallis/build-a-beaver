@@ -7,7 +7,7 @@ const ITEM_RIGHT_SIDE_EXACT = 5;
 const ITEM_LEFT_SIDE_IN_RIGHT_MARGIN = 6;
 const ITEM_RIGHT_SIDE_IN_LEFT_MARGIN = 7;
 const ITEM_SITTING_ON_TOP = 8;
-const ITEM_SNAP_DISTANCE = 200;
+const ITEM_SNAP_DISTANCE = 50;
 
 var Item = function(params) {
     this.realX = params.realX;
@@ -23,7 +23,28 @@ var Item = function(params) {
     this.allowedIntersections = params.allowedIntersections || [];
     this.compatibleItemOverlaps = params.compatibleItemOverlaps || [];
     this.itemType = params.itemType || null;
+    this.compatibleQuantity == params.compatibleQuantity || 0;
 };
+
+Item.prototype.saveSnapReferences = function() {
+    this.previousItemSnappedToRight = this.itemSnappedToRight;
+    this.previousItemSnappedToLeft = this.itemSnappedToLeft;
+    if(this.itemSnappedToLeft) this.itemSnappedToLeft = this.itemSnappedToLeft.itemSnappedToRight = undefined;
+    if (this.itemSnappedToRight) this.itemSnappedToRight = this.itemSnappedToRight.itemSnappedToLeft = undefined;
+}
+
+Item.prototype.restoreSnapReferences = function(){
+    if (this.previousItemSnappedToLeft){
+        this.itemSnappedToLeft = this.previousItemSnappedToLeft;
+        this.previousItemSnappedToLeft.itemSnappedToRight = this;
+        this.previousItemSnappedToLeft = undefined;
+    }
+    if (this.previousItemSnappedToRight){
+        this.itemSnappedToRight = this.previousItemSnappedToRight;
+        this.previousItemSnappedToRight.itemSnappedToLeft = this;
+        this.previousItemSnappedToRight = undefined;
+    }
+}
 
 Item.prototype.checkCollapse = function(item) {
     if (this.collapseTypes.indexOf(item.id) != -1) return true;
@@ -33,7 +54,7 @@ Item.prototype.checkCollapse = function(item) {
 Item.prototype.getInnerBounds = function() {
     return {
         "right": this.getBounds().right - this.marginRight,
-        "left": this.getBounds().left + this.marginLeft 
+        "left": this.getBounds().left + this.marginLeft
     }
 }
 
@@ -75,13 +96,13 @@ Item.prototype.checkIntersect = function(item) {
 }
 
 Item.prototype.checkRightSnap = function(testPosition) {
-    if (testPosition >= this.getBounds().right - this.snapDistance && testPosition < this.getBounds().right + this.snapDistance)
+    if (testPosition >= this.getInnerBounds().right - this.snapDistance && testPosition < this.getInnerBounds().right + this.snapDistance)
         return true;
     return false;
 }
 
 Item.prototype.checkLeftSnap = function(testPosition) {
-    if (testPosition > this.getBounds().left - this.snapDistance && testPosition <= this.getBounds().left + this.snapDistance)
+    if (testPosition >= this.getInnerBounds().left - this.snapDistance && testPosition <= this.getInnerBounds().left + this.snapDistance)
         return true;
     return false;
 }
