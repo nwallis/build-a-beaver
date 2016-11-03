@@ -8,7 +8,7 @@ ItemVisual = function(game, engine, model, startPos, container) {
     this.itemVisual.width = engine.mmToPixels(model.getInnerSize().width);
     this.itemVisual.height = engine.mmToPixels(model.realHeight);
     this.itemVisual.x = engine.mmToPixels(model.marginLeft);
-    this.itemVisual.y = game.stage.height - this.itemVisual.height;
+    this.itemVisual.y = GAME_HEIGHT_PX - this.itemVisual.height;
     this.addChild(this.itemVisual);
 
     this.icons = [];
@@ -33,7 +33,7 @@ ItemVisual = function(game, engine, model, startPos, container) {
         backgroundColor: "#ffff00"
     };
 
-    this.debugText = this.game.make.text(0, 20, 'testing', style);
+    this.debugText = this.game.make.text(0, 100, 'testing', style);
     //this.addChild(this.debugText);
 
     //    this.events.onInputOver.add(this.itemOver,this);
@@ -85,7 +85,6 @@ ItemVisual.prototype.layoutIcons = function() {
 ItemVisual.prototype.update = function() {
     var snapLeftName = (this.model.itemSnappedToLeft) ? this.model.itemSnappedToLeft.image : 'none';
     var snapRightName = (this.model.itemSnappedToRight) ? this.model.itemSnappedToRight.image : 'none';
-
     this.debugText.text = "width: " + this.model.getSize().width + "\nrealX: " + this.model.getBounds().left + "\ninner left: " + this.model.getInnerBounds().left + "\nsnap left: " + snapLeftName + "\nsnapped right: " + snapRightName;
 }
 

@@ -10,10 +10,11 @@
     <script src="js/classes/ItemContainer.js"></script>
     <script src="js/classes/Intersect.js"></script>
     <script src="js/classes/ContainerGap.js"></script>
-    <script src="js/Beaver.js"></script>
-    <script src="js/Boot.js"></script>
     <script src="js/classes/ItemContainerVisual.js"></script>
     <script src="js/classes/ItemVisual.js"></script>
+    <script src="js/classes/ProductVisual.js"></script>
+    <script src="js/Beaver.js"></script>
+    <script src="js/Boot.js"></script>
 </head>
 
 <body>
@@ -40,7 +41,7 @@
                 $("#step-three-options").show();
             });
 
-            var game = new Phaser.Game(710, 410, Phaser.AUTO, '');
+            var game = new Phaser.Game(APP_WIDTH_PX, APP_HEIGHT_PX, Phaser.AUTO, '');
             game.state.add('Boot', Boot);
             game.state.add('Beaver', arranger);
             game.state.start('Boot');
@@ -76,6 +77,11 @@
             </p>
             <p><a href="#" id="add-small-cabinet-with-bench">Add Small Cabinets with Bench</a>
             </p>
+        </div>
+        <hr>
+        <p>Options</p>
+        <div id="options">
+            <p id="start-full-screen"><a href="#">Enter full screen</a></p>
         </div>
     </div>
 </body>

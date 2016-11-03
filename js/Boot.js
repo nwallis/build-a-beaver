@@ -13,6 +13,7 @@ Boot.prototype.preload = function() {
     this.game.load.image('wall_bay_600_2400', 'images/wall_bay_600_2400.jpg');
     this.game.load.image('pillar_cover_600_2400', 'images/pillar_cover_600_2400.jpg');
     this.game.load.image('pillar', 'images/pillar.jpg');
+    this.game.load.image('ui_mockup', 'images/temp/ui_mockup.jpg');
 }
 
 Boot.prototype.create = function() {

@@ -133,6 +133,47 @@ Beaver.prototype.create = function(wallWidth) {
     $("#add-pillar").click(function() {
         arranger.addItem({
             realWidth: 300,
+            image: 'pillar_cover_600_2400',
+            marginRight: 15,
+            marginLeft: 15,
+            id: 10,
+            collapseTypes: [5, 10, 100],
+            compatibleItemOverlaps: [6],
+            allowedIntersections: [
+                ITEM_EXTREMITIES_OUTSIDE
+            ]
+        });
+    });
+
+    $("#add-wall-bay-600-2400").click(function() {
+        arranger.addItem({
+            realWidth: 600,
+            realHeight: 2400,
+            image: 'wall_bay_600_2400',
+            marginRight: 15,
+            marginLeft: 15,
+            id: 5,
+            collapseTypes: [5, 10, 100],
+            itemType: "wall-bay"
+        });
+    });
+
+    $("#add-wall-bay-900-2400").click(function() {
+        arranger.addItem({
+            realWidth: 900,
+            realHeight: 2400,
+            image: 'wall_bay_600_2400',
+            marginRight: 15,
+            marginLeft: 15,
+            id: 100,
+            collapseTypes: [5, 10, 100],
+            itemType: "wall-bay"
+        });
+    });
+
+    $("#add-pillar").click(function() {
+        arranger.addItem({
+            realWidth: 300,
             realHeight: 2500,
             image: 'pillar',
             id: 6
@@ -140,10 +181,12 @@ Beaver.prototype.create = function(wallWidth) {
     });
 }
 
+Beaver.prototype.startFullScreen = function() {
+    this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.game.scale.startFullScreen(false);
+}
+
 Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
-
-
-    //Create the model
     var newWall = new ItemContainer({
         realWidth: DEBUG_WALL_WIDTH,
         realHeight: GAME_HEIGHT_MM,
@@ -151,48 +194,10 @@ Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
         noGoZones: noGoZones
     });
 
-    var newLayerVisual = new ItemContainerVisual(this.game, this, newWall);
+    var newLayerVisual = new ItemContainerVisual(this.game, this, newWall, this.layerContainer);
     this.wallLayers.push(newLayerVisual);
 }
 
 Beaver.prototype.currentLayer = function() {
     return this.wallLayers[this.wallLayers.length - 1];
 }
-
-Beaver.prototype.deleteItem = function(item) {
-    this.wall.deleteItem(item);
-    this.drawGaps();
-}
-
-Beaver.prototype.addItem = function(params) {
-
-    var startPos;
-    var item = new Item(params);
-
-    //try {
-    //add the item to the model
-    startPos = this.currentLayer().model.addItem(item).position;
-
-    //add the item to the visual
-    this.currentLayer().addItem(item, startPos);
-    //} catch (error) {
-    //   alert(error.message);
-    //   return false;
-    //}
-
-}
-
-Beaver.prototype.update = function() {}
-
-Beaver.prototype.render = function() {}
-
-Beaver.prototype.pixelsToMM = function(distance) {
-    return (GAME_HEIGHT_MM / this.stage.height) * distance;
-}
-
-Beaver.prototype.mmToPixels = function(distance) {
-    return distance / (GAME_HEIGHT_MM / this.stage.height);
-}
-
-Beaver.prototype.init = function() {}
-Beaver.prototype.preload = function() {}
