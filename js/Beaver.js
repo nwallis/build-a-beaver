@@ -1,5 +1,7 @@
 const GAME_HEIGHT_MM = 2500;
 const DEBUG_WALL_WIDTH = 10000;
+const APP_WIDTH_PX = 1270;
+const APP_HEIGHT_PX = 630;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -201,3 +203,15 @@ Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
 Beaver.prototype.currentLayer = function() {
     return this.wallLayers[this.wallLayers.length - 1];
 }
+Beaver.prototype.pixelsToMM = function(distance) {
+    return (GAME_HEIGHT_MM / this.stage.height) * distance;
+}
+
+Beaver.prototype.mmToPixels = function(distance) {
+    return distance / (GAME_HEIGHT_MM / this.stage.height);
+}
+
+Beaver.prototype.update = function() {}
+Beaver.prototype.render = function() { }
+Beaver.prototype.init = function() {}
+Beaver.prototype.preload = function() {}
