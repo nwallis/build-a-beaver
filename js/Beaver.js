@@ -6,6 +6,8 @@ const DESIGN_AREA_WIDTH_PX = 1225;
 const DESIGN_AREA_HEIGHT_PX = 350;
 const DESIGN_AREA_X = 23;
 const DESIGN_AREA_Y = 90;
+const UI_CONTAINER_X = 11;
+const UI_CONTAINER_Y = 480;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -63,6 +65,15 @@ Beaver.prototype.create = function(wallWidth) {
 
     //Mask the layer container
     this.layerContainer.mask = this.designAreaMask;
+
+    this.uiContainer = this.game.add.sprite(UI_CONTAINER_X, UI_CONTAINER_Y);
+    this.uiContainer.addChild(new ProductVisual(this.game, this, 'cabinet', {
+        realWidth: 600,
+        realHeight: 1800,
+        image: 'cabinet',
+        compatibleItems: [5],
+        id: 1
+    }));
 
     this.nextStep();
 
