@@ -53,15 +53,16 @@ Beaver.prototype.create = function(wallWidth) {
     this.designAreaMask.drawRect(DESIGN_AREA_X, DESIGN_AREA_Y, DESIGN_AREA_WIDTH_PX, DESIGN_AREA_HEIGHT_PX);
 
     //Create group for all layers
-    this.layerContainer = this.game.add.sprite(DESIGN_AREA_X, DESIGN_AREA_Y);
+    this.layerContainer = this.game.add.group();
 
     //Background image for the wall
     this.wallOutline = this.game.add.graphics(0, 0);
     this.wallOutline.beginFill(0x444444);
     this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), DESIGN_AREA_WIDTH_PX);
-    this.layerContainer.addChild(this.wallOutline);
+    this.layerContainer.add(this.wallOutline);
 
-    //Center the layer container
+    //Position and center the layer container
+    this.layerContainer.y = DESIGN_AREA_Y;
     this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
 
     //Mask the layer container
@@ -211,7 +212,10 @@ Beaver.prototype.mmToPixels = function(distance) {
     return distance / (GAME_HEIGHT_MM / DESIGN_AREA_HEIGHT_PX);
 }
 
-Beaver.prototype.update = function() {}
+Beaver.prototype.update = function() {
+    this.layerContainer.update();
+}
+
 Beaver.prototype.render = function() {}
 Beaver.prototype.init = function() {}
 Beaver.prototype.preload = function() {}
