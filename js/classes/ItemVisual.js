@@ -8,7 +8,7 @@ ItemVisual = function(game, engine, model, startPos, container) {
     this.itemVisual.width = engine.mmToPixels(model.getInnerSize().width);
     this.itemVisual.height = engine.mmToPixels(model.realHeight);
     this.itemVisual.x = engine.mmToPixels(model.marginLeft);
-    this.itemVisual.y = GAME_HEIGHT_PX - this.itemVisual.height;
+    this.itemVisual.y = DESIGN_AREA_HEIGHT_PX - this.itemVisual.height;
     this.addChild(this.itemVisual);
 
     this.icons = [];
@@ -103,6 +103,7 @@ ItemVisual.prototype.startItemDrag = function() {
     this.itemVisual.bringToTop();
     this.dragStartPosition = this.x;
 }
+
 ItemVisual.prototype.stopItemDrag = function() {
     this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
     this.container.drawGaps();
