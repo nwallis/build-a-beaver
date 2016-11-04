@@ -1,7 +1,11 @@
 const GAME_HEIGHT_MM = 2500;
-const DEBUG_WALL_WIDTH = 10000;
+const DEBUG_WALL_WIDTH = 8000;
 const APP_WIDTH_PX = 1270;
 const APP_HEIGHT_PX = 630;
+const DESIGN_AREA_WIDTH_PX = 1225;
+const DESIGN_AREA_HEIGHT_PX = 350;
+const DESIGN_AREA_X = 23;
+const DESIGN_AREA_Y = 90;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -11,7 +15,6 @@ var Beaver = function() {
 Beaver.prototype.nextStep = function() {
 
     this.stepNumber++;
-
     var layerCollisions = [];
     var noGoZones = [];
 
@@ -22,16 +25,14 @@ Beaver.prototype.nextStep = function() {
     });
 
     switch (this.stepNumber) {
-
         case 3:
             noGoZones = this.wallLayers[1].model.getGaps('wall-bay');
             break;
-
     }
 
     this.addWallLayer(layerCollisions, noGoZones);
-
 }
+
 
 Beaver.prototype.create = function(wallWidth) {
 
@@ -40,12 +41,29 @@ Beaver.prototype.create = function(wallWidth) {
     this.wallHeightPixels = this.stage.height;
     this.game.world.setBounds(0, 0, this.wallWidthPixels, this.wallHeightPixels);
 
+    //Put ui mockup in the background
+    this.uiMockup = this.game.add.sprite(0, 0, 'ui_mockup');
+
+    //Create mask for design area
+    this.designAreaMask = this.game.add.graphics(0, 0);
+    this.designAreaMask.beginFill(0);
+    this.designAreaMask.drawRect(DESIGN_AREA_X, DESIGN_AREA_Y, DESIGN_AREA_WIDTH_PX, DESIGN_AREA_HEIGHT_PX);
+
+    //Create group for all layers
+    this.layerContainer = this.game.add.sprite(DESIGN_AREA_X, DESIGN_AREA_Y);
+
     //Background image for the wall
     this.wallOutline = this.game.add.graphics(0, 0);
     this.wallOutline.beginFill(0x444444);
-    this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), this.game.stage.height);
+    this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), DESIGN_AREA_WIDTH_PX);
+    this.layerContainer.addChild(this.wallOutline);
 
-    this.layerContainer = this.game.add.group();
+    //Center the layer container
+    this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
+
+    //Mask the layer container
+    this.layerContainer.mask = this.designAreaMask;
+
     this.nextStep();
 
     //UI Javascript 
@@ -121,7 +139,7 @@ Beaver.prototype.create = function(wallWidth) {
 
     $("#add-wall-bay-900-2400").click(function() {
         arranger.addItem({
-            realWidth: 900,
+            realWidth: 600,
             realHeight: 2400,
             image: 'wall_bay_600_2400',
             marginRight: 15,
@@ -134,7 +152,7 @@ Beaver.prototype.create = function(wallWidth) {
 
     $("#add-pillar").click(function() {
         arranger.addItem({
-            realWidth: 300,
+            realWidth: 600,
             image: 'pillar_cover_600_2400',
             marginRight: 15,
             marginLeft: 15,
@@ -181,6 +199,10 @@ Beaver.prototype.create = function(wallWidth) {
             id: 6
         });
     });
+
+    $("#start-full-screen").click(function() {
+        arranger.startFullScreen();
+    });
 }
 
 Beaver.prototype.startFullScreen = function() {
@@ -198,20 +220,35 @@ Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
 
     var newLayerVisual = new ItemContainerVisual(this.game, this, newWall, this.layerContainer);
     this.wallLayers.push(newLayerVisual);
+};
+
+Beaver.prototype.addItem = function(itemModel) {
+
+    var startPos;
+    var item = new Item(itemModel);
+
+    try {
+        startPos = this.currentWallLayer().addItem(item);
+    } catch (error) {
+        alert(error.message);
+        return false;
+    }
+
+};
+
+Beaver.prototype.currentWallLayer = function() {
+    return this.wallLayers[this.stepNumber - 1];
 }
 
-Beaver.prototype.currentLayer = function() {
-    return this.wallLayers[this.wallLayers.length - 1];
-}
 Beaver.prototype.pixelsToMM = function(distance) {
-    return (GAME_HEIGHT_MM / this.stage.height) * distance;
+    return (GAME_HEIGHT_MM / DESIGN_AREA_HEIGHT_PX) * distance;
 }
 
 Beaver.prototype.mmToPixels = function(distance) {
-    return distance / (GAME_HEIGHT_MM / this.stage.height);
+    return distance / (GAME_HEIGHT_MM / DESIGN_AREA_HEIGHT_PX);
 }
 
 Beaver.prototype.update = function() {}
-Beaver.prototype.render = function() { }
+Beaver.prototype.render = function() {}
 Beaver.prototype.init = function() {}
 Beaver.prototype.preload = function() {}
