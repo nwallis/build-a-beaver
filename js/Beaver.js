@@ -8,6 +8,7 @@ const DESIGN_AREA_X = 23;
 const DESIGN_AREA_Y = 90;
 const UI_CONTAINER_X = 11;
 const UI_CONTAINER_Y = 480;
+const GAP_Y = 10;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -150,47 +151,6 @@ Beaver.prototype.create = function(wallWidth) {
 
     $("#add-wall-bay-900-2400").click(function() {
         arranger.addItem({
-            realWidth: 600,
-            realHeight: 2400,
-            image: 'wall_bay_600_2400',
-            marginRight: 15,
-            marginLeft: 15,
-            id: 100,
-            collapseTypes: [5, 10, 100],
-            itemType: "wall-bay"
-        });
-    });
-
-    $("#add-pillar").click(function() {
-        arranger.addItem({
-            realWidth: 600,
-            image: 'pillar_cover_600_2400',
-            marginRight: 15,
-            marginLeft: 15,
-            id: 10,
-            collapseTypes: [5, 10, 100],
-            compatibleItemOverlaps: [6],
-            allowedIntersections: [
-                ITEM_EXTREMITIES_OUTSIDE
-            ]
-        });
-    });
-
-    $("#add-wall-bay-600-2400").click(function() {
-        arranger.addItem({
-            realWidth: 600,
-            realHeight: 2400,
-            image: 'wall_bay_600_2400',
-            marginRight: 15,
-            marginLeft: 15,
-            id: 5,
-            collapseTypes: [5, 10, 100],
-            itemType: "wall-bay"
-        });
-    });
-
-    $("#add-wall-bay-900-2400").click(function() {
-        arranger.addItem({
             realWidth: 900,
             realHeight: 2400,
             image: 'wall_bay_600_2400',
@@ -222,6 +182,7 @@ Beaver.prototype.startFullScreen = function() {
 }
 
 Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
+
     var newWall = new ItemContainer({
         realWidth: DEBUG_WALL_WIDTH,
         realHeight: GAME_HEIGHT_MM,
@@ -231,20 +192,11 @@ Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
 
     var newLayerVisual = new ItemContainerVisual(this.game, this, newWall, this.layerContainer);
     this.wallLayers.push(newLayerVisual);
+
 };
 
 Beaver.prototype.addItem = function(itemModel) {
-
-    var startPos;
-    var item = new Item(itemModel);
-
-    try {
-        startPos = this.currentWallLayer().addItem(item);
-    } catch (error) {
-        alert(error.message);
-        return false;
-    }
-
+    this.currentWallLayer().addItem(itemModel);
 };
 
 Beaver.prototype.currentWallLayer = function() {
