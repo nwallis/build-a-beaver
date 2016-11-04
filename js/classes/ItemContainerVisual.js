@@ -1,11 +1,11 @@
-var ItemContainerVisual = function (game, engine, model, container){
+var ItemContainerVisual = function(game, engine, model, container) {
 
     Phaser.Group.call(this, game, container);
 
     //References to the model and engine
     this.engine = engine;
     this.model = model;
-    
+
     //Layer for the gap graphics
     this.gapGraphics = game.make.graphics(0, 0);
     this.add(this.gapGraphics);
@@ -18,13 +18,24 @@ var ItemContainerVisual = function (game, engine, model, container){
 ItemContainerVisual.prototype = Object.create(Phaser.Group.prototype);
 ItemContainerVisual.prototype.constructor = ItemContainerVisual;
 
-ItemContainerVisual.prototype.addItem = function(item, startPos){
+ItemContainerVisual.prototype.addItem = function(itemModel) {
+
+    var item = new Item(itemModel), startPos;
+
+    try {
+        startPos = this.model.addItem(item);
+    } catch (error) {
+        alert(error);
+        return false;
+    }
+
     var itemVisual = new ItemVisual(this.game, this.engine, item, startPos, this);
     this.add(itemVisual);
     this.drawGaps();
+
 }
 
-ItemContainerVisual.prototype.moveItem = function(item, positionInMM){
+ItemContainerVisual.prototype.moveItem = function(item, positionInMM) {
     return this.model.moveItem(item, positionInMM);
 }
 
