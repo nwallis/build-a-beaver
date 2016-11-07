@@ -13,6 +13,7 @@ const GAP_Y = 10;
 var Beaver = function() {
     this.wallLayers = [];
     this.stepNumber = 0;
+    this.placingProduct = false;
 }
 
 Beaver.prototype.nextStep = function() {
@@ -39,6 +40,9 @@ Beaver.prototype.nextStep = function() {
 
 Beaver.prototype.create = function(wallWidth) {
 
+    //Always check mouse movement
+    this.game.input.addMoveCallback(this.moveProductPlacement, this);
+
     //Figure out how many pixels wide the world needs to be
     this.wallWidthPixels = this.mmToPixels(DEBUG_WALL_WIDTH);
     this.wallHeightPixels = this.stage.height;
@@ -58,7 +62,7 @@ Beaver.prototype.create = function(wallWidth) {
     //Background image for the wall
     this.wallOutline = this.game.add.graphics(0, 0);
     this.wallOutline.beginFill(0x444444);
-    this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), DESIGN_AREA_WIDTH_PX);
+    this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), DESIGN_AREA_HEIGHT_PX);
     this.layerContainer.add(this.wallOutline);
 
     //Position and center the layer container
@@ -69,13 +73,15 @@ Beaver.prototype.create = function(wallWidth) {
     this.layerContainer.mask = this.designAreaMask;
 
     this.uiContainer = this.game.add.sprite(UI_CONTAINER_X, UI_CONTAINER_Y);
-    this.uiContainer.addChild(new ProductVisual(this.game, this, 'cabinet', {
-        realWidth: 600,
-        realHeight: 1800,
-        image: 'cabinet',
-        compatibleItems: [5],
-        id: 1
+    this.uiContainer.addChild(new ProductVisual(this.game, this, {
+        realWidth: 300,
+        realHeight: 2500,
+        image: 'pillar',
+        id: 6
     }));
+
+    //Accordion
+    this.productAccordion = new Accordion(this.game, this, this.uiContainer);
 
     this.nextStep();
 
@@ -182,6 +188,32 @@ Beaver.prototype.startFullScreen = function() {
     this.game.scale.startFullScreen(false);
 }
 
+Beaver.prototype.startProductPlacement = function(productData) {
+    this.placingProduct = productData;
+    this.game.input.onUp.add(this.finishProductPlacement, this);
+}
+
+Beaver.prototype.moveProductPlacement = function() {
+    var activePointer = this.game.input.activePointer;
+    if (this.placingProduct) {
+        var layerPointerX = activePointer.x - this.layerContainer.x;
+        var layerPointerY = activePointer.y - this.layerContainer.y;
+        if (!this.createdItem && this.layerContainer.getBounds().contains(activePointer.x, activePointer.y)) {
+            this.createdItem = this.addItem(this.placingProduct);
+        } else if (this.createdItem) {
+           var modifiedBounds = this.layerContainer.getBounds();
+           modifiedBounds = new Phaser.Rectangle(modifiedBounds.x, 0, modifiedBounds.width, APP_HEIGHT_PX);
+           if (modifiedBounds.contains(activePointer.x, activePointer.y)) this.createdItem.x = this.mmToPixels(this.currentWallLayer().moveItem(this.createdItem.model, this.pixelsToMM(layerPointerX)).position);
+        }
+    }
+}
+
+Beaver.prototype.finishProductPlacement = function() {
+    this.createdItem = null;
+    this.placingProduct = false;
+    this.game.input.onUp.remove(this.finishProductPlacement, this);
+}
+
 Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
 
     var newWall = new ItemContainer({
@@ -197,7 +229,7 @@ Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
 };
 
 Beaver.prototype.addItem = function(itemModel) {
-    this.currentWallLayer().addItem(itemModel);
+    return this.currentWallLayer().addItem(itemModel);
 };
 
 Beaver.prototype.currentWallLayer = function() {

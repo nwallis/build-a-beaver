@@ -1,8 +1,6 @@
-    var wall, item1, item2, item1CompatibleItem, itemWithMargin;
+    var wall, item1, item2, item1CompatibleItem, itemWithMargin, accordion, game, container, accordion;
+
     (function() {
-
-        'use strict';
-
 
         beforeEach(function() {
 
@@ -54,6 +52,24 @@
             wall.moveItem(item1CompatibleItem, 2200);
             wall.moveItem(item2, 1500);
             wall.moveItem(item1, 700);
+
+        });
+
+        describe('Accordion', function() {
+
+            beforeEach(function() {
+                game = new Phaser.Game(10, 10, Phaser.AUTO, 'phaser-container', {
+                    create: function() {
+                        container = game.add.sprite(0, 0);
+                    }
+                });
+            });
+
+            it('should allow a section to be added', function() {
+                accordion = new Accordion(game, null, container);
+                accordion.addSection('first');
+                expect(accordion.sections.length).toBe(1);
+            });
 
         });
 
@@ -155,7 +171,6 @@
                 expect(itemWithMargin.itemSnappedToRight).toBe(undefined);
 
                 //move middle item back it - it should restore snap
-                console.clear();
                 wall.moveItem(secondItemWithMargin, 3100);
                 expect(secondItemWithMargin.itemSnappedToLeft).toBe(itemWithMargin);
                 expect(secondItemWithMargin.itemSnappedToRight).toBe(thirdItemWithMargin);
@@ -482,5 +497,4 @@
 
 
         });
-
     })();

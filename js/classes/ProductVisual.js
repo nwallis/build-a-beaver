@@ -6,7 +6,7 @@ const PRODUCT_BG_X_PX = 8;
 const PRODUCT_BG_Y_PX = 5;
 const PRODUCT_IMAGE_MARGIN = 5;
 
-var ProductVisual = function(game, engine, image, productData){
+var ProductVisual = function(game, engine, productData){
 
     Phaser.Sprite.call(this,game);
 
@@ -24,7 +24,7 @@ var ProductVisual = function(game, engine, image, productData){
     this.productBackground.drawRect(0, 0, PRODUCT_BG_WIDTH_PX, PRODUCT_BG_HEIGHT_PX);
     this.coloredBackground.addChild(this.productBackground);
 
-    this.productImage = game.make.sprite(0,0, image);
+    this.productImage = game.make.sprite(0,0, productData.image);
     this.productImage.anchor.setTo(.5,.5);
 
     var scaleFactor = Math.min ((PRODUCT_BG_WIDTH_PX - PRODUCT_IMAGE_MARGIN) / this.productImage.width, (PRODUCT_BG_HEIGHT_PX - PRODUCT_IMAGE_MARGIN) / this.productImage.height);
