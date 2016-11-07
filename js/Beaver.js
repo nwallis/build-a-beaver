@@ -6,8 +6,6 @@ const DESIGN_AREA_WIDTH_PX = 1225;
 const DESIGN_AREA_HEIGHT_PX = 350;
 const DESIGN_AREA_X = 23;
 const DESIGN_AREA_Y = 90;
-const UI_CONTAINER_X = 11;
-const UI_CONTAINER_Y = 480;
 const GAP_Y = 10;
 
 var Beaver = function() {
@@ -38,7 +36,7 @@ Beaver.prototype.nextStep = function() {
 }
 
 
-Beaver.prototype.create = function(wallWidth) {
+Beaver.prototype.create = function() {
 
     //Always check mouse movement
     this.game.input.addMoveCallback(this.moveProductPlacement, this);
@@ -72,13 +70,8 @@ Beaver.prototype.create = function(wallWidth) {
     //Mask the layer container
     this.layerContainer.mask = this.designAreaMask;
 
-    this.uiContainer = this.game.add.sprite(UI_CONTAINER_X, UI_CONTAINER_Y);
-    this.uiContainer.addChild(new ProductVisual(this.game, this, {
-        realWidth: 300,
-        realHeight: 2500,
-        image: 'pillar',
-        id: 6
-    }));
+    //create container for ui
+    this.uiContainer = this.game.add.group();
 
     //Accordion
     this.productAccordion = new Accordion(this.game, this, this.uiContainer);
