@@ -6,6 +6,9 @@ const DESIGN_AREA_WIDTH_PX = 1225;
 const DESIGN_AREA_HEIGHT_PX = 350;
 const DESIGN_AREA_X = 23;
 const DESIGN_AREA_Y = 90;
+const DESIGN_AREA_BG_COLOR = 0xffffff;
+const DESIGN_AREA_BG_STROKE_COLOR = 0x444444;
+const DESIGN_AREA_BG_STROKE_WEIGHT = 1;
 const GAP_Y = 10;
 
 var Beaver = function() {
@@ -59,7 +62,8 @@ Beaver.prototype.create = function() {
 
     //Background image for the wall
     this.wallOutline = this.game.add.graphics(0, 0);
-    this.wallOutline.beginFill(0x444444);
+    this.wallOutline.beginFill(DESIGN_AREA_BG_COLOR);
+    this.wallOutline.lineStyle(DESIGN_AREA_BG_STROKE_WEIGHT, DESIGN_AREA_BG_STROKE_COLOR, .3);
     this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), DESIGN_AREA_HEIGHT_PX);
     this.layerContainer.add(this.wallOutline);
 
@@ -74,7 +78,20 @@ Beaver.prototype.create = function() {
     this.uiContainer = this.game.add.group();
 
     //Accordion
+    var accordionSection;
     this.productAccordion = new Accordion(this.game, this, this.uiContainer);
+    accordionSection = this.productAccordion.addSection('stage_1_closed', 'stage_1_open');
+    accordionSection.addContent(new ProductVisual(this.game, this, {
+        realWidth: 300,
+        realHeight: 2500,
+        image: 'pillar',
+        id: 6
+    }));
+
+    accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open');
+    accordionSection = this.productAccordion.addSection('stage_3_closed', 'stage_3_open');
+    accordionSection = this.productAccordion.addSection('stage_4_closed', 'stage_4_open');
+    this.productAccordion.openByIndex(0);
 
     this.nextStep();
 
@@ -194,9 +211,9 @@ Beaver.prototype.moveProductPlacement = function() {
         if (!this.createdItem && this.layerContainer.getBounds().contains(activePointer.x, activePointer.y)) {
             this.createdItem = this.addItem(this.placingProduct);
         } else if (this.createdItem) {
-           var modifiedBounds = this.layerContainer.getBounds();
-           modifiedBounds = new Phaser.Rectangle(modifiedBounds.x, 0, modifiedBounds.width, APP_HEIGHT_PX);
-           if (modifiedBounds.contains(activePointer.x, activePointer.y)) this.createdItem.x = this.mmToPixels(this.currentWallLayer().moveItem(this.createdItem.model, this.pixelsToMM(layerPointerX)).position);
+            var modifiedBounds = this.layerContainer.getBounds();
+            modifiedBounds = new Phaser.Rectangle(modifiedBounds.x, 0, modifiedBounds.width, APP_HEIGHT_PX);
+            if (modifiedBounds.contains(activePointer.x, activePointer.y)) this.createdItem.x = this.mmToPixels(this.currentWallLayer().moveItem(this.createdItem.model, this.pixelsToMM(layerPointerX)).position);
         }
     }
 }
@@ -243,4 +260,27 @@ Beaver.prototype.update = function() {
 
 Beaver.prototype.render = function() {}
 Beaver.prototype.init = function() {}
-Beaver.prototype.preload = function() {}
+Beaver.prototype.preload = function() {
+
+    //accordion images
+    this.game.load.image('stage_1_closed', 'images/accordion/stage_1_closed.jpg');
+    this.game.load.image('stage_1_open', 'images/accordion/stage_1_open.jpg');
+    this.game.load.image('stage_2_closed', 'images/accordion/stage_2_closed.jpg');
+    this.game.load.image('stage_2_open', 'images/accordion/stage_2_open.jpg');
+    this.game.load.image('stage_3_closed', 'images/accordion/stage_3_closed.jpg');
+    this.game.load.image('stage_3_open', 'images/accordion/stage_3_open.jpg');
+    this.game.load.image('stage_4_closed', 'images/accordion/stage_4_closed.jpg');
+    this.game.load.image('stage_4_open', 'images/accordion/stage_4_open.jpg');
+
+    this.game.load.image('cabinet', 'images/cabinet.jpg');
+    this.game.load.image('delete_icon', 'images/icons/delete_icon.png');
+    this.game.load.image('small_cabinet', 'images/small_cabinet.jpg');
+    this.game.load.image('large_cabinet', 'images/large_cabinet.jpg');
+    this.game.load.image('small_cabinet_double_with_bench', 'images/small_cabinet_double_with_bench.jpg');
+    this.game.load.image('wall_bay_600_2400', 'images/wall_bay_600_2400.jpg');
+    this.game.load.image('pillar_cover_600_2400', 'images/pillar_cover_600_2400.jpg');
+    this.game.load.image('pillar', 'images/pillar.jpg');
+    this.game.load.image('ui_mockup', 'images/ui/background.jpg');
+    this.game.load.bitmapFont('arimo', 'fonts/arimo.png', 'fonts/arimo.fnt');
+
+}
