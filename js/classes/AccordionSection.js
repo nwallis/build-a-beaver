@@ -22,15 +22,22 @@ var AccordionSection = function(game, closedImage, openedImage, disabledImage, a
     this.titleContainer.addChild(this.disabledImage);
 
     this.contentContainer = game.add.sprite();
+    this.contentContainerMask = game.add.graphics();
     this.itemContainer = game.add.group();
     this.contentContainerBackground = game.add.graphics();
-    this.contentContainerBackground.x = ACCORDION_TITLE_WIDTH_PX;
+    this.contentContainerMask.x = this.contentContainerBackground.x = ACCORDION_TITLE_WIDTH_PX;
+    this.contentContainer.mask = this.contentContainerMask;
+
     this.contentContainer.addChild(this.contentContainerBackground);
     this.contentContainer.addChild(this.itemContainer);
+    this.contentContainer.addChild(this.contentContainerMask);
 
     //Add title container
     this.add(this.contentContainer);
     this.add(this.titleContainer);
+
+    //Close by default
+    this.move(0);
 }
 
 AccordionSection.prototype = Object.create(Phaser.Group.prototype);
@@ -74,9 +81,13 @@ AccordionSection.prototype.close = function() {
 }
 
 AccordionSection.prototype.move = function(amount) {
+    var drawDistance = amount * this.accordion.canvasSpace();
     this.contentContainerBackground.clear();
     this.contentContainerBackground.beginFill(ACCORDION_CONTENT_BG_COLOR);
-    this.contentContainerBackground.drawRect(0, 0, amount * this.accordion.canvasSpace(), ACCORDION_TITLE_HEIGHT_PX);
+    this.contentContainerBackground.drawRect(0, 0, drawDistance, ACCORDION_TITLE_HEIGHT_PX);
+    this.contentContainerMask.clear();
+    this.contentContainerMask.beginFill(ACCORDION_CONTENT_BG_COLOR);
+    this.contentContainerMask.drawRect(0, 0, drawDistance, ACCORDION_TITLE_HEIGHT_PX);
 }
 
 AccordionSection.prototype.update = function() {

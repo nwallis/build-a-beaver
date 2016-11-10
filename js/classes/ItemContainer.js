@@ -14,8 +14,13 @@ ItemContainer.prototype.sortChildren = function() {
     });
 }
 
-ItemContainer.prototype.deleteItem = function(item) {
+ItemContainer.prototype.removeItem = function(item) {
     this.children.splice(this.children.indexOf(item), 1);
+}
+
+ItemContainer.prototype.addItemAt = function(item, startPos) {
+    this.children.push(item);
+    return this.moveItem(item, startPos);
 }
 
 ItemContainer.prototype.addItem = function(item) {

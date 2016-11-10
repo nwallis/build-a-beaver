@@ -38,7 +38,27 @@ Beaver.prototype.nextStep = function() {
     this.addWallLayer(layerCollisions, noGoZones);
 }
 
+Beaver.prototype.showCursor = function(cursor) {
+    this.cursorContainer.children.forEach(function(child) {
+        child.visible = false;
+        child.anchor.y = child.anchor.x = .5;
+    });
+    cursor.visible = true;
+    this.cursorContainer.visible = true;
+    this.game.world.bringToTop(this.cursorContainer);
+}
+
+Beaver.prototype.hideCursor = function(cursor) {
+    this.cursorContainer.visible = false;
+}
+
 Beaver.prototype.create = function() {
+
+    //Create cursor images
+    this.cursorContainer = this.game.add.group();
+    this.positionProductCursor = this.game.add.sprite(0, 0, 'position_product_cursor');
+    this.cursorContainer.add(this.positionProductCursor);
+    this.cursorContainer.visible = false;
 
     //Always check mouse movement
     this.game.input.addMoveCallback(this.moveProductPlacement, this);
@@ -91,8 +111,8 @@ Beaver.prototype.create = function() {
     accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open', 'stage_2_disabled');
     accordionSection.enable();
     accordionSection.addContent(new ProductVisual(this.game, this, {
-        realWidth: 600,
         realHeight: 2400,
+        realWidth: 600,
         image: 'pillar_cover_600_2400',
         marginRight: 15,
         marginLeft: 15,
@@ -127,33 +147,33 @@ Beaver.prototype.create = function() {
     accordionSection = this.productAccordion.addSection('stage_3_closed', 'stage_3_open', 'stage_3_disabled');
     accordionSection.disable();
     accordionSection.addContent(new ProductVisual(this.game, this, {
-            realWidth: 600,
-            realHeight: 1800,
-            image: 'cabinet',
-            compatibleItems: [5],
-            id: 1
+        realWidth: 600,
+        realHeight: 1800,
+        image: 'cabinet',
+        compatibleItems: [5],
+        id: 1
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
-            realWidth: 900,
-            realHeight: 1800,
-            image: 'large_cabinet',
-            compatibleItems: [100],
-            id: 2
+        realWidth: 900,
+        realHeight: 1800,
+        image: 'large_cabinet',
+        compatibleItems: [100],
+        id: 2
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
-            realWidth: 900,
-            realHeight: 890,
-            image: 'small_cabinet',
-            compatibleItems: [100],
-            id: 3
+        realWidth: 900,
+        realHeight: 890,
+        image: 'small_cabinet',
+        compatibleItems: [100],
+        id: 3
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
-            realWidth: 1800,
-            realHeight: 900,
-            image: 'small_cabinet_double_with_bench',
-            compatibleItems: [100],
-            id: 4,
-            additionalCompatibleItems: 1,
+        realWidth: 1800,
+        realHeight: 900,
+        image: 'small_cabinet_double_with_bench',
+        compatibleItems: [100],
+        id: 4,
+        additionalCompatibleItems: 1,
     }));
 
     accordionSection = this.productAccordion.addSection('stage_4_closed', 'stage_4_open', 'stage_4_disabled');
@@ -177,6 +197,7 @@ Beaver.prototype.startFullScreen = function() {
 
 Beaver.prototype.startProductPlacement = function(productData) {
     $("#design-container canvas").addClass('hide-mouse');
+    this.showCursor(this.positionProductCursor);
     this.placingProduct = productData;
     this.game.input.onUp.add(this.finishProductPlacement, this);
 }
@@ -187,20 +208,29 @@ Beaver.prototype.moveProductPlacement = function() {
         var layerPointerX = activePointer.x - this.layerContainer.x;
         var layerPointerY = activePointer.y - this.layerContainer.y;
         if (!this.createdItem && this.layerContainer.getBounds().contains(activePointer.x, activePointer.y)) {
-            this.createdItem = this.addItem(this.placingProduct);
+            this.createdItem = this.currentWallLayer().addItem(this.placingProduct, this.pixelsToMM(layerPointerX));
         } else if (this.createdItem) {
             var modifiedBounds = this.layerContainer.getBounds();
             modifiedBounds = new Phaser.Rectangle(modifiedBounds.x, 0, modifiedBounds.width, APP_HEIGHT_PX);
-            if (modifiedBounds.contains(activePointer.x, activePointer.y)) this.createdItem.x = this.mmToPixels(this.currentWallLayer().moveItem(this.createdItem.model, this.pixelsToMM(layerPointerX)).position);
+            if (modifiedBounds.contains(activePointer.x, activePointer.y)) {
+                this.placementMoveResult = this.currentWallLayer().moveItem(this.createdItem.model, this.pixelsToMM(layerPointerX));
+                this.createdItem.x = this.mmToPixels(this.placementMoveResult.position);
+            }
         }
     }
 }
 
 Beaver.prototype.finishProductPlacement = function() {
+    if (!this.placementMoveResult.valid) this.removeItem(this.createdItem);
+    this.hideCursor();
     $("#design-container canvas").removeClass('hide-mouse');
     this.createdItem = null;
     this.placingProduct = false;
     this.game.input.onUp.remove(this.finishProductPlacement, this);
+}
+
+Beaver.prototype.removeItem = function(item){
+    this.currentWallLayer().removeItem(item);
 }
 
 Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
@@ -217,10 +247,6 @@ Beaver.prototype.addWallLayer = function(layerCollisions, noGoZones) {
 
 };
 
-Beaver.prototype.addItem = function(itemModel) {
-    return this.currentWallLayer().addItem(itemModel);
-};
-
 Beaver.prototype.currentWallLayer = function() {
     return this.wallLayers[this.stepNumber - 1];
 }
@@ -235,6 +261,9 @@ Beaver.prototype.mmToPixels = function(distance) {
 
 Beaver.prototype.update = function() {
     this.layerContainer.update();
+
+    this.cursorContainer.x = this.game.input.activePointer.x;
+    this.cursorContainer.y = this.game.input.activePointer.y;
 }
 
 Beaver.prototype.render = function() {}
@@ -254,6 +283,9 @@ Beaver.prototype.preload = function() {
     this.game.load.image('stage_4_closed', 'images/accordion/stage_4_closed.jpg');
     this.game.load.image('stage_4_disabled', 'images/accordion/stage_4_disabled.jpg');
     this.game.load.image('stage_4_open', 'images/accordion/stage_4_open.jpg');
+
+    //cursors
+    this.game.load.image('position_product_cursor', 'images/ui/cursors/position_product.png');
 
     this.game.load.image('cabinet', 'images/cabinet.jpg');
     this.game.load.image('delete_icon', 'images/icons/delete_icon.png');

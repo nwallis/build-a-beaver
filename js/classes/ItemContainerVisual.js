@@ -18,18 +18,24 @@ var ItemContainerVisual = function(game, engine, model, container) {
 ItemContainerVisual.prototype = Object.create(Phaser.Group.prototype);
 ItemContainerVisual.prototype.constructor = ItemContainerVisual;
 
-ItemContainerVisual.prototype.addItem = function(itemModel) {
+ItemContainerVisual.prototype.removeItem = function(item){
+    this.model.removeItem(item);
+    item.destroy();
+}
 
-    var item = new Item(itemModel), startPos;
+ItemContainerVisual.prototype.addItem = function(itemModel, startPos) {
+
+    var item = new Item(itemModel);
 
     try {
-        startPos = this.model.addItem(item);
+        startPos = (startPos) ? this.model.addItemAt(item, startPos) : this.model.addItem(item);
     } catch (error) {
         alert(error);
         return false;
     }
 
-    var itemVisual = new ItemVisual(this.game, this.engine, item, startPos, this);
+    var itemVisual = new ItemVisual(this.game, this.engine, item, startPos.position, this);
+    
     this.add(itemVisual);
     this.drawGaps();
 
