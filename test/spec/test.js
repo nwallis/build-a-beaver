@@ -55,8 +55,13 @@
 
         });
 
-        describe('Accordion', function() {
+        describe('Beaver', function(){
+            it('', function(){
+                
+            });
+        });
 
+        describe('Accordion', function() {
             beforeEach(function() {
                 game = new Phaser.Game(10, 10, Phaser.AUTO, 'phaser-container', {
                     create: function() {
@@ -64,13 +69,6 @@
                     }
                 });
             });
-
-            it('should allow a section to be added', function() {
-                accordion = new Accordion(game, null, container);
-                accordion.addSection('first');
-                expect(accordion.sections.length).toBe(1);
-            });
-
         });
 
         describe('Collation of container children', function() {

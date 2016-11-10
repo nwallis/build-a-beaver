@@ -4,6 +4,8 @@ var AccordionSection = function(game, closedImage, openedImage, disabledImage, a
 
     this.accordion = accordion;
     this.titleContainer = game.add.sprite();
+    this.closedImage = closedImage;
+    this.openedImage = openedImage;
     this.opened = false;
 
     //Title BG
@@ -12,9 +14,9 @@ var AccordionSection = function(game, closedImage, openedImage, disabledImage, a
     this.titleBackground.drawRect(0, 0, ACCORDION_TITLE_WIDTH_PX, ACCORDION_TITLE_HEIGHT_PX);
     this.titleContainer.addChild(this.titleBackground);
 
-    this.closedImage = game.add.sprite(0, 0, closedImage);
-    this.openedImage = game.add.sprite(0, 0, openedImage);
-    this.disabledImage = game.add.sprite(0, 0, disabledImage);
+    this.closedImage = game.add.sprite(0, 0, this.closedImage);
+    this.openedImage = game.add.sprite(0, 0, this.openedImage);
+    this.disabledImage = game.add.sprite(0, 0, this.disabledImage);
     this.openedImage.visible = false;
     this.disabledImage.visible = false;
     this.titleContainer.addChild(this.closedImage);

@@ -45,24 +45,3 @@ ProductVisual.prototype.constructor = ProductVisual;
 ProductVisual.prototype.registerMouseDown = function(){
     this.engine.startProductPlacement(this.productData);
 }
-
-ProductVisual.prototype.onStageMove = function(){
-    console.log("moving");
-}
-
-ProductVisual.prototype.onStageUp = function(){
-    console.log("mouse up");
-}
-
-ProductVisual.prototype.itemDragUpdate = function() {
-    var bounds = this.container.getBounds();
-    var wallBounds = this.engine.getDesignBounds();
-
-    if (Phaser.Rectangle.intersects(bounds, wallBounds)){
-        console.log("adding item");
-    }else{
-
-    }
-
-}
-

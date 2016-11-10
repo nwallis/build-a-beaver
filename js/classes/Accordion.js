@@ -9,6 +9,8 @@ const ACCORDION_TITLE_WIDTH_PX = 27;
 const ACCORDION_TITLE_HEIGHT_PX = ACCORDION_HEIGHT_PX;
 const ACCORDION_CONTENT_BG_COLOR = 0xFFFFFF;
 const ACCORDION_MOVE_DURATION = 600;
+const ACCORDION_SECTION_CONTENT_MARGIN = ACCORDION_TITLE_WIDTH_PX + 20;
+const ACCORDION_SECTION_CONTENT_ITEM_MARGIN = 8;
 
 var Accordion = function(game, engine, container) {
 
@@ -17,6 +19,7 @@ var Accordion = function(game, engine, container) {
     this.sections = [];
     this.engine = engine;
     this.game = game;
+    this.opening = false;
 
     var backgroundColor = game.add.graphics(0, 0);
     backgroundColor.beginFill(ACCORDION_BG_COLOR);
@@ -57,11 +60,11 @@ Accordion.prototype.open = function(section) {
 }
 
 Accordion.prototype.openByIndex = function(index) {
-    return this.open(this.sections[index]);
+    return this.sections[index].open();
 }
 
-Accordion.prototype.addSection = function(closedImage, openedImage) {
-    var section = new AccordionSection(this.game, closedImage, openedImage, this);
+Accordion.prototype.addSection = function(closedImage, openedImage, disabledImage) {
+    var section = new AccordionSection(this.game, closedImage, openedImage, disabledImage, this);
     (this.sections.length > 0) ? this.sections[this.sections.length - 1].connectSection(section): this.add(section);
     this.sections.push(section);
     return section;

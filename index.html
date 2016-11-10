@@ -20,6 +20,15 @@
 </head>
 
 <body>
+    <style type="text/css">
+        #design-container{
+            
+        }
+
+        .hide-mouse{
+            cursor:none !important;
+        }
+    </style>
     <script>
         var arranger = new Beaver();
 
@@ -43,14 +52,15 @@
                 $("#step-three-options").show();
             });
 
-            var game = new Phaser.Game(APP_WIDTH_PX, APP_HEIGHT_PX, Phaser.AUTO, '');
+            var game = new Phaser.Game(APP_WIDTH_PX, APP_HEIGHT_PX, Phaser.AUTO, 'design-container');
             game.state.add('Boot', Boot);
             game.state.add('Beaver', arranger);
             game.state.start('Boot');
 
         });
     </script>
-    <div style="float:left; padding:20px; width:200px;">
+    <div id="design-container"></div>
+    <div style="float:left; padding:20px; width:200px; display:none;">
         <p>Options</p>
         <div id="options">
             <p id="start-full-screen"><a href="#">Enter full screen</a></p>
