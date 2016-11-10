@@ -89,14 +89,28 @@ ItemVisual.prototype.update = function() {
 }
 
 ItemVisual.prototype.itemDragUpdate = function() {
-    this.moveResult = this.container.moveItem(this.model, this.engine.pixelsToMM(this.x));
+    this.move(this.x);
+}
+
+ItemVisual.prototype.move = function(xPosition){
+    this.moveResult = this.container.moveItem(this.model, this.engine.pixelsToMM(xPosition));
     if (this.moveResult.valid) {
         this.x = this.engine.mmToPixels(this.moveResult.position);
-        this.itemVisual.tint = 0xFFFFFF;
+        this.tintValid();
     } else {
-        this.itemVisual.tint = 0xFF0000;
+        this.x = xPosition;
+        this.tintInvalid();
     }
     this.container.drawGaps();
+    return this.moveResult;
+}
+
+ItemVisual.prototype.tintInvalid = function(){
+        this.itemVisual.tint = 0xFF0000;
+}
+
+ItemVisual.prototype.tintValid = function(){
+        this.itemVisual.tint = 0xFFFFFF;
 }
 
 ItemVisual.prototype.startItemDrag = function() {
@@ -107,5 +121,15 @@ ItemVisual.prototype.startItemDrag = function() {
 ItemVisual.prototype.stopItemDrag = function() {
     this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
     this.container.drawGaps();
-    this.itemVisual.tint = 0xFFFFFF;
+    this.tintValid();
+}
+
+ItemContainerVisual.prototype.drawGaps = function() {
+    /*this.gapGraphics.clear();
+    var wallGaps = this.model.getGaps();
+    wallGaps.forEach(function(gap) {
+        this.gapGraphics.lineStyle(2, 0, 1);
+        this.gapGraphics.moveTo(this.engine.mmToPixels(gap.getBounds().left), GAP_Y);
+        this.gapGraphics.lineTo(this.engine.mmToPixels(gap.getBounds().right), GAP_Y);
+    }, this);*/
 }

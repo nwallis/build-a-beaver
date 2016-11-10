@@ -15,7 +15,7 @@ ItemContainer.prototype.sortChildren = function() {
 }
 
 ItemContainer.prototype.removeItem = function(item) {
-    this.children.splice(this.children.indexOf(item), 1);
+    this.children.splice(this.children.indexOf(item.model), 1);
 }
 
 ItemContainer.prototype.addItemAt = function(item, startPos) {

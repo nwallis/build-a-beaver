@@ -47,12 +47,3 @@ ItemContainerVisual.prototype.moveItem = function(item, positionInMM) {
     return this.model.moveItem(item, positionInMM);
 }
 
-ItemContainerVisual.prototype.drawGaps = function() {
-    /*this.gapGraphics.clear();
-    var wallGaps = this.model.getGaps();
-    wallGaps.forEach(function(gap) {
-        this.gapGraphics.lineStyle(2, 0, 1);
-        this.gapGraphics.moveTo(this.engine.mmToPixels(gap.getBounds().left), GAP_Y);
-        this.gapGraphics.lineTo(this.engine.mmToPixels(gap.getBounds().right), GAP_Y);
-    }, this);*/
-}

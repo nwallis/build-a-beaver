@@ -212,10 +212,7 @@ Beaver.prototype.moveProductPlacement = function() {
         } else if (this.createdItem) {
             var modifiedBounds = this.layerContainer.getBounds();
             modifiedBounds = new Phaser.Rectangle(modifiedBounds.x, 0, modifiedBounds.width, APP_HEIGHT_PX);
-            if (modifiedBounds.contains(activePointer.x, activePointer.y)) {
-                this.placementMoveResult = this.currentWallLayer().moveItem(this.createdItem.model, this.pixelsToMM(layerPointerX));
-                this.createdItem.x = this.mmToPixels(this.placementMoveResult.position);
-            }
+            if (modifiedBounds.contains(activePointer.x, activePointer.y))  this.placementMoveResult = this.createdItem.move(layerPointerX); 
         }
     }
 }
@@ -261,9 +258,9 @@ Beaver.prototype.mmToPixels = function(distance) {
 
 Beaver.prototype.update = function() {
     this.layerContainer.update();
-
     this.cursorContainer.x = this.game.input.activePointer.x;
     this.cursorContainer.y = this.game.input.activePointer.y;
+    if (this.createdItem) this.cursorContainer.x += this.createdItem.itemVisual.width / 2;
 }
 
 Beaver.prototype.render = function() {}
