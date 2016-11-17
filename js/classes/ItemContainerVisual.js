@@ -6,13 +6,6 @@ var ItemContainerVisual = function(game, engine, model, container) {
     this.engine = engine;
     this.model = model;
 
-    //Layer for the gap graphics
-    this.gapGraphics = game.make.graphics(0, 0);
-    this.add(this.gapGraphics);
-
-    //Update the gaps
-    this.drawGaps();
-
 }
 
 ItemContainerVisual.prototype = Object.create(Phaser.Group.prototype);
@@ -21,6 +14,13 @@ ItemContainerVisual.prototype.constructor = ItemContainerVisual;
 ItemContainerVisual.prototype.removeItem = function(item){
     this.model.removeItem(item);
     item.destroy();
+}
+
+ItemContainerVisual.prototype.clear = function(){
+    this.children.forEach(function(child){
+        this.model.removeItem(child.model);
+        child.destroy();
+    }, this);
 }
 
 ItemContainerVisual.prototype.addItem = function(itemModel, startPos) {
@@ -37,8 +37,6 @@ ItemContainerVisual.prototype.addItem = function(itemModel, startPos) {
     var itemVisual = new ItemVisual(this.game, this.engine, item, startPos.position, this);
     
     this.add(itemVisual);
-    this.drawGaps();
-
     return itemVisual;
 
 }

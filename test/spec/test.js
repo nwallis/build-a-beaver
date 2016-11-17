@@ -1,16 +1,31 @@
-    var wall, item1, item2, item1CompatibleItem, itemWithMargin, accordion, game, container, accordion;
+    var arranger, item1Data, wall, item1, item2, item1CompatibleItem, itemWithMargin, accordion, game, container, accordion;
+
 
     (function() {
 
+        arranger = new Beaver();
+
+        game = new Phaser.Game(1270, 630, Phaser.AUTO, 'phaser-container', {
+            create: function() {
+                container = game.add.sprite(0, 0);
+            }
+        });
+        game.state.add('Boot', Boot);
+        game.state.add('Beaver', arranger);
+        game.state.start('Boot');
+
+
         beforeEach(function() {
 
-            item1 = new Item({
+            item1Data = {
                 realWidth: 600,
                 realHeight: 900,
                 id: 1,
                 itemType: 'cupboards',
-                image: 'item1'
-            });
+                image: 'pillar'
+            };
+
+            item1 = new Item(item1Data);
 
             item2 = new Item({
                 realWidth: 450,
@@ -55,20 +70,91 @@
 
         });
 
-        describe('Beaver', function(){
-            it('', function(){
-                
-            });
-        });
+        describe('Beaver', function() {
 
-        describe('Accordion', function() {
-            beforeEach(function() {
-                game = new Phaser.Game(10, 10, Phaser.AUTO, 'phaser-container', {
-                    create: function() {
-                        container = game.add.sprite(0, 0);
-                    }
-                });
+            beforeEach(function() {});
+
+            it('should be able to add a wall layer', function() {
+                arranger.addWallLayer();
+                expect(arranger.wallLayers.length).toBe(1);
             });
+
+            it('should be able to delete a wall layer', function() {
+                expect(arranger.wallLayers.length).toBe(1);
+                arranger.addWallLayer();
+                arranger.addWallLayer();
+                arranger.deleteWallLayer();
+                expect(arranger.wallLayers.length).toBe(2);
+                arranger.deleteWallLayer();
+                expect(arranger.wallLayers.length).toBe(1);
+            });
+
+            it('should return a reference to the new wall layer when created', function() {
+                var newLayer = arranger.addWallLayer();
+                expect(arranger.wallLayers[arranger.wallLayers.length - 1]).toBe(newLayer);
+            });
+
+            it('should allow items to be added to the current wall layer', function() {
+                arranger.deleteWallLayer();
+                arranger.deleteWallLayer();
+                expect(arranger.wallLayers.length).toBe(0);
+                var newLayer = arranger.addWallLayer();
+                arranger.addItem(item1Data, 0);
+                expect(newLayer.model.children.length).toBe(1);
+            });
+
+            it('should be able to count the number of items on a wall layer', function() {
+                var currentLayerItemCount = arranger.countItems();
+                expect(currentLayerItemCount).toBe(1);
+            });
+
+            it('should be able to count the number of items of a specific type on a wall layer', function() {
+                arranger.addItem(item1Data, 0);
+                var itemTypeCount = arranger.countItemsByType('cupboards');
+                expect(itemTypeCount).toBe(2);
+            });
+
+            it('should be able to count the number of items on the specified layer index', function(){
+                var topLayer = arranger.addWallLayer(); 
+                expect (arranger.countItemsByType('cupboards', 0)).toBe(2);
+            });
+
+            it('should not allow access to stage 3 without there being some items placed in stage 2', function(){
+                //delete all layers
+                arranger.deleteWallLayer();
+                arranger.deleteWallLayer();
+    
+                //simulate stage 2 layers
+                arranger.addWallLayer();
+                arranger.addWallLayer();
+
+                expect(arranger.changeStep(BEAVER_STEP_3).valid).toBe(false);
+
+            });
+
+            it('should allow changing from step 1 to step 2 with no reasons', function(){
+                arranger.deleteWallLayer();
+                arranger.deleteWallLayer();
+                arranger.addWallLayer();
+                var changeResult = arranger.changeStep(BEAVER_STEP_2);
+                expect(changeResult.valid).toBe(true);
+                expect(changeResult.reasons.length).toBe(0);
+            });
+
+            it('should be a valid move if going back a step, but some reasons should be presented', function(){
+                arranger.addItem(item1Data, 0);
+                var changeResult = arranger.changeStep(BEAVER_STEP_3);
+                arranger.addItem(item1Data, 0);
+                changeResult = arranger.changeStep(BEAVER_STEP_1);
+                expect(changeResult.valid).toBe(true);
+                expect(changeResult.reasons.length).not.toBe(0);
+            });
+
+            it('should have a warning if moving back a step', function(){
+                var changeResult = arranger.changeStep(BEAVER_STEP_1);
+                expect(changeResult.warnings.length).not.toBe(0);
+            });
+
         });
 
         describe('Collation of container children', function() {

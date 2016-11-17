@@ -63,8 +63,8 @@ Accordion.prototype.openByIndex = function(index) {
     return this.sections[index].open();
 }
 
-Accordion.prototype.addSection = function(closedImage, openedImage, disabledImage) {
-    var section = new AccordionSection(this.game, closedImage, openedImage, disabledImage, this);
+Accordion.prototype.addSection = function(closedImage, openedImage, disabledImage, stepNumber) {
+    var section = new AccordionSection(this.game, closedImage, openedImage, disabledImage, this, stepNumber);
     (this.sections.length > 0) ? this.sections[this.sections.length - 1].connectSection(section): this.add(section);
     this.sections.push(section);
     return section;

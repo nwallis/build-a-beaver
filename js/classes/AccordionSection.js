@@ -1,10 +1,11 @@
-var AccordionSection = function(game, closedImage, openedImage, disabledImage, accordion) {
+var AccordionSection = function(game, closedImage, openedImage, disabledImage, accordion, stepNumber) {
 
     Phaser.Group.call(this, game, accordion);
 
     this.accordion = accordion;
     this.titleContainer = game.add.sprite();
     this.opened = false;
+    this.stepNumber = stepNumber;
 
     //Title BG
     this.titleBackground = game.add.graphics();
@@ -47,13 +48,17 @@ AccordionSection.prototype.enable = function(){
     this.disabledImage.visible = false;
     this.titleContainer.inputEnabled = true;
     this.titleContainer.input.useHandCursor = true;
-    this.titleContainer.events.onInputUp.add(this.open, this);
+    this.titleContainer.events.onInputUp.add(this.changeStep, this);
 }
 
 AccordionSection.prototype.disable = function(){
     this.disabledImage.visible = true;
     this.titleContainer.inputEnabled = false;
-    this.titleContainer.events.onInputUp.remove(this.open, this);
+    this.titleContainer.events.onInputUp.remove(this.changeStep, this);
+}
+
+AccordionSection.prototype.changeStep = function(stepNumber){
+    this.accordion.engine.changeStep(this.stepNumber);
 }
 
 AccordionSection.prototype.addContent = function(element) {

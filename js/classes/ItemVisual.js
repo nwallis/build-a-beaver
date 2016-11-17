@@ -22,6 +22,8 @@ ItemVisual = function(game, engine, model, startPos, container) {
     this.events.onDragStart.add(this.startItemDrag, this);
     this.events.onDragUpdate.add(this.itemDragUpdate, this);
     this.events.onDragStop.add(this.stopItemDrag, this);
+    this.events.onInputOver.add(this.itemOver, this, -100);
+    this.events.onInputOut.add(this.itemOut, this, -100);
 
     //debug text
     var style = {
@@ -36,8 +38,6 @@ ItemVisual = function(game, engine, model, startPos, container) {
     this.debugText = this.game.make.text(0, 100, 'testing', style);
     //this.addChild(this.debugText);
 
-    //    this.events.onInputOver.add(this.itemOver,this);
-    //   this.events.onInputOut.add(this.itemOut,this);
 
     this.deleteIcon = this.game.make.sprite(0, 0, 'delete_icon');
     //this.addIcon(this.deleteIcon, this.deleteClicked);
@@ -47,11 +47,13 @@ ItemVisual.prototype = Object.create(Phaser.Sprite.prototype);
 ItemVisual.prototype.constructor = ItemVisual;
 
 ItemVisual.prototype.itemOver = function() {
+    this.engine.measureItem(this);
     this.icons.forEach(function(icon) {
         icon.visible = true;
     });
 }
 ItemVisual.prototype.itemOut = function() {
+    this.engine.hideMeasure();
     this.icons.forEach(function(icon) {
         icon.visible = false;
     });
@@ -92,7 +94,8 @@ ItemVisual.prototype.itemDragUpdate = function() {
     this.move(this.x);
 }
 
-ItemVisual.prototype.move = function(xPosition){
+ItemVisual.prototype.move = function(xPosition) {
+    this.engine.measureItem(this);
     this.moveResult = this.container.moveItem(this.model, this.engine.pixelsToMM(xPosition));
     if (this.moveResult.valid) {
         this.x = this.engine.mmToPixels(this.moveResult.position);
@@ -101,16 +104,15 @@ ItemVisual.prototype.move = function(xPosition){
         this.x = xPosition;
         this.tintInvalid();
     }
-    this.container.drawGaps();
     return this.moveResult;
 }
 
-ItemVisual.prototype.tintInvalid = function(){
-        this.itemVisual.tint = 0xFF0000;
+ItemVisual.prototype.tintInvalid = function() {
+    this.itemVisual.tint = 0xFF0000;
 }
 
-ItemVisual.prototype.tintValid = function(){
-        this.itemVisual.tint = 0xFFFFFF;
+ItemVisual.prototype.tintValid = function() {
+    this.itemVisual.tint = 0xFFFFFF;
 }
 
 ItemVisual.prototype.startItemDrag = function() {
@@ -120,16 +122,5 @@ ItemVisual.prototype.startItemDrag = function() {
 
 ItemVisual.prototype.stopItemDrag = function() {
     this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
-    this.container.drawGaps();
     this.tintValid();
-}
-
-ItemContainerVisual.prototype.drawGaps = function() {
-    /*this.gapGraphics.clear();
-    var wallGaps = this.model.getGaps();
-    wallGaps.forEach(function(gap) {
-        this.gapGraphics.lineStyle(2, 0, 1);
-        this.gapGraphics.moveTo(this.engine.mmToPixels(gap.getBounds().left), GAP_Y);
-        this.gapGraphics.lineTo(this.engine.mmToPixels(gap.getBounds().right), GAP_Y);
-    }, this);*/
 }
