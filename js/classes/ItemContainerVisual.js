@@ -16,11 +16,18 @@ ItemContainerVisual.prototype.removeItem = function(item){
     item.destroy();
 }
 
-ItemContainerVisual.prototype.clear = function(){
-    this.children.forEach(function(child){
-        this.model.removeItem(child.model);
-        child.destroy();
-    }, this);
+ItemContainerVisual.prototype.destroy = function(){
+
+    //reduce the price on the engine by the amount of the items
+    var total = 0;
+
+    this.model.children.forEach(function(child){
+        total += BEAVER_TEST_PRICE;
+    });
+
+    this.engine.priceCounter.decrement(total);
+
+    Phaser.Group.prototype.destroy.call(this);
 }
 
 ItemContainerVisual.prototype.addItem = function(itemModel, startPos) {
@@ -35,7 +42,6 @@ ItemContainerVisual.prototype.addItem = function(itemModel, startPos) {
     }
 
     var itemVisual = new ItemVisual(this.game, this.engine, item, startPos.position, this);
-    
     this.add(itemVisual);
     return itemVisual;
 

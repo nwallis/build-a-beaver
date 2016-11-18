@@ -155,6 +155,11 @@
                 expect(changeResult.warnings.length).not.toBe(0);
             });
 
+            it('should be able to delete all wall layers above an index', function(){
+                arranger.deleteWallLayersAbove(BEAVER_STEP_1);
+                expect(arranger.wallLayers.length).toBe(1);
+            });
+
         });
 
         describe('Collation of container children', function() {

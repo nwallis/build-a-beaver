@@ -13,6 +13,11 @@ const GAP_Y = -10;
 const BEAVER_STEP_1 = 0;
 const BEAVER_STEP_2 = 1;
 const BEAVER_STEP_3 = 2;
+const BEAVER_TEST_PRICE = 100.38;
+const DESIGN_CONTAINER_X_PX = 11;
+const DESIGN_CONTAINER_Y_PX = 44; 
+const DESIGN_CONTAINER_WIDTH_PX = 1250;
+const DESIGN_CONTAINER_HEIGHT_PX = 426;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -31,17 +36,21 @@ Beaver.prototype.hideMeasure = function() {
     this.measureContainer.visible = false;
 }
 
+Beaver.prototype.confirmStepChange = function() {
+    this.deleteWallLayersAbove(this.desiredStepNumber);
+    if (this.productAccordion) this.productAccordion.openByIndex(this.desiredStepNumber);
+    this.stepNumber = this.desiredStepNumber;
+}
+
 Beaver.prototype.changeStep = function(stepNumber) {
+
+    this.desiredStepNumber = stepNumber;
 
     var reasons = [];
     var warnings = [];
     var validChange = true;
 
     if (stepNumber < this.stepNumber) {
-
-        for (var layerCount = this.stepNumber; layerCount < this.wallLayers.length; layerCount++) {
-            this.wallLayers[layerCount].clear();
-        }
 
         //Potential warnings about what will happen
         warnings.push("Careful, you are going back a step");
@@ -52,17 +61,17 @@ Beaver.prototype.changeStep = function(stepNumber) {
                 case BEAVER_STEP_1:
                     break;
                 case BEAVER_STEP_2:
-                    reasons.push("Any wall bays you placed will be deleted");
+                    if (this.countItems(BEAVER_STEP_2)) reasons.push("Any wall bays you placed will be deleted");
                     break;
                 case BEAVER_STEP_3:
-                    reasons.push("Any cabinets you placed will be deleted");
+                    if (this.countItems(BEAVER_STEP_3)) reasons.push("Any cabinets you placed will be deleted");
                     break;
             }
         }
 
     } else if (stepNumber > this.stepNumber) {
 
-        if (stepNumber == 2 && this.getLayerItemCount(1) == 0) {
+        if (stepNumber == 2 && this.countItems(BEAVER_STEP_2) == 0) {
             validChange = false;
             reasons.push("Must have some wall bays to place any cupboards");
         }
@@ -76,9 +85,8 @@ Beaver.prototype.changeStep = function(stepNumber) {
 
     if (validChange && reasons.length == 0) {
         this.stepNumber = stepNumber;
-        if (this.productAccordion) this.productAccordion.openByIndex(this.stepNumber);
+        this.confirmStepChange();
     } else if (validChange && reasons.length > 0) {
-        this.desiredStepNumber = stepNumber;
         this.showDialog(reasons, warnings);
     } else if (!validChange) {
         this.showError(reasons, warnings);
@@ -92,12 +100,12 @@ Beaver.prototype.changeStep = function(stepNumber) {
 
 }
 
-Beaver.prototype.showError = function(reasons, warnings){
-
+Beaver.prototype.showDialog = function(reasons, warnings) {
+    if (this.dialogBox) this.dialogBox.show(reasons, warnings);
 }
 
-Beaver.prototype.showDialog = function (reasons, warnings){
-
+Beaver.prototype.showError = function(reasons, warnings) {
+    if (this.errorBox) this.errorBox.show(reasons, warnings);
 }
 
 Beaver.prototype.countItems = function(layerIndex) {
@@ -112,11 +120,6 @@ Beaver.prototype.countItemsByType = function(type, layerIndex) {
         if (child.itemType == type) itemCount++;
     });
     return itemCount;
-}
-
-Beaver.prototype.getLayerItemCount = function(layerIndex) {
-    var layer = this.wallLayers[layerIndex];
-    return (layer) ? layer.model.children.length : 0;
 }
 
 Beaver.prototype.showCustomCursor = function(cursor) {
@@ -180,7 +183,7 @@ Beaver.prototype.create = function() {
     //Accordion
     var accordionSection;
     this.productAccordion = new Accordion(this.game, this, this.uiContainer);
-    accordionSection = this.productAccordion.addSection('stage_1_closed', 'stage_1_open', 'stage_1_disabled', 0);
+    accordionSection = this.productAccordion.addSection('stage_1_closed', 'stage_1_open', 'stage_1_disabled', BEAVER_STEP_1);
     accordionSection.enable();
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 300,
@@ -189,7 +192,7 @@ Beaver.prototype.create = function() {
         id: 6
     }));
 
-    accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open', 'stage_2_disabled', 1);
+    accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open', 'stage_2_disabled', BEAVER_STEP_2);
     accordionSection.enable();
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realHeight: 2400,
@@ -225,7 +228,7 @@ Beaver.prototype.create = function() {
         itemType: "wall-bay"
     }));
 
-    accordionSection = this.productAccordion.addSection('stage_3_closed', 'stage_3_open', 'stage_3_disabled', 2);
+    accordionSection = this.productAccordion.addSection('stage_3_closed', 'stage_3_open', 'stage_3_disabled', BEAVER_STEP_3);
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 600,
         realHeight: 1800,
@@ -255,6 +258,18 @@ Beaver.prototype.create = function() {
         id: 4,
         additionalCompatibleItems: 1,
     }));
+
+    //Dialog boxes
+    this.dialogContainer = this.game.add.group();
+    this.dialogBox = new Dialog(this.game, this, this.dialogContainer, true, null, this, true, this.confirmStepChange, this);
+    this.dialogBox.hide();
+    this.errorBox = new Dialog(this.game, this, this.dialogContainer, false, null, this, true, null, this);
+    this.errorBox.hide();
+    this.uiContainer.add(this.dialogContainer);
+    this.dialogMask = this.game.add.graphics(0,0);
+    this.dialogMask.beginFill(0);
+    this.dialogMask.drawRect(DESIGN_CONTAINER_X_PX,DESIGN_CONTAINER_Y_PX,DESIGN_CONTAINER_WIDTH_PX,DESIGN_CONTAINER_HEIGHT_PX);
+    this.dialogContainer.mask = this.dialogMask;
 
     //Layer for the gap graphics
     this.measureContainer = this.game.add.group();
@@ -319,7 +334,7 @@ Beaver.prototype.finishProductPlacement = function() {
     if (!this.placementMoveResult.valid) {
         this.removeItem(this.createdItem);
     } else {
-        this.priceCounter.increment(100.38);
+        this.priceCounter.increment(BEAVER_TEST_PRICE);
     }
 
     this.hideMeasure();
@@ -337,6 +352,15 @@ Beaver.prototype.removeItem = function(item) {
 Beaver.prototype.deleteWallLayer = function() {
     var deletedLayer = this.wallLayers.pop();
     if (deletedLayer) deletedLayer.destroy();
+}
+
+Beaver.prototype.deleteWallLayersAbove = function(index) {
+    var deletedLayers = this.wallLayers.splice(index + 1);
+    if (deletedLayers) {
+        deletedLayers.forEach(function(layer) {
+            layer.destroy();
+        });
+    }
 }
 
 Beaver.prototype.addWallLayer = function() {
@@ -434,6 +458,13 @@ Beaver.prototype.preload = function() {
     this.game.load.image('stage_4_closed', '/images/accordion/stage_4_closed.jpg');
     this.game.load.image('stage_4_disabled', '/images/accordion/stage_4_disabled.jpg');
     this.game.load.image('stage_4_open', '/images/accordion/stage_4_open.jpg');
+
+    //dialog images
+    this.game.load.image('dialog_background', '/images/ui/dialog/dialog_background.png');
+
+    //buttons
+    this.game.load.spritesheet('button_ok', '/images/ui/buttons/ok.png', 113, 31);
+    this.game.load.spritesheet('button_cancel', '/images/ui/buttons/cancel.png', 113, 31);
 
     //cursors
     this.game.load.image('position_product_cursor', '/images/ui/cursors/position_product.png');

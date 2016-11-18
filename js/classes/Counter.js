@@ -7,7 +7,7 @@ Counter = function(game, engine) {
     this.counterText = this.game.add.bitmapText(0, 0, 'arimo_bold_16', '', 16);
     this.counterText.tint = 0xFF0000;
     this.add(this.counterText);
-    this.transitionTo(1250);
+    this.transitionTo(0);
 }
 
 Counter.prototype = Object.create(Phaser.Group.prototype);
@@ -30,6 +30,12 @@ Counter.prototype.transitionTo = function(number) {
 Counter.prototype.increment = function(amount){
 
     this.targetAmount += amount;
+    this.transitionTo(this.targetAmount);
+}
+
+Counter.prototype.decrement = function(amount){
+
+    this.targetAmount -= amount;
     this.transitionTo(this.targetAmount);
 }
 
