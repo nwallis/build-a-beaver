@@ -1,11 +1,13 @@
 const DIALOG_DISPLAY_Y_PX = 79;
 const DIALOG_TWEEN_TIME = 500;
 const DIALOG_EASE_FUNCTION = Phaser.Easing.Quadratic.Out;
+const DIALOG_TEXT_MAX_WIDTH_PX = 370;
 
 Dialog = function(game, engine, container, showCancel, cancelCallback, cancelContext, showOk, okCallback, okContext) {
 
     Phaser.Group.call(this, game, container);
 
+    this.visible = false;
     this.engine = engine;
 
     this.add(this.game.add.sprite(0, 0, 'dialog_background'));
@@ -26,7 +28,11 @@ Dialog = function(game, engine, container, showCancel, cancelCallback, cancelCon
     }
 
     this.warningText = this.game.add.bitmapText(40, 40, 'arimo', '', 18);
+    this.warningText.maxWidth = DIALOG_TEXT_MAX_WIDTH_PX;
+    this.reasonsText = this.game.add.bitmapText(40, 60, 'arimo', '', 14);
+    this.reasonsText.maxWidth = DIALOG_TEXT_MAX_WIDTH_PX;
     this.add(this.warningText);
+    this.add(this.reasonsText);
     this.add(this.buttonsContainer);
     this.x = (APP_WIDTH_PX - this.width) / 2;
 }
@@ -37,6 +43,8 @@ Dialog.prototype.constructor = Dialog;
 Dialog.prototype.show = function(reasons, warnings) {
     this.visible = true;
     this.warningText.text = warnings[0];
+    this.reasonsText.text = reasons.join('\n');
+    this.reasonsText.y = this.warningText.y + this.warningText.height + 20;
     this.y = DESIGN_CONTAINER_Y_PX + DESIGN_CONTAINER_HEIGHT_PX;
     this.game.add.tween(this).to({y:DIALOG_DISPLAY_Y_PX}, DIALOG_TWEEN_TIME, DIALOG_EASE_FUNCTION, true);
 }

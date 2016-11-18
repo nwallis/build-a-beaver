@@ -53,18 +53,19 @@ Beaver.prototype.changeStep = function(stepNumber) {
     if (stepNumber < this.stepNumber) {
 
         //Potential warnings about what will happen
-        warnings.push("Careful, you are going back a step");
+        warnings.push("Careful, you are going back to stage " + (parseInt(stepNumber) + 1) + ", if you click OK, the following will apply:");
 
         //Potential reasons for going backwards that the user needs to be aware of
-        for (var reasonCount = stepNumber; reasonCount <= this.stepNumber; reasonCount++) {
+        for (var reasonCount = stepNumber + 1; reasonCount <= this.stepNumber; reasonCount++) {
             switch (reasonCount) {
                 case BEAVER_STEP_1:
+                    reasons.push("shit");
                     break;
                 case BEAVER_STEP_2:
-                    if (this.countItems(BEAVER_STEP_2)) reasons.push("Any wall bays you placed will be deleted");
+                    if (this.countItems(BEAVER_STEP_2)) reasons.push("- Any wall bays you placed will be deleted");
                     break;
                 case BEAVER_STEP_3:
-                    if (this.countItems(BEAVER_STEP_3)) reasons.push("Any cabinets you placed will be deleted");
+                    if (this.countItems(BEAVER_STEP_3)) reasons.push("- Any cabinets you placed will be deleted");
                     break;
             }
         }
