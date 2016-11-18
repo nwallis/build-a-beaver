@@ -24,6 +24,7 @@ Dialog = function(game, engine, container, showCancel, cancelCallback, cancelCon
 
     if (showCancel) {
         this.cancelButton = this.game.add.button(200, 0, 'button_cancel', this.cancelClicked, this, 0, 0, 0);
+        this.cancelButton.input.useHandCursor = true;
         this.buttonsContainer.addChild(this.cancelButton);
     }
 
@@ -50,6 +51,7 @@ Dialog.prototype.show = function(reasons, warnings) {
 }
 
 Dialog.prototype.hide = function() {
+    this.engine.hideDialog();
     this.game.add.tween(this).to({y:DESIGN_CONTAINER_Y_PX + DESIGN_CONTAINER_HEIGHT_PX}, DIALOG_TWEEN_TIME, DIALOG_EASE_FUNCTION, true);
 }
 

@@ -47,7 +47,6 @@ AccordionSection.prototype.constructor = AccordionSection;
 AccordionSection.prototype.enable = function(){
     this.disabledImage.visible = false;
     this.titleContainer.inputEnabled = true;
-    this.titleContainer.input.useHandCursor = true;
     this.titleContainer.events.onInputUp.add(this.changeStep, this);
 }
 

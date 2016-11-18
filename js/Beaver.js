@@ -15,7 +15,7 @@ const BEAVER_STEP_2 = 1;
 const BEAVER_STEP_3 = 2;
 const BEAVER_TEST_PRICE = 100.38;
 const DESIGN_CONTAINER_X_PX = 11;
-const DESIGN_CONTAINER_Y_PX = 44; 
+const DESIGN_CONTAINER_Y_PX = 44;
 const DESIGN_CONTAINER_WIDTH_PX = 1250;
 const DESIGN_CONTAINER_HEIGHT_PX = 426;
 
@@ -101,7 +101,20 @@ Beaver.prototype.changeStep = function(stepNumber) {
 
 }
 
+Beaver.prototype.hideDialog = function(reasons, warnings) {
+    var hideTween = this.game.add.tween(this.dialogBackgroundColor).to({
+        alpha: 0
+    }, DIALOG_TWEEN_TIME, DIALOG_EASE_FUNCTION, true);
+    hideTween.onComplete.add(function() {
+        this.dialogBackgroundColor.visible = false;
+    }, this);
+}
+
 Beaver.prototype.showDialog = function(reasons, warnings) {
+    this.dialogBackgroundColor.visible = true;
+    this.game.add.tween(this.dialogBackgroundColor).to({
+        alpha: .3
+    }, DIALOG_TWEEN_TIME, DIALOG_EASE_FUNCTION, true);
     if (this.dialogBox) this.dialogBox.show(reasons, warnings);
 }
 
@@ -262,15 +275,30 @@ Beaver.prototype.create = function() {
 
     //Dialog boxes
     this.dialogContainer = this.game.add.group();
-    this.dialogBox = new Dialog(this.game, this, this.dialogContainer, true, null, this, true, this.confirmStepChange, this);
-    this.dialogBox.hide();
-    this.errorBox = new Dialog(this.game, this, this.dialogContainer, false, null, this, true, null, this);
-    this.errorBox.hide();
-    this.uiContainer.add(this.dialogContainer);
-    this.dialogMask = this.game.add.graphics(0,0);
+
+    //Background color behind all dialogs which blocks interaction with elements 
+    this.dialogBackgroundColor = this.game.add.graphics();
+    this.dialogBackgroundColor.beginFill(0x666666);
+    this.dialogBackgroundColor.visible = false;
+    this.dialogBackgroundColor.alpha = 0;
+    this.dialogBackgroundColor.drawRect(0, 0, APP_WIDTH_PX, APP_HEIGHT_PX);
+    this.dialogBackgroundColor.inputEnabled = true;
+    this.dialogBackgroundColor.input.useHandCursor = true;
+    this.dialogContainer.add(this.dialogBackgroundColor);
+
+    //Container for all dialog boxes
+    this.dialogBoxContainer = this.game.add.group();
+    this.dialogBox = new Dialog(this.game, this, this.dialogBoxContainer, true, null, this, true, this.confirmStepChange, this);
+    this.errorBox = new Dialog(this.game, this, this.dialogBoxContainer, false, null, this, true, null, this);
+
+    //Mask for dialog boxes
+    this.dialogMask = this.game.add.graphics(0, 0);
     this.dialogMask.beginFill(0);
-    this.dialogMask.drawRect(DESIGN_CONTAINER_X_PX,DESIGN_CONTAINER_Y_PX,DESIGN_CONTAINER_WIDTH_PX,DESIGN_CONTAINER_HEIGHT_PX);
-    this.dialogContainer.mask = this.dialogMask;
+    this.dialogMask.drawRect(DESIGN_CONTAINER_X_PX, DESIGN_CONTAINER_Y_PX, DESIGN_CONTAINER_WIDTH_PX, DESIGN_CONTAINER_HEIGHT_PX);
+    this.dialogBoxContainer.mask = this.dialogMask;
+    this.dialogContainer.add(this.dialogBoxContainer);
+
+    this.uiContainer.add(this.dialogContainer);
 
     //Layer for the gap graphics
     this.measureContainer = this.game.add.group();
