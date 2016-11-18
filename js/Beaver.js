@@ -59,7 +59,6 @@ Beaver.prototype.changeStep = function(stepNumber) {
         for (var reasonCount = stepNumber + 1; reasonCount <= this.stepNumber; reasonCount++) {
             switch (reasonCount) {
                 case BEAVER_STEP_1:
-                    reasons.push("shit");
                     break;
                 case BEAVER_STEP_2:
                     if (this.countItems(BEAVER_STEP_2)) reasons.push("- Any wall bays you placed will be deleted");
