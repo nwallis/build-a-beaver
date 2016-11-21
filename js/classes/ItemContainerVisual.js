@@ -11,17 +11,17 @@ var ItemContainerVisual = function(game, engine, model, container) {
 ItemContainerVisual.prototype = Object.create(Phaser.Group.prototype);
 ItemContainerVisual.prototype.constructor = ItemContainerVisual;
 
-ItemContainerVisual.prototype.removeItem = function(item){
+ItemContainerVisual.prototype.removeItem = function(item) {
     this.model.removeItem(item);
     item.destroy();
 }
 
-ItemContainerVisual.prototype.destroy = function(){
+ItemContainerVisual.prototype.destroy = function() {
 
     //reduce the price on the engine by the amount of the items
     var total = 0;
 
-    this.model.children.forEach(function(child){
+    this.model.children.forEach(function(child) {
         total += BEAVER_TEST_PRICE;
     });
 
@@ -51,3 +51,14 @@ ItemContainerVisual.prototype.moveItem = function(item, positionInMM) {
     return this.model.moveItem(item, positionInMM);
 }
 
+ItemContainerVisual.prototype.enable = function() {
+    this.children.forEach(function(child) {
+        child.enable();
+    });
+}
+
+ItemContainerVisual.prototype.disable = function() {
+    this.children.forEach(function(child) {
+        child.disable();
+    });
+}

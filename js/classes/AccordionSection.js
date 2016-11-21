@@ -39,6 +39,8 @@ var AccordionSection = function(game, closedImage, openedImage, disabledImage, a
 
     //Close by default
     this.move(0);
+
+    this.enable();
 }
 
 AccordionSection.prototype = Object.create(Phaser.Group.prototype);
@@ -47,6 +49,7 @@ AccordionSection.prototype.constructor = AccordionSection;
 AccordionSection.prototype.enable = function(){
     this.disabledImage.visible = false;
     this.titleContainer.inputEnabled = true;
+    this.titleContainer.input.useHandCursor = true;
     this.titleContainer.events.onInputUp.add(this.changeStep, this);
 }
 

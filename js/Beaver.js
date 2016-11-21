@@ -71,12 +71,13 @@ Beaver.prototype.changeStep = function(stepNumber) {
 
     } else if (stepNumber > this.stepNumber) {
 
+
         if (stepNumber == 2 && this.countItems(BEAVER_STEP_2) == 0) {
             validChange = false;
-            reasons.push("Must have some wall bays to place any cupboards");
+            warnings.push("You haven't placed any wall bays. Cabinets can only connect to wall bays, they cannot be freestanding");
         }
 
-        if (reasons.length == 0) {
+        if (warnings.length == 0) {
             this.stepNumber = stepNumber;
             this.addWallLayer();
         }
@@ -109,20 +110,26 @@ Beaver.prototype.hideDialog = function(reasons, warnings) {
     }, this);
 }
 
-Beaver.prototype.showDialog = function(reasons, warnings) {
+Beaver.prototype.prepareDialog = function() {
     this.dialogBackgroundColor.visible = true;
     this.game.add.tween(this.dialogBackgroundColor).to({
         alpha: .3
     }, DIALOG_TWEEN_TIME, DIALOG_EASE_FUNCTION, true);
+}
+
+Beaver.prototype.showDialog = function(reasons, warnings) {
+    this.prepareDialog();
     if (this.dialogBox) this.dialogBox.show(reasons, warnings);
 }
 
 Beaver.prototype.showError = function(reasons, warnings) {
+    this.prepareDialog();
     if (this.errorBox) this.errorBox.show(reasons, warnings);
 }
 
 Beaver.prototype.countItems = function(layerIndex) {
     var layer = (layerIndex != undefined) ? this.wallLayers[layerIndex] : this.currentWallLayer();
+    if (!layer) return 0;
     return layer.model.children.length;
 }
 
@@ -197,7 +204,6 @@ Beaver.prototype.create = function() {
     var accordionSection;
     this.productAccordion = new Accordion(this.game, this, this.uiContainer);
     accordionSection = this.productAccordion.addSection('stage_1_closed', 'stage_1_open', 'stage_1_disabled', BEAVER_STEP_1);
-    accordionSection.enable();
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 300,
         realHeight: 2500,
@@ -206,11 +212,10 @@ Beaver.prototype.create = function() {
     }));
 
     accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open', 'stage_2_disabled', BEAVER_STEP_2);
-    accordionSection.enable();
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realHeight: 2400,
-        realWidth: 600,
-        image: 'pillar_cover_600_2400',
+        realWidth: 450,
+        image: 'pillar_cover_450_2400',
         marginRight: 15,
         marginLeft: 15,
         id: 10,
@@ -219,6 +224,29 @@ Beaver.prototype.create = function() {
         allowedIntersections: [
             ITEM_EXTREMITIES_OUTSIDE
         ]
+    }));
+    accordionSection.addContent(new ProductVisual(this.game, this, {
+        realHeight: 2400,
+        realWidth: 600,
+        image: 'pillar_cover_450_2400',
+        marginRight: 15,
+        marginLeft: 15,
+        id: 10,
+        collapseTypes: [5, 10, 100],
+        compatibleItemOverlaps: [6],
+        allowedIntersections: [
+            ITEM_EXTREMITIES_OUTSIDE
+        ]
+    }));
+    accordionSection.addContent(new ProductVisual(this.game, this, {
+        realWidth: 450,
+        realHeight: 2400,
+        image: 'wall_bay_450_2400',
+        marginRight: 15,
+        marginLeft: 15,
+        id: 5,
+        collapseTypes: [5, 10, 100],
+        itemType: "wall-bay"
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 600,
@@ -233,7 +261,7 @@ Beaver.prototype.create = function() {
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 900,
         realHeight: 2400,
-        image: 'wall_bay_600_2400',
+        image: 'wall_bay_900_2400',
         marginRight: 15,
         marginLeft: 15,
         id: 100,
@@ -245,32 +273,34 @@ Beaver.prototype.create = function() {
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 600,
         realHeight: 1800,
-        image: 'cabinet',
+        image: 'cabinet_600_1800',
         compatibleItems: [5],
         id: 1
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 900,
         realHeight: 1800,
-        image: 'large_cabinet',
+        image: 'cabinet_900_1800',
         compatibleItems: [100],
         id: 2
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 900,
-        realHeight: 890,
-        image: 'small_cabinet',
+        realHeight: 900,
+        image: 'cabinet_900_900',
         compatibleItems: [100],
         id: 3
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 1800,
         realHeight: 900,
-        image: 'small_cabinet_double_with_bench',
+        image: 'cabinet_1800_900',
         compatibleItems: [100],
         id: 4,
         additionalCompatibleItems: 1,
     }));
+
+    accordionSection = this.productAccordion.addSection('stage_4_closed', 'stage_4_open', 'stage_4_disabled', BEAVER_STEP_3);
 
     //Dialog boxes
     this.dialogContainer = this.game.add.group();
@@ -319,11 +349,18 @@ Beaver.prototype.create = function() {
 
     //Create initial wall layer
     this.addWallLayer();
-    this.productAccordion.openByIndex(0);
+    this.productAccordion.openByIndex(BEAVER_STEP_1);
 
     $("#start-full-screen").click(function() {
         arranger.startFullScreen();
     });
+
+
+    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.game.scale.pageAlignVertically = true;
+    this.game.scale.pageAlignHorizontally = true;
+    this.game.scale.setShowAll();
+    this.game.scale.refresh();
 }
 
 Beaver.prototype.startFullScreen = function() {
@@ -389,6 +426,8 @@ Beaver.prototype.deleteWallLayersAbove = function(index) {
             layer.destroy();
         });
     }
+
+    this.wallLayers[this.wallLayers.length - 1].enable();
 }
 
 Beaver.prototype.addWallLayer = function() {
@@ -414,6 +453,11 @@ Beaver.prototype.addWallLayer = function() {
         realHeight: GAME_HEIGHT_MM,
         layerCollisions: layerCollisions,
         noGoZones: noGoZones
+    });
+
+    //Disable all existing layers - we are about to add one on top
+    this.wallLayers.forEach(function(layer) {
+        layer.disable();
     });
 
     var newLayerVisual = new ItemContainerVisual(this.game, this, newWall, this.layerContainer);
@@ -493,20 +537,29 @@ Beaver.prototype.preload = function() {
     //buttons
     this.game.load.spritesheet('button_ok', '/images/ui/buttons/ok.png', 113, 31);
     this.game.load.spritesheet('button_cancel', '/images/ui/buttons/cancel.png', 113, 31);
+    this.game.load.spritesheet('header_stage_1', '/images/ui/buttons/header_stage_1.png', 114, 20);
 
     //cursors
     this.game.load.image('position_product_cursor', '/images/ui/cursors/position_product.png');
 
-    this.game.load.image('cabinet', '/images/cabinet.jpg');
+    //icons
     this.game.load.image('delete_icon', '/images/icons/delete_icon.png');
-    this.game.load.image('small_cabinet', '/images/small_cabinet.jpg');
-    this.game.load.image('large_cabinet', '/images/large_cabinet.jpg');
-    this.game.load.image('small_cabinet_double_with_bench', '/images/small_cabinet_double_with_bench.jpg');
-    this.game.load.image('wall_bay_600_2400', '/images/wall_bay_600_2400.jpg');
-    this.game.load.image('pillar_cover_600_2400', '/images/pillar_cover_600_2400.jpg');
-    this.game.load.image('pillar', '/images/pillar.jpg');
+
     this.game.load.image('ui_mockup', '/images/ui/background.jpg');
     this.game.load.bitmapFont('arimo', '/fonts/arimo.png', '/fonts/arimo.fnt');
     this.game.load.bitmapFont('arimo_bold_16', '/fonts/arimo_bold_16.png', '/fonts/arimo_bold_16.fnt');
+
+    //cabinets 
+    this.game.load.image('cabinet_600_1800', '/images/products/cabinet_600_1800.jpg');
+    this.game.load.image('cabinet_900_900', '/images/products/cabinet_900_900.jpg');
+    this.game.load.image('cabinet_900_1800', '/images/products/cabinet_900_1800.jpg');
+    this.game.load.image('cabinet_1800_900', '/images/products/cabinet_1800_900.jpg');
+
+    //wall bays and pillars
+    this.game.load.image('wall_bay_450_2400', '/images/products/wall_bay_450_2400.jpg');
+    this.game.load.image('wall_bay_600_2400', '/images/products/wall_bay_600_2400.jpg');
+    this.game.load.image('wall_bay_900_2400', '/images/products/wall_bay_900_2400.jpg');
+    this.game.load.image('pillar_cover_450_2400', '/images/products/pillar_cover_450_2400.jpg');
+    this.game.load.image('pillar', '/images/pillar.jpg');
 
 }

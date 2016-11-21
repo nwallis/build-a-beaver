@@ -12,10 +12,6 @@ ItemVisual = function(game, engine, model, startPos, container) {
     this.addChild(this.itemVisual);
 
     this.icons = [];
-    this.inputEnabled = true;
-    this.input.useHandCursor = true;
-    this.input.setDragLock(true, false);
-    this.input.enableDrag(false, false);
     this.engine = engine;
     this.container = container;
     this.model = model;
@@ -41,6 +37,8 @@ ItemVisual = function(game, engine, model, startPos, container) {
 
     this.deleteIcon = this.game.make.sprite(0, 0, 'delete_icon');
     //this.addIcon(this.deleteIcon, this.deleteClicked);
+    
+    this.enable();
 }
 
 ItemVisual.prototype = Object.create(Phaser.Sprite.prototype);
@@ -123,4 +121,15 @@ ItemVisual.prototype.startItemDrag = function() {
 ItemVisual.prototype.stopItemDrag = function() {
     this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
     this.tintValid();
+}
+
+ItemVisual.prototype.enable = function() {
+    this.inputEnabled = true;
+    this.input.useHandCursor = true;
+    this.input.setDragLock(true, false);
+    this.input.enableDrag(false, false);
+}
+
+ItemVisual.prototype.disable = function() {
+    this.inputEnabled = false;
 }

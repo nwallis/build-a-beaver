@@ -55,6 +55,7 @@
             });
 
             var game = new Phaser.Game(APP_WIDTH_PX, APP_HEIGHT_PX, Phaser.AUTO, 'design-container');
+
             game.state.add('Boot', Boot);
             game.state.add('Beaver', arranger);
             game.state.start('Boot');
