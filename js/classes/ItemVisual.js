@@ -31,10 +31,6 @@ ItemVisual = function(game, engine, model, startPos, container) {
         backgroundColor: "#ffff00"
     };
 
-    this.debugText = this.game.make.text(0, 100, 'testing', style);
-    //this.addChild(this.debugText);
-
-
     this.deleteIcon = this.game.make.sprite(0, 0, 'delete_icon');
     //this.addIcon(this.deleteIcon, this.deleteClicked);
     
@@ -80,12 +76,6 @@ ItemVisual.prototype.layoutIcons = function() {
         icon.y = ICON_MARGIN;
         icon.x = this.width - ICON_MARGIN - (iconCount * (ICON_MARGIN + icon.width));
     }
-}
-
-ItemVisual.prototype.update = function() {
-    var snapLeftName = (this.model.itemSnappedToLeft) ? this.model.itemSnappedToLeft.image : 'none';
-    var snapRightName = (this.model.itemSnappedToRight) ? this.model.itemSnappedToRight.image : 'none';
-    this.debugText.text = "width: " + this.model.getSize().width + "\nrealX: " + this.model.getBounds().left + "\ninner left: " + this.model.getInnerBounds().left + "\nsnap left: " + snapLeftName + "\nsnapped right: " + snapRightName;
 }
 
 ItemVisual.prototype.itemDragUpdate = function() {

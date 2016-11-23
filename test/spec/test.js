@@ -104,19 +104,21 @@
             });
 
             it('should be able to count the number of items on a wall layer', function() {
-                var currentLayerItemCount = arranger.countItems();
-                expect(currentLayerItemCount).toBe(1);
+                var currentLayerItemCount = arranger.countItems(0);
+                expect(currentLayerItemCount).toBe(0);
             });
 
             it('should be able to count the number of items of a specific type on a wall layer', function() {
                 arranger.addItem(item1Data, 0);
                 var itemTypeCount = arranger.countItemsByType('cupboards');
-                expect(itemTypeCount).toBe(2);
+                expect(itemTypeCount).toBe(1);
             });
 
             it('should be able to count the number of items on the specified layer index', function(){
                 var topLayer = arranger.addWallLayer(); 
-                expect (arranger.countItemsByType('cupboards', 0)).toBe(2);
+                arranger.addItem(item1Data);
+                arranger.addItem(item1Data);
+                expect (arranger.countItemsByType('cupboards')).toBe(2);
             });
 
             it('should not allow access to stage 3 without there being some items placed in stage 2', function(){
@@ -141,6 +143,13 @@
                 expect(changeResult.reasons.length).toBe(0);
             });
 
+            it('should have a warning if moving back a step', function(){
+                arranger.addItem(item1Data);
+                var changeResult = arranger.changeStep(BEAVER_STEP_2);
+                changeResult = arranger.changeStep(BEAVER_STEP_1);
+                expect(changeResult.warnings.length).not.toBe(0);
+            });
+
             it('should be a valid move if going back a step, but some reasons should be presented', function(){
                 arranger.addItem(item1Data, 0);
                 var changeResult = arranger.changeStep(BEAVER_STEP_3);
@@ -148,11 +157,6 @@
                 changeResult = arranger.changeStep(BEAVER_STEP_1);
                 expect(changeResult.valid).toBe(true);
                 expect(changeResult.reasons.length).not.toBe(0);
-            });
-
-            it('should have a warning if moving back a step', function(){
-                var changeResult = arranger.changeStep(BEAVER_STEP_1);
-                expect(changeResult.warnings.length).not.toBe(0);
             });
 
             it('should be able to delete all wall layers above an index', function(){
@@ -412,6 +416,10 @@
             });
 
             it('should snap compatible items inside parent container', function() {
+                expect(wall.moveItem(item1CompatibleItem, item1.getBounds().left + ITEM_SNAP_DISTANCE + 10).position).toBe(700);
+            });
+
+            it('should not allow allow more than one item to snap to a parent', function() {
                 expect(wall.moveItem(item1CompatibleItem, item1.getBounds().left + ITEM_SNAP_DISTANCE + 10).position).toBe(700);
             });
 
