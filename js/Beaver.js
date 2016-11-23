@@ -300,8 +300,6 @@ Beaver.prototype.create = function() {
         additionalCompatibleItems: 1,
     }));
 
-    accordionSection = this.productAccordion.addSection('stage_4_closed', 'stage_4_open', 'stage_4_disabled', BEAVER_STEP_3);
-
     //Dialog boxes
     this.dialogContainer = this.game.add.group();
 
