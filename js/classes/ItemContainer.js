@@ -190,15 +190,25 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
 
                             item.compatibleItems.forEach(function(itemID) {
                                 if (child.id == itemID && child.id != item.id && intersections.lookFor(ITEM_LEFT_SIDE)) {
-
                                     isCompatible = true;
                                     var nextChild = child;
+                                    var compatibleParents = [child];
                                     for (var additionalCount = 0; additionalCount < item.additionalCompatibleItems; additionalCount++) {
-                                        if (nextChild) nextChild = nextChild.itemSnappedToRight;
-                                        if (!nextChild || nextChild.id != itemID) isCompatible = false;
+                                        if (nextChild) {
+                                            nextChild = nextChild.itemSnappedToRight;
+                                            compatibleParents.push(nextChild);
+                                        }
+
+                                        if (!nextChild || nextChild.id != itemID || nextChild.snappedChild) isCompatible = false;
                                     }
 
-                                    if (isCompatible) snapAmount = -(item.getBounds().left - child.getInnerBounds().left);
+                                    if (isCompatible) {
+                                        snapAmount = -(item.getBounds().left - child.getInnerBounds().left);
+                                        item.snappedParent = compatibleParents;
+                                        compatibleParents.forEach(function(parent) {
+                                            parent.snappedChild = item;
+                                        });
+                                    }
                                 }
                             });
 

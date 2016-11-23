@@ -27,22 +27,38 @@ var Item = function(params) {
 };
 
 Item.prototype.saveSnapReferences = function() {
+
     this.previousItemSnappedToRight = this.itemSnappedToRight;
     this.previousItemSnappedToLeft = this.itemSnappedToLeft;
-    if(this.itemSnappedToLeft) this.itemSnappedToLeft = this.itemSnappedToLeft.itemSnappedToRight = undefined;
+    this.previousSnappedParent = this.snappedParent;
+
+    if (this.snappedParent) {
+        this.snappedParent.forEach(function(parent) {
+            parent.snappedChild = undefined;
+        });
+        this.snappedParent = undefined;
+    }
+    if (this.itemSnappedToLeft) this.itemSnappedToLeft = this.itemSnappedToLeft.itemSnappedToRight = undefined;
     if (this.itemSnappedToRight) this.itemSnappedToRight = this.itemSnappedToRight.itemSnappedToLeft = undefined;
 }
 
-Item.prototype.restoreSnapReferences = function(){
-    if (this.previousItemSnappedToLeft){
+Item.prototype.restoreSnapReferences = function() {
+    if (this.previousItemSnappedToLeft) {
         this.itemSnappedToLeft = this.previousItemSnappedToLeft;
         this.previousItemSnappedToLeft.itemSnappedToRight = this;
         this.previousItemSnappedToLeft = undefined;
     }
-    if (this.previousItemSnappedToRight){
+    if (this.previousItemSnappedToRight) {
         this.itemSnappedToRight = this.previousItemSnappedToRight;
         this.previousItemSnappedToRight.itemSnappedToLeft = this;
         this.previousItemSnappedToRight = undefined;
+    }
+    if (this.previousSnappedParent) {
+        this.snappedParent = this.previousSnappedParent;
+        this.snappedParent.forEach(function(parent) {
+            parent.snappedChild = this;
+        });
+        this.previousSnappedParent = undefined;
     }
 }
 

@@ -114,18 +114,18 @@
                 expect(itemTypeCount).toBe(1);
             });
 
-            it('should be able to count the number of items on the specified layer index', function(){
-                var topLayer = arranger.addWallLayer(); 
+            it('should be able to count the number of items on the specified layer index', function() {
+                var topLayer = arranger.addWallLayer();
                 arranger.addItem(item1Data);
                 arranger.addItem(item1Data);
-                expect (arranger.countItemsByType('cupboards')).toBe(2);
+                expect(arranger.countItemsByType('cupboards')).toBe(2);
             });
 
-            it('should not allow access to stage 3 without there being some items placed in stage 2', function(){
+            it('should not allow access to stage 3 without there being some items placed in stage 2', function() {
                 //delete all layers
                 arranger.deleteWallLayer();
                 arranger.deleteWallLayer();
-    
+
                 //simulate stage 2 layers
                 arranger.addWallLayer();
                 arranger.addWallLayer();
@@ -134,7 +134,7 @@
 
             });
 
-            it('should allow changing from step 1 to step 2 with no reasons', function(){
+            it('should allow changing from step 1 to step 2 with no reasons', function() {
                 arranger.deleteWallLayer();
                 arranger.deleteWallLayer();
                 arranger.addWallLayer();
@@ -143,14 +143,14 @@
                 expect(changeResult.reasons.length).toBe(0);
             });
 
-            it('should have a warning if moving back a step', function(){
+            it('should have a warning if moving back a step', function() {
                 arranger.addItem(item1Data);
                 var changeResult = arranger.changeStep(BEAVER_STEP_2);
                 changeResult = arranger.changeStep(BEAVER_STEP_1);
                 expect(changeResult.warnings.length).not.toBe(0);
             });
 
-            it('should be a valid move if going back a step, but some reasons should be presented', function(){
+            it('should be a valid move if going back a step, but some reasons should be presented', function() {
                 arranger.addItem(item1Data, 0);
                 var changeResult = arranger.changeStep(BEAVER_STEP_3);
                 arranger.addItem(item1Data, 0);
@@ -159,7 +159,7 @@
                 expect(changeResult.reasons.length).not.toBe(0);
             });
 
-            it('should be able to delete all wall layers above an index', function(){
+            it('should be able to delete all wall layers above an index', function() {
                 arranger.deleteWallLayersAbove(BEAVER_STEP_1);
                 expect(arranger.wallLayers.length).toBe(1);
             });
@@ -419,8 +419,198 @@
                 expect(wall.moveItem(item1CompatibleItem, item1.getBounds().left + ITEM_SNAP_DISTANCE + 10).position).toBe(700);
             });
 
+            it('should store a reference of the child in the parent when an item is snapped', function() {
+                wall.moveItem(item1CompatibleItem, item1.getBounds().left + ITEM_SNAP_DISTANCE + 10);
+                expect(item1.snappedChild).toBe(item1CompatibleItem);
+            });
+
+            it('should store a reference in multiple parents when the child spans multiple parents', function() {
+                var itemThatNeedsTwoParents
+
+                var parent1 = new Item({
+                    realWidth: 400,
+                    realHeight: 900,
+                    id: 200,
+                    image: 'parent1',
+                    marginLeft: 50,
+                    marginRight: 50,
+                    collapseTypes: [200]
+                });
+
+                var parent2 = new Item({
+                    realWidth: 400,
+                    realHeight: 900,
+                    id: 200,
+                    image: 'parent2',
+                    marginLeft: 50,
+                    marginRight: 50,
+                    collapseTypes: [200]
+                });
+
+                var parent3 = new Item({
+                    realWidth: 400,
+                    realHeight: 900,
+                    id: 200,
+                    image: 'parent3',
+                    marginLeft: 50,
+                    marginRight: 50,
+                    collapseTypes: [200]
+                });
+
+                var multiParentItem = new Item({
+                    realWidth: 800,
+                    realHeight: 900,
+                    id: 300,
+                    compatibleItems: [200],
+                    additionalCompatibleItems: 1,
+                    image: 'multiParentItem'
+                });
+
+                wall.addItem(parent1);
+                wall.addItem(parent2);
+                wall.addItem(parent3);
+
+                var multiStartPos = wall.addItem(multiParentItem).position;
+                wall.moveItem(parent1, 6000);
+                wall.moveItem(parent2, 6400);
+                wall.moveItem(parent3, 6800);
+
+                expect(wall.moveItem(multiParentItem, 6150).position).toBe(6050);
+                expect(parent1.snappedChild).toBe(multiParentItem);
+                expect(parent2.snappedChild).toBe(multiParentItem);
+                expect(multiParentItem.snappedParent[0]).toBe(parent1);
+                expect(multiParentItem.snappedParent[1]).toBe(parent2);
+            });
+
+            it('should clear the reference in the parent when the child is move elsewhere', function() {
+                var itemThatNeedsTwoParents
+
+                var parent1 = new Item({
+                    realWidth: 400,
+                    realHeight: 900,
+                    id: 200,
+                    image: 'parent1',
+                    marginLeft: 50,
+                    marginRight: 50,
+                    collapseTypes: [200]
+                });
+
+                var parent2 = new Item({
+                    realWidth: 400,
+                    realHeight: 900,
+                    id: 200,
+                    image: 'parent2',
+                    marginLeft: 50,
+                    marginRight: 50,
+                    collapseTypes: [200]
+                });
+
+                var parent3 = new Item({
+                    realWidth: 400,
+                    realHeight: 900,
+                    id: 200,
+                    image: 'parent3',
+                    marginLeft: 50,
+                    marginRight: 50,
+                    collapseTypes: [200]
+                });
+
+                var multiParentItem = new Item({
+                    realWidth: 800,
+                    realHeight: 900,
+                    id: 300,
+                    compatibleItems: [200],
+                    additionalCompatibleItems: 1,
+                    image: 'multiParentItem'
+                });
+
+                wall.addItem(parent1);
+                wall.addItem(parent2);
+                wall.addItem(parent3);
+
+                var multiStartPos = wall.addItem(multiParentItem).position;
+                wall.moveItem(parent1, 6000);
+                wall.moveItem(parent2, 6400);
+                wall.moveItem(parent3, 6800);
+
+                expect(wall.moveItem(multiParentItem, 6150).position).toBe(6050);
+                expect(parent1.snappedChild).toBe(multiParentItem);
+                expect(parent2.snappedChild).toBe(multiParentItem);
+                expect(multiParentItem.snappedParent[0]).toBe(parent1);
+                expect(multiParentItem.snappedParent[1]).toBe(parent2);
+                var moveResult = wall.moveItem(multiParentItem, 8000);
+                expect(multiParentItem.snappedParent).toBe(undefined);
+                expect(parent1.snappedChild).toBe(undefined);
+                expect(parent2.snappedChild).toBe(undefined);
+            });
+
             it('should not allow allow more than one item to snap to a parent', function() {
-                expect(wall.moveItem(item1CompatibleItem, item1.getBounds().left + ITEM_SNAP_DISTANCE + 10).position).toBe(700);
+                var parent1 = new Item({
+                    realWidth: 400,
+                    realHeight: 900,
+                    id: 200,
+                    image: 'parent1',
+                    marginLeft: 50,
+                    marginRight: 50,
+                    collapseTypes: [200]
+                });
+
+                var parent2 = new Item({
+                    realWidth: 400,
+                    realHeight: 900,
+                    id: 200,
+                    image: 'parent2',
+                    marginLeft: 50,
+                    marginRight: 50,
+                    collapseTypes: [200]
+                });
+
+                var parent3 = new Item({
+                    realWidth: 400,
+                    realHeight: 900,
+                    id: 200,
+                    image: 'parent3',
+                    marginLeft: 50,
+                    marginRight: 50,
+                    collapseTypes: [200]
+                });
+
+                var multiParentItem2 = new Item({
+                    realWidth: 800,
+                    realHeight: 900,
+                    id: 300,
+                    compatibleItems: [200],
+                    additionalCompatibleItems: 1,
+                    image: 'multiParentItem'
+                });
+
+                var multiParentItem = new Item({
+                    realWidth: 800,
+                    realHeight: 900,
+                    id: 300,
+                    compatibleItems: [200],
+                    additionalCompatibleItems: 1,
+                    image: 'multiParentItem'
+                });
+
+                wall.addItem(parent1);
+                wall.addItem(parent2);
+                wall.addItem(parent3);
+
+                var multiStartPos = wall.addItem(multiParentItem).position;
+                var multiStartPos2 = wall.addItem(multiParentItem2).position;
+
+                wall.moveItem(parent1, 6000);
+                wall.moveItem(parent2, 6400);
+                wall.moveItem(parent3, 6800);
+
+                expect(wall.moveItem(multiParentItem, 6550).position).toBe(6450);
+                expect(parent2.snappedChild).toBe(multiParentItem);
+                expect(parent3.snappedChild).toBe(multiParentItem);
+                expect(multiParentItem.snappedParent[0]).toBe(parent2);
+                expect(multiParentItem.snappedParent[1]).toBe(parent3);
+                expect(wall.moveItem(multiParentItem2, 6150).position).toBe(multiStartPos2);
+
             });
 
             it('should snap compatible items inside parent container only when there are enough compatible items', function() {
