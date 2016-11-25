@@ -33,12 +33,28 @@ ItemVisual = function(game, engine, model, startPos, container) {
 
     this.deleteIcon = this.game.make.sprite(0, 0, 'delete_icon');
     //this.addIcon(this.deleteIcon, this.deleteClicked);
-    
+
+    this.debugText = this.game.make.text(20, (this.model.itemType == "wall-bay") ? 20 : 200, 'testing', style);
+    this.addChild(this.debugText);
+
     this.enable();
 }
 
 ItemVisual.prototype = Object.create(Phaser.Sprite.prototype);
 ItemVisual.prototype.constructor = ItemVisual;
+
+ItemVisual.prototype.update = function() {
+    var snapLeftName = (this.model.itemSnappedToLeft) ? this.model.itemSnappedToLeft.image : 'none';
+    var snapRightName = (this.model.itemSnappedToRight) ? this.model.itemSnappedToRight.image : 'none';
+    var snapChildName = (this.model.snappedChild) ? this.model.snappedChild.image : 'none';
+    var snapParentName = (this.model.snappedParent) ? this.model.snappedParent[0].image : 'none';
+    this.debugText.text =
+        //"width: " + this.model.getSize().width +
+        //"\nrealX: " + this.model.getBounds().left +
+        //"\ninner left: " + this.model.getInnerBounds().left +
+        "snapped child: " + snapChildName + 
+        "\nsnapped parent: " + snapParentName;
+}
 
 ItemVisual.prototype.itemOver = function() {
     this.engine.measureItem(this);

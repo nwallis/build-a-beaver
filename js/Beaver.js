@@ -333,10 +333,8 @@ Beaver.prototype.create = function() {
     this.measureContainer.y = this.layerContainer.y;
     this.measureGraphics = this.game.make.graphics();
     this.itemWidthText = this.game.add.bitmapText(0, 0, 'arimo', '', 12);
-    this.itemLeftText = this.game.add.bitmapText(0, 0, 'arimo', '', 12);
     this.measureContainer.add(this.measureGraphics);
     this.measureContainer.add(this.itemWidthText);
-    this.measureContainer.add(this.itemLeftText);
     this.uiContainer.addChild(this.measureContainer);
 
     //Price counter
@@ -469,7 +467,7 @@ Beaver.prototype.currentWallLayer = function() {
 }
 
 Beaver.prototype.pixelsToMM = function(distance) {
-    return (GAME_HEIGHT_MM / DESIGN_AREA_HEIGHT_PX) * distance;
+    return Math.floor((GAME_HEIGHT_MM / DESIGN_AREA_HEIGHT_PX) * distance);
 }
 
 Beaver.prototype.mmToPixels = function(distance) {
@@ -480,9 +478,10 @@ Beaver.prototype.update = function() {
 
     if (this.itemToMeasure) {
 
-        var itemLeftPixels = this.mmToPixels(this.itemToMeasure.model.getBounds().left);
-        var itemRightPixels = this.mmToPixels(this.itemToMeasure.model.getBounds().right);
-        var itemWidthPixels = this.mmToPixels(this.itemToMeasure.model.getInnerSize().width);
+        var itemMeasurement = this.itemToMeasure.model.measure();
+        var itemLeftPixels = this.mmToPixels(itemMeasurement.left);
+        var itemRightPixels = this.mmToPixels(itemMeasurement.right);
+        var itemWidthPixels = itemRightPixels - itemLeftPixels;
 
         this.measureGraphics.clear();
         this.measureGraphics.lineStyle(2, 0, 1);
@@ -495,14 +494,10 @@ Beaver.prototype.update = function() {
         this.measureGraphics.lineTo(itemRightPixels, GAP_Y + 5);
 
         //create text for width of item
-        this.itemWidthText.text = this.itemToMeasure.model.getSize().width;
+        this.itemWidthText.text = itemMeasurement.width + "mm";
         this.itemWidthText.tint = 0xff0000;
         this.itemWidthText.x = itemLeftPixels + ((itemWidthPixels - this.itemWidthText.width) / 2);
-        this.itemLeftText.y = this.itemWidthText.y = this.measureGraphics.y - 25;
-
-        this.itemLeftText.x = this.itemWidthText.x - 200;
-        this.itemLeftText.tint = 0xff0000;
-        this.itemLeftText.text = Math.floor(this.itemToMeasure.model.getBounds().left) + " to left edge";
+        this.itemWidthText.y = this.measureGraphics.y - 25;
     }
 
     this.layerContainer.update();

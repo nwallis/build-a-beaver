@@ -22,6 +22,8 @@ ItemContainerVisual.prototype.destroy = function() {
     var total = 0;
 
     this.model.children.forEach(function(child) {
+        console.log("calling destroy on ", child);
+        child.destroy();
         total += BEAVER_TEST_PRICE;
     });
 

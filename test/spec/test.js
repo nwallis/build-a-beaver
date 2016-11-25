@@ -544,7 +544,7 @@
                 expect(parent2.snappedChild).toBe(undefined);
             });
 
-            it('should not allow allow more than one item to snap to a parent', function() {
+            it('should not allow more than one item to snap to a parent', function() {
                 var parent1 = new Item({
                     realWidth: 400,
                     realHeight: 900,
@@ -610,6 +610,7 @@
                 expect(multiParentItem.snappedParent[0]).toBe(parent2);
                 expect(multiParentItem.snappedParent[1]).toBe(parent3);
                 expect(wall.moveItem(multiParentItem2, 6150).position).toBe(multiStartPos2);
+                expect(wall.moveItem(multiParentItem2, parent2.getInnerBounds().left).position).toBe(multiStartPos2);
 
             });
 

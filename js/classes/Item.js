@@ -26,6 +26,20 @@ var Item = function(params) {
     this.additionalCompatibleItems = params.additionalCompatibleItems || 0;
 };
 
+Item.prototype.destroy = function() {
+    this.previousItemSnappedToRight = undefined;
+    this.previousItemSnappedToLeft = undefined;
+    this.previousSnappedParent = undefined;
+    this.itemSnappedToRight = undefined;
+    this.itemSnappedToLeft = undefined;
+    if (this.snappedParent) {
+        this.snappedParent.forEach(function(parent) {
+            parent.snappedChild = undefined;
+        });
+    }
+    this.snappedParent = undefined;
+}
+
 Item.prototype.saveSnapReferences = function() {
 
     this.previousItemSnappedToRight = this.itemSnappedToRight;
@@ -34,31 +48,37 @@ Item.prototype.saveSnapReferences = function() {
 
     if (this.snappedParent) {
         this.snappedParent.forEach(function(parent) {
-            parent.snappedChild = undefined;
+            delete parent.snappedChild;
         });
-        this.snappedParent = undefined;
+        delete this.snappedParent;
     }
-    if (this.itemSnappedToLeft) this.itemSnappedToLeft = this.itemSnappedToLeft.itemSnappedToRight = undefined;
-    if (this.itemSnappedToRight) this.itemSnappedToRight = this.itemSnappedToRight.itemSnappedToLeft = undefined;
+    if (this.itemSnappedToLeft) {
+        delete this.itemSnappedToLeft.itemSnappedToRight;
+        delete this.itemSnappedToLeft;
+    }
+    if (this.itemSnappedToRight) {
+        delete this.itemSnappedToRight.itemSnappedToLeft;
+        delete this.itemSnappedToRight;
+    }
 }
 
 Item.prototype.restoreSnapReferences = function() {
     if (this.previousItemSnappedToLeft) {
         this.itemSnappedToLeft = this.previousItemSnappedToLeft;
         this.previousItemSnappedToLeft.itemSnappedToRight = this;
-        this.previousItemSnappedToLeft = undefined;
+        delete this.previousItemSnappedToLeft;
     }
     if (this.previousItemSnappedToRight) {
         this.itemSnappedToRight = this.previousItemSnappedToRight;
         this.previousItemSnappedToRight.itemSnappedToLeft = this;
-        this.previousItemSnappedToRight = undefined;
+        delete this.previousItemSnappedToRight;
     }
     if (this.previousSnappedParent) {
         this.snappedParent = this.previousSnappedParent;
         this.snappedParent.forEach(function(parent) {
             parent.snappedChild = this;
-        });
-        this.previousSnappedParent = undefined;
+        }, this);
+        delete this.previousSnappedParent;
     }
 }
 
@@ -67,10 +87,20 @@ Item.prototype.checkCollapse = function(item) {
     return false;
 }
 
+Item.prototype.measure = function() {
+    var left = this.getBounds().left + ((this.itemSnappedToLeft) ? this.marginLeft : 0);
+    var right = this.getBounds().right - ((this.itemSnappedToRight) ? this.marginRight : 0);
+    return {
+        "left": left,
+        "right": right,
+        "width": right - left
+    }
+}
+
 Item.prototype.getInnerBounds = function() {
     return {
-        "right": this.getBounds().right - this.marginRight,
-        "left": this.getBounds().left + this.marginLeft
+        "left": this.getBounds().left + this.marginLeft,
+        "right": this.getBounds().right - this.marginRight
     }
 }
 
