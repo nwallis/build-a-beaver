@@ -233,7 +233,7 @@ Beaver.prototype.create = function() {
         realWidth: 820,
         realHeight: 2040,
         image: 'door_820_2040',
-        id: 600 
+        id: 600
     }));
 
     accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open', 'stage_2_disabled', BEAVER_STEP_2);
@@ -353,24 +353,24 @@ Beaver.prototype.create = function() {
     this.uiContainer.add(this.dialogContainer);
 
     //Layer for the gap graphics
-    
+
     var measureStyling = {
-        font:"12px Lato",
-        fontStyle:"italic",
-        align:"left",
-        fontWeight:"300",
-        fill:MARKER_COLOR_HTML,
-        stroke:MARKER_COLOR_HTML,
-        strokeThickness:1
-    }; 
+        font: "12px Lato",
+        fontStyle: "italic",
+        align: "left",
+        fontWeight: "300",
+        fill: MARKER_COLOR_HTML,
+        stroke: MARKER_COLOR_HTML,
+        strokeThickness: 1
+    };
     this.measureContainer = this.game.add.group();
     this.measureContainer.x = this.layerContainer.x;
     this.measureContainer.y = this.layerContainer.y;
     this.measureGraphics = this.game.make.graphics();
     this.itemWidthText = this.game.add.text(0, 0, '', measureStyling);
-    this.itemLeftText = this.game.add.text(80 - this.layerContainer.x, 358, '', measureStyling);
+    this.itemLeftText = this.game.add.text(this.wallOutline.x + 10, 358, '', measureStyling);
     measureStyling.align = "right";
-    this.itemRightText = this.game.add.text(1130 - this.layerContainer.x, 358, '', measureStyling);
+    this.itemRightText = this.game.add.text(this.wallOutline.x + this.wallOutline.width - 60, 358, '', measureStyling);
     this.measureContainer.add(this.measureGraphics);
     this.measureContainer.add(this.itemWidthText);
     this.measureContainer.add(this.itemLeftText);
@@ -378,12 +378,10 @@ Beaver.prototype.create = function() {
     this.uiContainer.addChild(this.measureContainer);
 
     //Icons
-    this.deleteIcon = this.game.add.button(0,0,'delete_icon',this.deleteItem, this, 0,0,0);
-    this.infoIcon = this.game.add.button(0,0,'info_icon',this.displayItemInfo, this, 0,0,0);
+    this.deleteIcon = this.game.add.button(0, 0, 'delete_icon', this.deleteItem, this, 0, 0, 0);
+    this.infoIcon = this.game.add.button(0, 0, 'info_icon', this.displayItemInfo, this, 0, 0, 0);
     this.infoIcon.scale.x = this.infoIcon.scale.y = this.deleteIcon.scale.x = this.deleteIcon.scale.y = .5;
     this.deleteIcon.visible = this.infoIcon.visible = false;
-    this.deleteIcon.anchor.x = this.infoIcon.anchor.x = 0;
-    this.deleteIcon.anchor.y = this.infoIcon.anchor.y = 0;
     this.icons = [this.deleteIcon, this.infoIcon];
 
     //Price counter
@@ -407,13 +405,12 @@ Beaver.prototype.create = function() {
     this.game.scale.refresh();
 }
 
-Beaver.prototype.showIcons = function(itemVisual){
+Beaver.prototype.showIcons = function(itemVisual) {
     //Set icon positions based on margins
     for (var iconCount = 0; iconCount < this.icons.length; iconCount++) {
         var icon = this.icons[iconCount];
-        icon.y = this.layerContainer.y + (iconCount * (ICON_MARGIN + icon.height)) + (DESIGN_AREA_HEIGHT_PX - itemVisual.height);
-        console.log(DESIGN_AREA_HEIGHT_PX - itemVisual.height);
-        icon.x = this.layerContainer.x + itemVisual.x + ((itemVisual.width - icon.width) / 2);
+        icon.y = ICON_MARGIN + this.layerContainer.y + (iconCount * (ICON_MARGIN + icon.height)) + itemVisual.itemVisual.y;
+        icon.x = (ICON_MARGIN + icon.width > itemVisual.itemVisual.width) ? this.layerContainer.x + itemVisual.x + ((itemVisual.itemVisual.width - icon.width) / 2) : this.layerContainer.x + itemVisual.x + ICON_MARGIN;
         icon.visible = true;
     }
 
@@ -421,16 +418,16 @@ Beaver.prototype.showIcons = function(itemVisual){
     return this.icons;
 }
 
-Beaver.prototype.hideIcons = function(){
+Beaver.prototype.hideIcons = function() {
     this.deleteIcon.visible = this.infoIcon.visible = false;
 }
 
-Beaver.prototype.deleteItem = function(){
+Beaver.prototype.deleteItem = function() {
     this.currentWallLayer().removeItem(this.selectedItem);
     this.hideIcons();
 }
 
-Beaver.prototype.displayItemInfo = function(itemVisual){
+Beaver.prototype.displayItemInfo = function(itemVisual) {
     this.hideIcons();
 }
 
@@ -470,6 +467,7 @@ Beaver.prototype.finishProductPlacement = function() {
     if (!this.placementMoveResult.valid) {
         this.removeItem(this.createdItem);
     } else {
+        this.showIcons(this.createdItem);
         this.priceCounter.increment(BEAVER_TEST_PRICE);
     }
 
@@ -567,7 +565,7 @@ Beaver.prototype.update = function() {
         this.measureGraphics.lineTo(itemLeftPixels, MARKER_BOTTOM_Y);
         this.measureGraphics.moveTo(itemRightPixels, MARKER_BOTTOM_Y);
         this.measureGraphics.lineTo(this.layerContainer.width, MARKER_BOTTOM_Y);
-         
+
         //vertical lines
         this.measureGraphics.lineStyle(1, MARKER_COLOR, 1);
         this.measureGraphics.moveTo(itemLeftPixels, MARKER_TOP_Y + (MARKER_LINE_THICKNESS / 2));
@@ -578,10 +576,6 @@ Beaver.prototype.update = function() {
         this.measureGraphics.lineTo(0, MARKER_BOTTOM_Y + MARKER_HEIGHT);
         this.measureGraphics.moveTo(this.layerContainer.width, MARKER_BOTTOM_Y - (MARKER_LINE_THICKNESS / 2));
         this.measureGraphics.lineTo(this.layerContainer.width, MARKER_BOTTOM_Y + MARKER_HEIGHT);
-        this.measureGraphics.moveTo(itemLeftPixels, MARKER_BOTTOM_Y - (MARKER_LINE_THICKNESS / 2));
-        this.measureGraphics.lineTo(itemLeftPixels, MARKER_BOTTOM_Y + MARKER_HEIGHT);
-        this.measureGraphics.moveTo(itemRightPixels, MARKER_BOTTOM_Y - (MARKER_LINE_THICKNESS / 2));
-        this.measureGraphics.lineTo(itemRightPixels, MARKER_BOTTOM_Y + MARKER_HEIGHT);
 
         //create text for width of item
         this.itemWidthText.text = itemMeasurement.width + MM_SUFFIX;
@@ -621,10 +615,10 @@ Beaver.prototype.preload = function() {
 
     //buttons
     this.game.load.spritesheet('button_ok', '/images/ui/buttons/ok.png', 113, 31);
-    this.game.load.spritesheet('button_cancel', '/images/ui/buttons/cancel.png', 113, 31); 
-    this.game.load.spritesheet('header_stage_1', '/images/ui/buttons/header_stage_1.png', 112, 20); 
-    this.game.load.spritesheet('header_stage_2', '/images/ui/buttons/header_stage_2.png', 112, 20); 
-    this.game.load.spritesheet('header_stage_3', '/images/ui/buttons/header_stage_3.png', 112, 20); 
+    this.game.load.spritesheet('button_cancel', '/images/ui/buttons/cancel.png', 113, 31);
+    this.game.load.spritesheet('header_stage_1', '/images/ui/buttons/header_stage_1.png', 112, 20);
+    this.game.load.spritesheet('header_stage_2', '/images/ui/buttons/header_stage_2.png', 112, 20);
+    this.game.load.spritesheet('header_stage_3', '/images/ui/buttons/header_stage_3.png', 112, 20);
     //cursors
     this.game.load.image('position_product_cursor', '/images/ui/cursors/position_product.png');
 

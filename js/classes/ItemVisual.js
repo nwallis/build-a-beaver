@@ -64,6 +64,7 @@ ItemVisual.prototype.deleteClicked = function() {
 }
 
 ItemVisual.prototype.itemDragUpdate = function() {
+    this.engine.showIcons(this);
     this.move(this.x);
 }
 
