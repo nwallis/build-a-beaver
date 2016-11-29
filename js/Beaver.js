@@ -1,6 +1,6 @@
 const ICON_MARGIN = 5;
 const GAME_HEIGHT_MM = 2500;
-const DEBUG_WALL_WIDTH = 4000;
+const DEBUG_WALL_WIDTH = 8000;
 const APP_WIDTH_PX = 1270;
 const APP_HEIGHT_PX = 630;
 const DESIGN_AREA_WIDTH_PX = 1225;
@@ -28,7 +28,7 @@ const MARKER_LINE_THICKNESS = 4;
 
 var Beaver = function() {
     this.wallLayers = [];
-    this.stepNumber = 0;
+    this.stepNumber = -1;
     this.placingProduct = false;
     this.placementCount = [];
 }
@@ -44,12 +44,24 @@ Beaver.prototype.hideMeasure = function() {
 }
 
 Beaver.prototype.confirmStepChange = function() {
+
+    //highlight correct header button
+    this.headerStageButtons.forEach(function(stageButton) {
+        stageButton.setFrames(1, 0, 1);
+    });
+    this.headerStageButtons[this.desiredStepNumber].setFrames(1, 1, 1);
+
+    //hide the icons
+    this.hideIcons();
+
     this.deleteWallLayersAbove(this.desiredStepNumber);
     if (this.productAccordion) this.productAccordion.openByIndex(this.desiredStepNumber);
     this.stepNumber = this.desiredStepNumber;
 }
 
 Beaver.prototype.changeStep = function(stepNumber) {
+
+    if (stepNumber == this.stepNumber) return;
 
     this.desiredStepNumber = stepNumber;
 
@@ -208,21 +220,25 @@ Beaver.prototype.create = function() {
     this.uiContainer = this.game.add.group();
 
     //Header buttons
-    this.game.add.button(396, 13, 'header_stage_1', function() {
+    this.headerStage1 = this.game.add.button(396, 13, 'header_stage_1', function() {
         this.changeStep(BEAVER_STEP_1);
     }, this, 1, 0, 1);
-    this.game.add.button(520, 13, 'header_stage_2', function() {
+    this.headerStage2 = this.game.add.button(520, 13, 'header_stage_2', function() {
         this.changeStep(BEAVER_STEP_2);
     }, this, 1, 0, 1);
-    this.game.add.button(642, 13, 'header_stage_3', function() {
+    this.headerStage3 = this.game.add.button(642, 13, 'header_stage_3', function() {
         this.changeStep(BEAVER_STEP_3);
     }, this, 1, 0, 1);
+
+    this.headerStageButtons = [this.headerStage1, this.headerStage2, this.headerStage3];
 
     //Accordion
     var accordionSection;
     this.productAccordion = new Accordion(this.game, this, this.uiContainer);
     accordionSection = this.productAccordion.addSection('stage_1_closed', 'stage_1_open', 'stage_1_disabled', BEAVER_STEP_1);
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'BRICK PILLAR',
+        price: 100.38,
         realWidth: 230,
         realHeight: 2500,
         image: 'pillar',
@@ -230,6 +246,8 @@ Beaver.prototype.create = function() {
     }));
 
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'DOOR',
+        price: 99.00,
         realWidth: 820,
         realHeight: 2040,
         image: 'door_820_2040',
@@ -238,6 +256,8 @@ Beaver.prototype.create = function() {
 
     accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open', 'stage_2_disabled', BEAVER_STEP_2);
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'PILLAR COVER',
+        price: 100.38,
         realHeight: 2400,
         realWidth: 450,
         image: 'pillar_cover_450_2400',
@@ -251,6 +271,8 @@ Beaver.prototype.create = function() {
         ]
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'PILLAR COVER',
+        price: 100.38,
         realHeight: 2400,
         realWidth: 600,
         image: 'pillar_cover_600_2400',
@@ -264,6 +286,8 @@ Beaver.prototype.create = function() {
         ]
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'WALL BAY',
+        price: 100.38,
         realWidth: 450,
         realHeight: 2400,
         image: 'wall_bay_450_2400',
@@ -274,6 +298,8 @@ Beaver.prototype.create = function() {
         itemType: "wall-bay"
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'WALL BAY',
+        price: 100.38,
         realWidth: 600,
         realHeight: 2400,
         image: 'wall_bay_600_2400',
@@ -284,6 +310,8 @@ Beaver.prototype.create = function() {
         itemType: "wall-bay"
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'WALL BAY',
+        price: 100.38,
         realWidth: 900,
         realHeight: 2400,
         image: 'wall_bay_900_2400',
@@ -296,6 +324,8 @@ Beaver.prototype.create = function() {
 
     accordionSection = this.productAccordion.addSection('stage_3_closed', 'stage_3_open', 'stage_3_disabled', BEAVER_STEP_3);
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'CABINET',
+        price: 100.38,
         realWidth: 600,
         realHeight: 1800,
         image: 'cabinet_600_1800',
@@ -303,6 +333,8 @@ Beaver.prototype.create = function() {
         id: 1
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'CABINET',
+        price: 100.38,
         realWidth: 900,
         realHeight: 1800,
         image: 'cabinet_900_1800',
@@ -310,6 +342,8 @@ Beaver.prototype.create = function() {
         id: 2
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'CABINET',
+        price: 100.38,
         realWidth: 900,
         realHeight: 900,
         image: 'cabinet_900_900',
@@ -317,6 +351,8 @@ Beaver.prototype.create = function() {
         id: 3
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
+        name: 'CABINET',
+        price: 100.38,
         realWidth: 1800,
         realHeight: 1005,
         image: 'cabinet_1800_1005',
@@ -391,8 +427,9 @@ Beaver.prototype.create = function() {
     this.uiContainer.addChild(this.priceCounter);
 
     //Create initial wall layer
-    this.addWallLayer();
-    this.productAccordion.openByIndex(BEAVER_STEP_1);
+    //this.addWallLayer();
+    //this.productAccordion.openByIndex(BEAVER_STEP_1);
+    this.changeStep(BEAVER_STEP_1);
 
     $("#start-full-screen").click(function() {
         arranger.startFullScreen();
@@ -406,16 +443,17 @@ Beaver.prototype.create = function() {
 }
 
 Beaver.prototype.showIcons = function(itemVisual) {
-    //Set icon positions based on margins
-    for (var iconCount = 0; iconCount < this.icons.length; iconCount++) {
-        var icon = this.icons[iconCount];
-        icon.y = ICON_MARGIN + this.layerContainer.y + (iconCount * (ICON_MARGIN + icon.height)) + itemVisual.itemVisual.y;
-        icon.x = (ICON_MARGIN + icon.width > itemVisual.itemVisual.width) ? this.layerContainer.x + itemVisual.x + ((itemVisual.itemVisual.width - icon.width) / 2) : this.layerContainer.x + itemVisual.x + ICON_MARGIN;
-        icon.visible = true;
-    }
+    if (itemVisual) {
+        //Set icon positions based on margins
+        for (var iconCount = 0; iconCount < this.icons.length; iconCount++) {
+            var icon = this.icons[iconCount];
+            icon.y = ICON_MARGIN + this.layerContainer.y + (iconCount * (ICON_MARGIN + icon.height)) + itemVisual.itemVisual.y;
+            icon.x = (ICON_MARGIN + icon.width > itemVisual.itemVisual.width) ? this.layerContainer.x + itemVisual.x + ((itemVisual.itemVisual.width - icon.width) / 2) : this.layerContainer.x + itemVisual.x + ICON_MARGIN;
+            icon.visible = true;
+        }
 
-    this.selectedItem = itemVisual;
-    return this.icons;
+        this.selectedItem = itemVisual;
+    }
 }
 
 Beaver.prototype.hideIcons = function() {
@@ -423,6 +461,7 @@ Beaver.prototype.hideIcons = function() {
 }
 
 Beaver.prototype.deleteItem = function() {
+    this.priceCounter.decrement(this.selectedItem.model.price);
     this.currentWallLayer().removeItem(this.selectedItem);
     this.hideIcons();
 }
@@ -450,11 +489,14 @@ Beaver.prototype.moveProductPlacement = function() {
         var layerPointerY = activePointer.y - this.layerContainer.y;
         if (!this.createdItem && this.layerContainer.getBounds().contains(activePointer.x, activePointer.y)) {
             this.createdItem = this.addItem(this.placingProduct, layerPointerX);
+            this.createdItem.dragging = true;
         } else if (this.createdItem) {
             var modifiedBounds = this.layerContainer.getBounds();
             modifiedBounds = new Phaser.Rectangle(modifiedBounds.x, 0, modifiedBounds.width, APP_HEIGHT_PX);
             if (modifiedBounds.contains(activePointer.x, activePointer.y)) this.placementMoveResult = this.createdItem.move(layerPointerX);
         }
+
+        this.showIcons(this.createdItem);
     }
 }
 
@@ -464,11 +506,14 @@ Beaver.prototype.addItem = function(itemData, startPosPx) {
 
 Beaver.prototype.finishProductPlacement = function() {
 
+    this.createdItem.dragging = false;
+
     if (!this.placementMoveResult.valid) {
         this.removeItem(this.createdItem);
+        this.hideIcons();
     } else {
         this.showIcons(this.createdItem);
-        this.priceCounter.increment(BEAVER_TEST_PRICE);
+        this.priceCounter.increment(this.createdItem.model.price);
     }
 
     this.hideMeasure();

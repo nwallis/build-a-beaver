@@ -1,3 +1,7 @@
+const TINT_COLOR_HOVER = 0xDDDDDD;
+const TINT_COLOR_INVALID = 0xFF0000;
+const TINT_COLOR_VALID = 0xFFFFFF;
+
 ItemVisual = function(game, engine, model, startPos, container) {
 
     Phaser.Sprite.call(this, game, engine.mmToPixels(startPos), 0);
@@ -18,6 +22,7 @@ ItemVisual = function(game, engine, model, startPos, container) {
     this.events.onDragStop.add(this.stopItemDrag, this);
     this.events.onInputOver.add(this.itemOver, this, -100);
     this.events.onInputOut.add(this.itemOut, this, -100);
+    this.dragging = false;
 
     //debug text
     var style = {
@@ -52,9 +57,12 @@ ItemVisual.prototype.update = function() {
 }
 
 ItemVisual.prototype.itemOver = function() {
+    console.log(this.dragging);
+    if(!this.dragging) this.itemVisual.tint = TINT_COLOR_HOVER;
     this.engine.measureItem(this);
 }
 ItemVisual.prototype.itemOut = function() {
+    this.tintValid();
     this.engine.hideMeasure();
 }
 
@@ -82,19 +90,21 @@ ItemVisual.prototype.move = function(xPosition) {
 }
 
 ItemVisual.prototype.tintInvalid = function() {
-    this.itemVisual.tint = 0xFF0000;
+    this.itemVisual.tint = TINT_COLOR_INVALID;
 }
 
 ItemVisual.prototype.tintValid = function() {
-    this.itemVisual.tint = 0xFFFFFF;
+    this.itemVisual.tint = TINT_COLOR_VALID;
 }
 
 ItemVisual.prototype.startItemDrag = function() {
+    this.dragging = true;
     this.itemVisual.bringToTop();
     this.dragStartPosition = this.x;
 }
 
 ItemVisual.prototype.stopItemDrag = function() {
+    this.dragging = false;
     this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
     this.tintValid();
 }

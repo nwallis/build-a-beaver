@@ -10,6 +10,7 @@ const ITEM_SITTING_ON_TOP = 8;
 const ITEM_SNAP_DISTANCE = 50;
 
 var Item = function(params) {
+    this.price = params.price;
     this.realX = params.realX;
     this.realWidth = params.realWidth;
     this.realHeight = params.realHeight;
