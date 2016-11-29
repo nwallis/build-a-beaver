@@ -57,7 +57,6 @@ ItemVisual.prototype.update = function() {
 }
 
 ItemVisual.prototype.itemOver = function() {
-    console.log(this.dragging);
     if(!this.dragging) this.itemVisual.tint = TINT_COLOR_HOVER;
     this.engine.measureItem(this);
 }
