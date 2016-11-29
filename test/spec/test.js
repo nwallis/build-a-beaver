@@ -596,7 +596,6 @@
                 wall.addItem(parent1);
                 wall.addItem(parent2);
                 wall.addItem(parent3);
-
                 var multiStartPos = wall.addItem(multiParentItem).position;
                 var multiStartPos2 = wall.addItem(multiParentItem2).position;
 

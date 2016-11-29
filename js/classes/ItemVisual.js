@@ -1,5 +1,3 @@
-const ICON_MARGIN = 5;
-
 ItemVisual = function(game, engine, model, startPos, container) {
 
     Phaser.Sprite.call(this, game, engine.mmToPixels(startPos), 0);
@@ -9,9 +7,9 @@ ItemVisual = function(game, engine, model, startPos, container) {
     this.itemVisual.height = engine.mmToPixels(model.realHeight);
     this.itemVisual.x = engine.mmToPixels(model.marginLeft);
     this.itemVisual.y = DESIGN_AREA_HEIGHT_PX - this.itemVisual.height;
+
     this.addChild(this.itemVisual);
 
-    this.icons = [];
     this.engine = engine;
     this.container = container;
     this.model = model;
@@ -23,7 +21,7 @@ ItemVisual = function(game, engine, model, startPos, container) {
 
     //debug text
     var style = {
-        font: "12px Arial",
+        font: "30px Arimo",
         fill: "#ff0044",
         wordWrap: true,
         wordWrapWidth: this.itemVisual.width,
@@ -31,11 +29,8 @@ ItemVisual = function(game, engine, model, startPos, container) {
         backgroundColor: "#ffff00"
     };
 
-    this.deleteIcon = this.game.make.sprite(0, 0, 'delete_icon');
-    //this.addIcon(this.deleteIcon, this.deleteClicked);
-
     this.debugText = this.game.make.text(20, (this.model.itemType == "wall-bay") ? 20 : 200, 'testing', style);
-    this.addChild(this.debugText);
+    //this.addChild(this.debugText);
 
     this.enable();
 }
@@ -52,46 +47,20 @@ ItemVisual.prototype.update = function() {
         //"width: " + this.model.getSize().width +
         //"\nrealX: " + this.model.getBounds().left +
         //"\ninner left: " + this.model.getInnerBounds().left +
-        "snapped child: " + snapChildName + 
+        "snapped child: " + snapChildName +
         "\nsnapped parent: " + snapParentName;
 }
 
 ItemVisual.prototype.itemOver = function() {
     this.engine.measureItem(this);
-    this.icons.forEach(function(icon) {
-        icon.visible = true;
-    });
 }
 ItemVisual.prototype.itemOut = function() {
     this.engine.hideMeasure();
-    this.icons.forEach(function(icon) {
-        icon.visible = false;
-    });
 }
 
 ItemVisual.prototype.deleteClicked = function() {
     this.parent.removeChild(this);
     this.engine.deleteItem(this.model);
-}
-
-ItemVisual.prototype.addIcon = function(icon, clickHandler) {
-
-    //icon.visible = false;
-    icon.inputEnabled = true;
-    icon.input.useHandCursor = true;
-    //icon.events.onInputUp.add(clickHandler, this);
-
-    this.icons.push(icon);
-    this.layoutIcons();
-    this.addChild(icon);
-}
-
-ItemVisual.prototype.layoutIcons = function() {
-    for (var iconCount = 0; iconCount < this.icons.length; iconCount++) {
-        var icon = this.icons[iconCount];
-        icon.y = ICON_MARGIN;
-        icon.x = this.width - ICON_MARGIN - (iconCount * (ICON_MARGIN + icon.width));
-    }
 }
 
 ItemVisual.prototype.itemDragUpdate = function() {
@@ -134,6 +103,7 @@ ItemVisual.prototype.enable = function() {
     this.input.useHandCursor = true;
     this.input.setDragLock(true, false);
     this.input.enableDrag(false, false);
+    this.events.onInputUp.add(this.engine.showIcons, this.engine, this);
 }
 
 ItemVisual.prototype.disable = function() {

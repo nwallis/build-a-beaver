@@ -16,6 +16,7 @@ ItemContainer.prototype.sortChildren = function() {
 
 ItemContainer.prototype.removeItem = function(item) {
     this.children.splice(this.children.indexOf(item.model), 1);
+    item.model.destroy();
 }
 
 ItemContainer.prototype.addItemAt = function(item, startPos) {
@@ -190,24 +191,44 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
 
                             item.compatibleItems.forEach(function(itemID) {
                                 if (child.id == itemID && child.id != item.id && intersections.lookFor(ITEM_LEFT_SIDE)) {
-                                    isCompatible = true;
-                                    var nextChild = child;
-                                    var compatibleParents = [child];
-                                    for (var additionalCount = 0; additionalCount < item.additionalCompatibleItems; additionalCount++) {
-                                        if (nextChild) {
-                                            nextChild = nextChild.itemSnappedToRight;
-                                            compatibleParents.push(nextChild);
-                                        }
 
-                                        if (!nextChild || nextChild.id != itemID || nextChild.snappedChild) isCompatible = false;
+                                    isCompatible = true;
+
+                                    if (!child.snappedChild) {
+                                        var nextChild = child;
+                                        var compatibleParents = [child];
+                                        for (var additionalCount = 0; additionalCount < item.additionalCompatibleItems; additionalCount++) {
+                                            if (nextChild) {
+                                                nextChild = nextChild.itemSnappedToRight;
+                                                compatibleParents.push(nextChild);
+                                            }
+
+                                            if (!nextChild || nextChild.id != itemID || nextChild.snappedChild) isCompatible = false;
+                                        }
+                                    } else if (child.snappedChild != item) {
+                                        isCompatible = false;
                                     }
 
                                     if (isCompatible) {
                                         snapAmount = -(item.getBounds().left - child.getInnerBounds().left);
+                                        //Delete snap references
+                                        if (item.snappedParent) {
+                                            item.snappedParent.forEach(function(parent) {
+                                                delete parent.snappedChild;
+                                            });
+                                        }
+                                        //Setup new references
                                         item.snappedParent = compatibleParents;
                                         compatibleParents.forEach(function(parent) {
                                             parent.snappedChild = item;
                                         });
+                                    } else {
+                                        //Delete snap references
+                                        if (item.snappedParent) {
+                                            item.snappedParent.forEach(function(parent) {
+                                                delete parent.snappedChild;
+                                            });
+                                        }
                                     }
                                 }
                             });

@@ -1,5 +1,6 @@
+const ICON_MARGIN = 5;
 const GAME_HEIGHT_MM = 2500;
-const DEBUG_WALL_WIDTH = 8000;
+const DEBUG_WALL_WIDTH = 4000;
 const APP_WIDTH_PX = 1270;
 const APP_HEIGHT_PX = 630;
 const DESIGN_AREA_WIDTH_PX = 1225;
@@ -9,7 +10,6 @@ const DESIGN_AREA_Y = 90;
 const DESIGN_AREA_BG_COLOR = 0xffffff;
 const DESIGN_AREA_BG_STROKE_COLOR = 0x444444;
 const DESIGN_AREA_BG_STROKE_WEIGHT = 1;
-const GAP_Y = -10;
 const BEAVER_STEP_1 = 0;
 const BEAVER_STEP_2 = 1;
 const BEAVER_STEP_3 = 2;
@@ -18,6 +18,13 @@ const DESIGN_CONTAINER_X_PX = 11;
 const DESIGN_CONTAINER_Y_PX = 44;
 const DESIGN_CONTAINER_WIDTH_PX = 1250;
 const DESIGN_CONTAINER_HEIGHT_PX = 426;
+const MARKER_TOP_Y = -3;
+const MARKER_BOTTOM_Y = 355;
+const MARKER_HEIGHT = 10;
+const MARKER_COLOR = 0xc27843;
+const MARKER_COLOR_HTML = "#aa662e";
+const MM_SUFFIX = " mm";
+const MARKER_LINE_THICKNESS = 4;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -200,15 +207,33 @@ Beaver.prototype.create = function() {
     //create container for ui
     this.uiContainer = this.game.add.group();
 
+    //Header buttons
+    this.game.add.button(396, 13, 'header_stage_1', function() {
+        this.changeStep(BEAVER_STEP_1);
+    }, this, 1, 0, 1);
+    this.game.add.button(520, 13, 'header_stage_2', function() {
+        this.changeStep(BEAVER_STEP_2);
+    }, this, 1, 0, 1);
+    this.game.add.button(642, 13, 'header_stage_3', function() {
+        this.changeStep(BEAVER_STEP_3);
+    }, this, 1, 0, 1);
+
     //Accordion
     var accordionSection;
     this.productAccordion = new Accordion(this.game, this, this.uiContainer);
     accordionSection = this.productAccordion.addSection('stage_1_closed', 'stage_1_open', 'stage_1_disabled', BEAVER_STEP_1);
     accordionSection.addContent(new ProductVisual(this.game, this, {
-        realWidth: 300,
+        realWidth: 230,
         realHeight: 2500,
         image: 'pillar',
         id: 6
+    }));
+
+    accordionSection.addContent(new ProductVisual(this.game, this, {
+        realWidth: 820,
+        realHeight: 2040,
+        image: 'door_820_2040',
+        id: 600 
     }));
 
     accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open', 'stage_2_disabled', BEAVER_STEP_2);
@@ -228,7 +253,7 @@ Beaver.prototype.create = function() {
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realHeight: 2400,
         realWidth: 600,
-        image: 'pillar_cover_450_2400',
+        image: 'pillar_cover_600_2400',
         marginRight: 15,
         marginLeft: 15,
         id: 10,
@@ -293,8 +318,8 @@ Beaver.prototype.create = function() {
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
         realWidth: 1800,
-        realHeight: 900,
-        image: 'cabinet_1800_900',
+        realHeight: 1005,
+        image: 'cabinet_1800_1005',
         compatibleItems: [100],
         id: 4,
         additionalCompatibleItems: 1,
@@ -328,14 +353,38 @@ Beaver.prototype.create = function() {
     this.uiContainer.add(this.dialogContainer);
 
     //Layer for the gap graphics
+    
+    var measureStyling = {
+        font:"12px Lato",
+        fontStyle:"italic",
+        align:"left",
+        fontWeight:"300",
+        fill:MARKER_COLOR_HTML,
+        stroke:MARKER_COLOR_HTML,
+        strokeThickness:1
+    }; 
     this.measureContainer = this.game.add.group();
     this.measureContainer.x = this.layerContainer.x;
     this.measureContainer.y = this.layerContainer.y;
     this.measureGraphics = this.game.make.graphics();
-    this.itemWidthText = this.game.add.bitmapText(0, 0, 'arimo', '', 12);
+    this.itemWidthText = this.game.add.text(0, 0, '', measureStyling);
+    this.itemLeftText = this.game.add.text(80 - this.layerContainer.x, 358, '', measureStyling);
+    measureStyling.align = "right";
+    this.itemRightText = this.game.add.text(1130 - this.layerContainer.x, 358, '', measureStyling);
     this.measureContainer.add(this.measureGraphics);
     this.measureContainer.add(this.itemWidthText);
+    this.measureContainer.add(this.itemLeftText);
+    this.measureContainer.add(this.itemRightText);
     this.uiContainer.addChild(this.measureContainer);
+
+    //Icons
+    this.deleteIcon = this.game.add.button(0,0,'delete_icon',this.deleteItem, this, 0,0,0);
+    this.infoIcon = this.game.add.button(0,0,'info_icon',this.displayItemInfo, this, 0,0,0);
+    this.infoIcon.scale.x = this.infoIcon.scale.y = this.deleteIcon.scale.x = this.deleteIcon.scale.y = .5;
+    this.deleteIcon.visible = this.infoIcon.visible = false;
+    this.deleteIcon.anchor.x = this.infoIcon.anchor.x = 0;
+    this.deleteIcon.anchor.y = this.infoIcon.anchor.y = 0;
+    this.icons = [this.deleteIcon, this.infoIcon];
 
     //Price counter
     this.priceCounter = new Counter(this.game);
@@ -351,12 +400,38 @@ Beaver.prototype.create = function() {
         arranger.startFullScreen();
     });
 
-
     this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     this.game.scale.pageAlignVertically = true;
     this.game.scale.pageAlignHorizontally = true;
     this.game.scale.setShowAll();
     this.game.scale.refresh();
+}
+
+Beaver.prototype.showIcons = function(itemVisual){
+    //Set icon positions based on margins
+    for (var iconCount = 0; iconCount < this.icons.length; iconCount++) {
+        var icon = this.icons[iconCount];
+        icon.y = this.layerContainer.y + (iconCount * (ICON_MARGIN + icon.height)) + (DESIGN_AREA_HEIGHT_PX - itemVisual.height);
+        console.log(DESIGN_AREA_HEIGHT_PX - itemVisual.height);
+        icon.x = this.layerContainer.x + itemVisual.x + ((itemVisual.width - icon.width) / 2);
+        icon.visible = true;
+    }
+
+    this.selectedItem = itemVisual;
+    return this.icons;
+}
+
+Beaver.prototype.hideIcons = function(){
+    this.deleteIcon.visible = this.infoIcon.visible = false;
+}
+
+Beaver.prototype.deleteItem = function(){
+    this.currentWallLayer().removeItem(this.selectedItem);
+    this.hideIcons();
+}
+
+Beaver.prototype.displayItemInfo = function(itemVisual){
+    this.hideIcons();
 }
 
 Beaver.prototype.startFullScreen = function() {
@@ -484,20 +559,37 @@ Beaver.prototype.update = function() {
         var itemWidthPixels = itemRightPixels - itemLeftPixels;
 
         this.measureGraphics.clear();
-        this.measureGraphics.lineStyle(2, 0, 1);
-        this.measureGraphics.moveTo(itemLeftPixels, GAP_Y);
-        this.measureGraphics.lineTo(itemRightPixels, GAP_Y);
-        this.measureGraphics.lineStyle(1, 0, 1);
-        this.measureGraphics.moveTo(itemLeftPixels, GAP_Y - 5);
-        this.measureGraphics.lineTo(itemLeftPixels, GAP_Y + 5);
-        this.measureGraphics.moveTo(itemRightPixels, GAP_Y - 5);
-        this.measureGraphics.lineTo(itemRightPixels, GAP_Y + 5);
+        //horizontal line
+        this.measureGraphics.lineStyle(MARKER_LINE_THICKNESS, MARKER_COLOR, 1);
+        this.measureGraphics.moveTo(itemLeftPixels, MARKER_TOP_Y);
+        this.measureGraphics.lineTo(itemRightPixels, MARKER_TOP_Y);
+        this.measureGraphics.moveTo(0, MARKER_BOTTOM_Y);
+        this.measureGraphics.lineTo(itemLeftPixels, MARKER_BOTTOM_Y);
+        this.measureGraphics.moveTo(itemRightPixels, MARKER_BOTTOM_Y);
+        this.measureGraphics.lineTo(this.layerContainer.width, MARKER_BOTTOM_Y);
+         
+        //vertical lines
+        this.measureGraphics.lineStyle(1, MARKER_COLOR, 1);
+        this.measureGraphics.moveTo(itemLeftPixels, MARKER_TOP_Y + (MARKER_LINE_THICKNESS / 2));
+        this.measureGraphics.lineTo(itemLeftPixels, MARKER_TOP_Y - MARKER_HEIGHT);
+        this.measureGraphics.moveTo(itemRightPixels, MARKER_TOP_Y + (MARKER_LINE_THICKNESS / 2));
+        this.measureGraphics.lineTo(itemRightPixels, MARKER_TOP_Y - MARKER_HEIGHT);
+        this.measureGraphics.moveTo(0, MARKER_BOTTOM_Y - (MARKER_LINE_THICKNESS / 2));
+        this.measureGraphics.lineTo(0, MARKER_BOTTOM_Y + MARKER_HEIGHT);
+        this.measureGraphics.moveTo(this.layerContainer.width, MARKER_BOTTOM_Y - (MARKER_LINE_THICKNESS / 2));
+        this.measureGraphics.lineTo(this.layerContainer.width, MARKER_BOTTOM_Y + MARKER_HEIGHT);
+        this.measureGraphics.moveTo(itemLeftPixels, MARKER_BOTTOM_Y - (MARKER_LINE_THICKNESS / 2));
+        this.measureGraphics.lineTo(itemLeftPixels, MARKER_BOTTOM_Y + MARKER_HEIGHT);
+        this.measureGraphics.moveTo(itemRightPixels, MARKER_BOTTOM_Y - (MARKER_LINE_THICKNESS / 2));
+        this.measureGraphics.lineTo(itemRightPixels, MARKER_BOTTOM_Y + MARKER_HEIGHT);
 
         //create text for width of item
-        this.itemWidthText.text = itemMeasurement.width + "mm";
-        this.itemWidthText.tint = 0xff0000;
+        this.itemWidthText.text = itemMeasurement.width + MM_SUFFIX;
         this.itemWidthText.x = itemLeftPixels + ((itemWidthPixels - this.itemWidthText.width) / 2);
-        this.itemWidthText.y = this.measureGraphics.y - 25;
+        this.itemWidthText.y = this.measureGraphics.y - 30;
+
+        this.itemLeftText.text = itemMeasurement.left + MM_SUFFIX;
+        this.itemRightText.text = (DEBUG_WALL_WIDTH - itemMeasurement.right) + MM_SUFFIX;
     }
 
     this.layerContainer.update();
@@ -529,14 +621,16 @@ Beaver.prototype.preload = function() {
 
     //buttons
     this.game.load.spritesheet('button_ok', '/images/ui/buttons/ok.png', 113, 31);
-    this.game.load.spritesheet('button_cancel', '/images/ui/buttons/cancel.png', 113, 31);
-    this.game.load.spritesheet('header_stage_1', '/images/ui/buttons/header_stage_1.png', 114, 20);
-
+    this.game.load.spritesheet('button_cancel', '/images/ui/buttons/cancel.png', 113, 31); 
+    this.game.load.spritesheet('header_stage_1', '/images/ui/buttons/header_stage_1.png', 112, 20); 
+    this.game.load.spritesheet('header_stage_2', '/images/ui/buttons/header_stage_2.png', 112, 20); 
+    this.game.load.spritesheet('header_stage_3', '/images/ui/buttons/header_stage_3.png', 112, 20); 
     //cursors
     this.game.load.image('position_product_cursor', '/images/ui/cursors/position_product.png');
 
     //icons
-    this.game.load.image('delete_icon', '/images/icons/delete_icon.png');
+    this.game.load.spritesheet('delete_icon', '/images/ui/icons/delete.png', 58, 58);
+    this.game.load.spritesheet('info_icon', '/images/ui/icons/info.png', 58, 58);
 
     this.game.load.image('ui_mockup', '/images/ui/background.jpg');
     this.game.load.bitmapFont('arimo', '/fonts/arimo.png', '/fonts/arimo.fnt');
@@ -546,13 +640,15 @@ Beaver.prototype.preload = function() {
     this.game.load.image('cabinet_600_1800', '/images/products/cabinet_600_1800.jpg');
     this.game.load.image('cabinet_900_900', '/images/products/cabinet_900_900.jpg');
     this.game.load.image('cabinet_900_1800', '/images/products/cabinet_900_1800.jpg');
-    this.game.load.image('cabinet_1800_900', '/images/products/cabinet_1800_900.jpg');
+    this.game.load.image('cabinet_1800_1005', '/images/products/cabinet_1800_1005.jpg');
 
     //wall bays and pillars
     this.game.load.image('wall_bay_450_2400', '/images/products/wall_bay_450_2400.jpg');
     this.game.load.image('wall_bay_600_2400', '/images/products/wall_bay_600_2400.jpg');
     this.game.load.image('wall_bay_900_2400', '/images/products/wall_bay_900_2400.jpg');
     this.game.load.image('pillar_cover_450_2400', '/images/products/pillar_cover_450_2400.jpg');
-    this.game.load.image('pillar', '/images/pillar.jpg');
+    this.game.load.image('pillar_cover_600_2400', '/images/products/pillar_cover_600_2400.jpg');
+    this.game.load.image('pillar', '/images/objects/pillar.jpg');
+    this.game.load.image('door_820_2040', '/images/objects/door_820_2040.jpg');
 
 }

@@ -19,16 +19,16 @@
     <script src="js/classes/AccordionSection.js"></script>
     <script src="js/Beaver.js"></script>
     <script src="js/Boot.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Arimo:400,400i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
 </head>
 
 <body>
     <style type="text/css">
-        #design-container{
-            
-        }
-
-        .hide-mouse{
-            cursor:none !important;
+        #design-container {}
+        
+        .hide-mouse {
+            cursor: none !important;
         }
     </style>
     <script>
@@ -54,7 +54,8 @@
                 $("#step-three-options").show();
             });
 
-            var game = new Phaser.Game(APP_WIDTH_PX, APP_HEIGHT_PX, Phaser.AUTO, 'design-container');
+            var game = new Phaser.Game(APP_WIDTH_PX, APP_HEIGHT_PX,
+                Phaser.AUTO, 'design-container');
 
             game.state.add('Boot', Boot);
             game.state.add('Beaver', arranger);
