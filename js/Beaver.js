@@ -1,6 +1,5 @@
 const ICON_MARGIN = 5;
 const GAME_HEIGHT_MM = 2500;
-const DEBUG_WALL_WIDTH = 8000;
 const APP_WIDTH_PX = 1270;
 const APP_HEIGHT_PX = 630;
 const DESIGN_AREA_WIDTH_PX = 1225;
@@ -107,9 +106,9 @@ Beaver.prototype.changeStep = function(stepNumber) {
         this.stepNumber = stepNumber;
         this.confirmStepChange();
     } else if (validChange && reasons.length > 0) {
-        this.showDialog(reasons, warnings);
+        this.showDialog(reasons, warnings, null, null);
     } else if (!validChange) {
-        this.showError(reasons, warnings);
+        this.showError(reasons, warnings, null, null);
     }
 
     return {
@@ -141,10 +140,9 @@ Beaver.prototype.showDialog = function(reasons, warnings) {
     if (this.dialogBox) this.dialogBox.show(reasons, warnings);
 }
 
-Beaver.prototype.showError = function(reasons, warnings, callback) {
+Beaver.prototype.showError = function(reasons, warnings, okCallback, uiElements) {
     this.prepareDialog();
-    if (callback) this.errorBox.okCallback = callback;
-    this.errorBox.show(reasons, warnings);
+    this.errorBox.show(reasons, warnings, okCallback, uiElements);
 }
 
 Beaver.prototype.countItems = function(layerIndex) {
@@ -188,7 +186,7 @@ Beaver.prototype.create = function() {
     this.game.input.addMoveCallback(this.moveProductPlacement, this);
 
     //Figure out how many pixels wide the world needs to be
-    this.wallWidthPixels = this.mmToPixels(DEBUG_WALL_WIDTH);
+    this.wallWidthPixels = this.mmToPixels(this.desiredWallWidth);
     this.wallHeightPixels = this.stage.height;
     this.game.world.setBounds(0, 0, this.wallWidthPixels, this.wallHeightPixels);
 
@@ -355,6 +353,13 @@ Beaver.prototype.create = function() {
         additionalCompatibleItems: 1,
     }));
 
+    //Icons
+    this.deleteIcon = this.game.add.button(0, 0, 'delete_icon', this.deleteItem, this, 0, 0, 0);
+    this.infoIcon = this.game.add.button(0, 0, 'info_icon', this.displayItemInfo, this, 0, 0, 0);
+    this.infoIcon.scale.x = this.infoIcon.scale.y = this.deleteIcon.scale.x = this.deleteIcon.scale.y = .5;
+    this.deleteIcon.visible = this.infoIcon.visible = false;
+    this.icons = [this.deleteIcon, this.infoIcon];
+
     //Dialog boxes
     this.dialogContainer = this.game.add.group();
 
@@ -365,7 +370,6 @@ Beaver.prototype.create = function() {
     this.dialogBackgroundColor.alpha = 0;
     this.dialogBackgroundColor.drawRect(0, 0, APP_WIDTH_PX, APP_HEIGHT_PX);
     this.dialogBackgroundColor.inputEnabled = true;
-    this.dialogBackgroundColor.input.useHandCursor = true;
     this.dialogContainer.add(this.dialogBackgroundColor);
 
     //Container for all dialog boxes
@@ -382,23 +386,16 @@ Beaver.prototype.create = function() {
 
     this.uiContainer.add(this.dialogContainer);
 
-    //Layer for the gap graphics
-
-
-    //Icons
-    this.deleteIcon = this.game.add.button(0, 0, 'delete_icon', this.deleteItem, this, 0, 0, 0);
-    this.infoIcon = this.game.add.button(0, 0, 'info_icon', this.displayItemInfo, this, 0, 0, 0);
-    this.infoIcon.scale.x = this.infoIcon.scale.y = this.deleteIcon.scale.x = this.deleteIcon.scale.y = .5;
-    this.deleteIcon.visible = this.infoIcon.visible = false;
-    this.icons = [this.deleteIcon, this.infoIcon];
-
     //Price counter
     this.priceCounter = new Counter(this.game);
     this.priceCounter.x = 1172;
     this.priceCounter.y = 17;
     this.uiContainer.addChild(this.priceCounter);
 
-    this.showError(['Move the slider left and right to change your wall width.\nAfter you selecting OK, you can drag products onto your wall.'], ['How wide is your wall?'], this.setupWall);
+    //Create a slider for the dialog
+    this.wallWidthSlider = new Slider(this.game, this, 300,1000,9000,50);
+
+    this.showError(['Move the slider left and right to change your wall width.\nAfter you selecting OK, you can drag products onto your wall.'], ['How wide is your wall?'], this.setupWall, this.wallWidthSlider);
 
     $("#start-full-screen").click(function() {
         arranger.startFullScreen();
@@ -411,12 +408,14 @@ Beaver.prototype.create = function() {
     this.game.scale.refresh();
 }
 
-Beaver.prototype.setupWall = function(){
+Beaver.prototype.setupWall = function() {
+
+    this.desiredWallWidth = this.wallWidthSlider.currentValue;
 
     //Draw wall based on input width
     this.wallOutline.beginFill(DESIGN_AREA_BG_COLOR);
     this.wallOutline.lineStyle(DESIGN_AREA_BG_STROKE_WEIGHT, DESIGN_AREA_BG_STROKE_COLOR, .3);
-    this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), DESIGN_AREA_HEIGHT_PX);
+    this.wallOutline.drawRect(0, 0, this.mmToPixels(this.desiredWallWidth), DESIGN_AREA_HEIGHT_PX);
 
     //Position and center the layer container
     this.layerContainer.y = DESIGN_AREA_Y;
@@ -569,7 +568,7 @@ Beaver.prototype.addWallLayer = function() {
     }
 
     var newWall = new ItemContainer({
-        realWidth: DEBUG_WALL_WIDTH,
+        realWidth: this.desiredWallWidth,
         realHeight: GAME_HEIGHT_MM,
         layerCollisions: layerCollisions,
         noGoZones: noGoZones
@@ -634,7 +633,7 @@ Beaver.prototype.update = function() {
         this.itemWidthText.y = this.measureGraphics.y - 30;
 
         this.itemLeftText.text = itemMeasurement.left + MM_SUFFIX;
-        this.itemRightText.text = (DEBUG_WALL_WIDTH - itemMeasurement.right) + MM_SUFFIX;
+        this.itemRightText.text = (this.desiredWallWidth - itemMeasurement.right) + MM_SUFFIX;
     }
 
     this.layerContainer.update();

@@ -10,7 +10,8 @@ Dialog = function(game, engine, container, showCancel, cancelCallback, cancelCon
     this.visible = false;
     this.engine = engine;
 
-    this.add(this.game.add.sprite(0, 0, 'dialog_background'));
+    this.dialogBackground = this.game.add.sprite(0,0,'dialog_background');
+    this.add(this.dialogBackground);
     this.buttonsContainer = this.game.add.sprite(60, 210);
     this.cancelCallback = cancelCallback;
     this.okCallback = okCallback;
@@ -41,12 +42,18 @@ Dialog = function(game, engine, container, showCancel, cancelCallback, cancelCon
 Dialog.prototype = Object.create(Phaser.Group.prototype);
 Dialog.prototype.constructor = Dialog;
 
-Dialog.prototype.show = function(reasons, warnings) {
+Dialog.prototype.show = function(reasons, warnings, okCallback, uiElements) {
+    if (okCallback) this.okCallback = okCallback;
     this.visible = true;
     this.warningText.text = warnings[0];
     this.reasonsText.text = reasons.join('\n');
     this.reasonsText.y = this.warningText.y + this.warningText.height + 20;
     this.y = DESIGN_CONTAINER_Y_PX + DESIGN_CONTAINER_HEIGHT_PX;
+    if (uiElements) {
+        this.add(uiElements);
+        uiElements.y = this.reasonsText.y + this.reasonsText.height + 40;
+        uiElements.x = (450 - uiElements.width) / 2;
+    }
     this.game.add.tween(this).to({y:DIALOG_DISPLAY_Y_PX}, DIALOG_TWEEN_TIME, DIALOG_EASE_FUNCTION, true);
 }
 
