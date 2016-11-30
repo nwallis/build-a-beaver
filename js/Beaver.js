@@ -677,8 +677,8 @@ Beaver.prototype.preload = function() {
     this.game.load.spritesheet('info_icon', '/images/beaver/ui/icons/info.png', 58, 58);
 
     this.game.load.image('ui_mockup', '/images/beaver/ui/background.jpg');
-    this.game.load.bitmapFont('arimo', '/fonts/arimo.png', '/fonts/arimo.fnt');
-    this.game.load.bitmapFont('arimo_bold_16', '/fonts/arimo_bold_16.png', '/fonts/arimo_bold_16.fnt');
+    this.game.load.bitmapFont('arimo', '/images/beaver/fonts/arimo.png', '/images/beaver/fonts/arimo.fnt');
+    this.game.load.bitmapFont('arimo_bold_16', '/images/beaver/fonts/arimo_bold_16.png', '/images/beaver/fonts/arimo_bold_16.fnt');
 
     //cabinets 
     this.game.load.image('cabinet_600_1800', '/images/beaver/products/cabinet_600_1800.jpg');
