@@ -141,9 +141,10 @@ Beaver.prototype.showDialog = function(reasons, warnings) {
     if (this.dialogBox) this.dialogBox.show(reasons, warnings);
 }
 
-Beaver.prototype.showError = function(reasons, warnings) {
+Beaver.prototype.showError = function(reasons, warnings, callback) {
     this.prepareDialog();
-    if (this.errorBox) this.errorBox.show(reasons, warnings);
+    if (callback) this.errorBox.okCallback = callback;
+    this.errorBox.show(reasons, warnings);
 }
 
 Beaver.prototype.countItems = function(layerIndex) {
@@ -204,14 +205,7 @@ Beaver.prototype.create = function() {
 
     //Background image for the wall
     this.wallOutline = this.game.add.graphics(0, 0);
-    this.wallOutline.beginFill(DESIGN_AREA_BG_COLOR);
-    this.wallOutline.lineStyle(DESIGN_AREA_BG_STROKE_WEIGHT, DESIGN_AREA_BG_STROKE_COLOR, .3);
-    this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), DESIGN_AREA_HEIGHT_PX);
     this.layerContainer.add(this.wallOutline);
-
-    //Position and center the layer container
-    this.layerContainer.y = DESIGN_AREA_Y;
-    this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
 
     //Mask the layer container
     this.layerContainer.mask = this.designAreaMask;
@@ -390,6 +384,44 @@ Beaver.prototype.create = function() {
 
     //Layer for the gap graphics
 
+
+    //Icons
+    this.deleteIcon = this.game.add.button(0, 0, 'delete_icon', this.deleteItem, this, 0, 0, 0);
+    this.infoIcon = this.game.add.button(0, 0, 'info_icon', this.displayItemInfo, this, 0, 0, 0);
+    this.infoIcon.scale.x = this.infoIcon.scale.y = this.deleteIcon.scale.x = this.deleteIcon.scale.y = .5;
+    this.deleteIcon.visible = this.infoIcon.visible = false;
+    this.icons = [this.deleteIcon, this.infoIcon];
+
+    //Price counter
+    this.priceCounter = new Counter(this.game);
+    this.priceCounter.x = 1172;
+    this.priceCounter.y = 17;
+    this.uiContainer.addChild(this.priceCounter);
+
+    this.showError(['Move the slider left and right to change your wall width.\nAfter you selecting OK, you can drag products onto your wall.'], ['How wide is your wall?'], this.setupWall);
+
+    $("#start-full-screen").click(function() {
+        arranger.startFullScreen();
+    });
+
+    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.game.scale.pageAlignVertically = true;
+    this.game.scale.pageAlignHorizontally = true;
+    this.game.scale.setShowAll();
+    this.game.scale.refresh();
+}
+
+Beaver.prototype.setupWall = function(){
+
+    //Draw wall based on input width
+    this.wallOutline.beginFill(DESIGN_AREA_BG_COLOR);
+    this.wallOutline.lineStyle(DESIGN_AREA_BG_STROKE_WEIGHT, DESIGN_AREA_BG_STROKE_COLOR, .3);
+    this.wallOutline.drawRect(0, 0, this.mmToPixels(DEBUG_WALL_WIDTH), DESIGN_AREA_HEIGHT_PX);
+
+    //Position and center the layer container
+    this.layerContainer.y = DESIGN_AREA_Y;
+    this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
+
     var measureStyling = {
         font: "12px Lato",
         fontStyle: "italic",
@@ -413,33 +445,7 @@ Beaver.prototype.create = function() {
     this.measureContainer.add(this.itemRightText);
     this.uiContainer.addChild(this.measureContainer);
 
-    //Icons
-    this.deleteIcon = this.game.add.button(0, 0, 'delete_icon', this.deleteItem, this, 0, 0, 0);
-    this.infoIcon = this.game.add.button(0, 0, 'info_icon', this.displayItemInfo, this, 0, 0, 0);
-    this.infoIcon.scale.x = this.infoIcon.scale.y = this.deleteIcon.scale.x = this.deleteIcon.scale.y = .5;
-    this.deleteIcon.visible = this.infoIcon.visible = false;
-    this.icons = [this.deleteIcon, this.infoIcon];
-
-    //Price counter
-    this.priceCounter = new Counter(this.game);
-    this.priceCounter.x = 1172;
-    this.priceCounter.y = 17;
-    this.uiContainer.addChild(this.priceCounter);
-
-    //Create initial wall layer
-    //this.addWallLayer();
-    //this.productAccordion.openByIndex(BEAVER_STEP_1);
     this.changeStep(BEAVER_STEP_1);
-
-    $("#start-full-screen").click(function() {
-        arranger.startFullScreen();
-    });
-
-    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    this.game.scale.pageAlignVertically = true;
-    this.game.scale.pageAlignHorizontally = true;
-    this.game.scale.setShowAll();
-    this.game.scale.refresh();
 }
 
 Beaver.prototype.showIcons = function(itemVisual) {
