@@ -234,7 +234,7 @@ Beaver.prototype.create = function() {
         realWidth: 230,
         realHeight: 2500,
         image: 'pillar',
-        id: 6
+        id: -1
     }));
 
     accordionSection.addContent(new ProductVisual(this.game, this, {
@@ -243,7 +243,7 @@ Beaver.prototype.create = function() {
         realWidth: 820,
         realHeight: 2040,
         image: 'door_820_2040',
-        id: 600
+        id: -2 
     }));
 
     accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open', 'stage_2_disabled', BEAVER_STEP_2);
@@ -255,9 +255,9 @@ Beaver.prototype.create = function() {
         image: 'pillar_cover_450_2400',
         marginRight: 15,
         marginLeft: 15,
-        id: 10,
-        collapseTypes: [5, 10, 100],
-        compatibleItemOverlaps: [6],
+        id: 725,
+        collapseTypes: [722,723,724,725,726],
+        compatibleItemOverlaps: [-1],
         allowedIntersections: [
             ITEM_EXTREMITIES_OUTSIDE
         ]
@@ -270,9 +270,9 @@ Beaver.prototype.create = function() {
         image: 'pillar_cover_600_2400',
         marginRight: 15,
         marginLeft: 15,
-        id: 10,
-        collapseTypes: [5, 10, 100],
-        compatibleItemOverlaps: [6],
+        id: 726,
+        collapseTypes: [722,723,724,725,726],
+        compatibleItemOverlaps: [-1],
         allowedIntersections: [
             ITEM_EXTREMITIES_OUTSIDE
         ]
@@ -285,8 +285,8 @@ Beaver.prototype.create = function() {
         image: 'wall_bay_450_2400',
         marginRight: 15,
         marginLeft: 15,
-        id: 5,
-        collapseTypes: [5, 10, 100],
+        id: 722,
+        collapseTypes: [722,723,724,725,726],
         itemType: "wall-bay"
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
@@ -297,8 +297,8 @@ Beaver.prototype.create = function() {
         image: 'wall_bay_600_2400',
         marginRight: 15,
         marginLeft: 15,
-        id: 5,
-        collapseTypes: [5, 10, 100],
+        id: 723,
+        collapseTypes: [722,723,724,725,726],
         itemType: "wall-bay"
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
@@ -309,8 +309,8 @@ Beaver.prototype.create = function() {
         image: 'wall_bay_900_2400',
         marginRight: 15,
         marginLeft: 15,
-        id: 100,
-        collapseTypes: [5, 10, 100],
+        id: 724,
+        collapseTypes: [722,723,724,725,726],
         itemType: "wall-bay"
     }));
 
@@ -321,8 +321,8 @@ Beaver.prototype.create = function() {
         realWidth: 600,
         realHeight: 1800,
         image: 'cabinet_600_1800',
-        compatibleItems: [5],
-        id: 1
+        compatibleItems: [723],
+        id:727 
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
         name: 'CABINET',
@@ -330,8 +330,8 @@ Beaver.prototype.create = function() {
         realWidth: 900,
         realHeight: 1800,
         image: 'cabinet_900_1800',
-        compatibleItems: [100],
-        id: 2
+        compatibleItems: [724],
+        id:728 
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
         name: 'CABINET',
@@ -339,8 +339,8 @@ Beaver.prototype.create = function() {
         realWidth: 900,
         realHeight: 900,
         image: 'cabinet_900_900',
-        compatibleItems: [100],
-        id: 3
+        compatibleItems: [724],
+        id:729 
     }));
     accordionSection.addContent(new ProductVisual(this.game, this, {
         name: 'CABINET',
@@ -348,8 +348,8 @@ Beaver.prototype.create = function() {
         realWidth: 1800,
         realHeight: 1005,
         image: 'cabinet_1800_1005',
-        compatibleItems: [100],
-        id: 4,
+        compatibleItems: [724],
+        id: 730,
         additionalCompatibleItems: 1,
     }));
 
