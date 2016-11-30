@@ -17,7 +17,6 @@
     <link href="https://fonts.googleapis.com/css?family=Arimo:400,400i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
 
-<body>
     <style type="text/css">
         #design-container {}
         
