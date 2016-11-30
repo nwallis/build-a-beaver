@@ -23,6 +23,7 @@
         cursor: none !important;
     }
 </style>
+
 <script>
     var arranger = new Beaver();
 
