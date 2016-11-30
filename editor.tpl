@@ -1,22 +1,22 @@
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/phaser/build/phaser.js"></script>
-    <script src="js/classes/Item.js"></script>
-    <script src="js/classes/Counter.js"></script>
-    <script src="js/classes/ItemContainer.js"></script>
-    <script src="js/classes/Intersect.js"></script>
-    <script src="js/classes/ContainerGap.js"></script>
-    <script src="js/classes/ItemContainerVisual.js"></script>
-    <script src="js/classes/ItemVisual.js"></script>
-    <script src="js/classes/ProductVisual.js"></script>
-    <script src="js/classes/Dialog.js"></script>
-    <script src="js/classes/Accordion.js"></script>
-    <script src="js/classes/Slider.js"></script>
-    <script src="js/classes/AccordionSection.js"></script>
-    <script src="js/Beaver.js"></script>
-    <script src="js/Boot.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/Item.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/Counter.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/ItemContainer.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/Intersect.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/ContainerGap.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/ItemContainerVisual.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/ItemVisual.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/ProductVisual.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/Dialog.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/Accordion.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/Slider.js"></script>
+    <script src="js/addons/my_changes/beaver/classes/AccordionSection.js"></script>
+    <script src="js/addons/my_changes/beaver/Beaver.js"></script>
+    <script src="js/addons/my_changes/beaver/Boot.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Arimo:400,400i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
 
+<body>
     <style type="text/css">
         #design-container {}
         
