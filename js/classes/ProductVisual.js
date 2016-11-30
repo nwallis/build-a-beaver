@@ -34,7 +34,7 @@ var ProductVisual = function(game, engine, productData) {
     this.productImage.y = PRODUCT_BG_HEIGHT_PX / 2;
     this.productBackground.addChild(this.productImage);
 
-    this.productText = this.game.add.text(100, 15, this.productData.name + '\n' +this.productData.realWidth+' x '+this.productData.realHeight+'mm\n$' + Number(this.productData.price).toFixed(2), {
+    this.productText = this.game.add.text(100, 15, this.productData.name + '\n' +this.productData.realWidth+' x '+this.productData.realHeight+'mm\n$' + (this.productData.price > 0) ? Number(this.productData.price).toFixed(2) : '', {
         font: "12px Lato",
         fontStyle: "",
         align: "left",

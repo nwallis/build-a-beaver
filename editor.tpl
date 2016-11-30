@@ -1,4 +1,4 @@
-    <script src="bower_components/phaser/build/phaser.js"></script>
+    <script src="js/addons/my_changes/beaver/phaser.js"></script>
     <script src="js/addons/my_changes/beaver/classes/Item.js"></script>
     <script src="js/addons/my_changes/beaver/classes/Counter.js"></script>
     <script src="js/addons/my_changes/beaver/classes/ItemContainer.js"></script>
