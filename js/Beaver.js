@@ -647,52 +647,52 @@ Beaver.prototype.init = function() {}
 Beaver.prototype.preload = function() {
 
     //accordion images
-    this.game.load.image('stage_1_closed', '/images/accordion/stage_1_closed.jpg');
-    this.game.load.image('stage_1_disabled', '/images/accordion/stage_1_disabled.jpg');
-    this.game.load.image('stage_1_open', '/images/accordion/stage_1_open.jpg');
-    this.game.load.image('stage_2_closed', '/images/accordion/stage_2_closed.jpg');
-    this.game.load.image('stage_2_disabled', '/images/accordion/stage_2_disabled.jpg');
-    this.game.load.image('stage_2_open', '/images/accordion/stage_2_open.jpg');
-    this.game.load.image('stage_3_closed', '/images/accordion/stage_3_closed.jpg');
-    this.game.load.image('stage_3_disabled', '/images/accordion/stage_3_disabled.jpg');
-    this.game.load.image('stage_3_open', '/images/accordion/stage_3_open.jpg');
-    this.game.load.image('stage_4_closed', '/images/accordion/stage_4_closed.jpg');
-    this.game.load.image('stage_4_disabled', '/images/accordion/stage_4_disabled.jpg');
-    this.game.load.image('stage_4_open', '/images/accordion/stage_4_open.jpg');
+    this.game.load.image('stage_1_closed', '/images/beaver/accordion/stage_1_closed.jpg');
+    this.game.load.image('stage_1_disabled', '/images/beaver/accordion/stage_1_disabled.jpg');
+    this.game.load.image('stage_1_open', '/images/beaver/accordion/stage_1_open.jpg');
+    this.game.load.image('stage_2_closed', '/images/beaver/accordion/stage_2_closed.jpg');
+    this.game.load.image('stage_2_disabled', '/images/beaver/accordion/stage_2_disabled.jpg');
+    this.game.load.image('stage_2_open', '/images/beaver/accordion/stage_2_open.jpg');
+    this.game.load.image('stage_3_closed', '/images/beaver/accordion/stage_3_closed.jpg');
+    this.game.load.image('stage_3_disabled', '/images/beaver/accordion/stage_3_disabled.jpg');
+    this.game.load.image('stage_3_open', '/images/beaver/accordion/stage_3_open.jpg');
+    this.game.load.image('stage_4_closed', '/images/beaver/accordion/stage_4_closed.jpg');
+    this.game.load.image('stage_4_disabled', '/images/beaver/accordion/stage_4_disabled.jpg');
+    this.game.load.image('stage_4_open', '/images/beaver/accordion/stage_4_open.jpg');
 
     //dialog images
-    this.game.load.image('dialog_background', '/images/ui/dialog/dialog_background.png');
+    this.game.load.image('dialog_background', '/images/beaver/ui/dialog/dialog_background.png');
 
     //buttons
-    this.game.load.spritesheet('button_ok', '/images/ui/buttons/ok.png', 113, 31);
-    this.game.load.spritesheet('button_cancel', '/images/ui/buttons/cancel.png', 113, 31);
-    this.game.load.spritesheet('header_stage_1', '/images/ui/buttons/header_stage_1.png', 112, 20);
-    this.game.load.spritesheet('header_stage_2', '/images/ui/buttons/header_stage_2.png', 112, 20);
-    this.game.load.spritesheet('header_stage_3', '/images/ui/buttons/header_stage_3.png', 112, 20);
+    this.game.load.spritesheet('button_ok', '/images/beaver/ui/buttons/ok.png', 113, 31);
+    this.game.load.spritesheet('button_cancel', '/images/beaver/ui/buttons/cancel.png', 113, 31);
+    this.game.load.spritesheet('header_stage_1', '/images/beaver/ui/buttons/header_stage_1.png', 112, 20);
+    this.game.load.spritesheet('header_stage_2', '/images/beaver/ui/buttons/header_stage_2.png', 112, 20);
+    this.game.load.spritesheet('header_stage_3', '/images/beaver/ui/buttons/header_stage_3.png', 112, 20);
     //cursors
-    this.game.load.image('position_product_cursor', '/images/ui/cursors/position_product.png');
+    this.game.load.image('position_product_cursor', '/images/beaver/ui/cursors/position_product.png');
 
     //icons
-    this.game.load.spritesheet('delete_icon', '/images/ui/icons/delete.png', 58, 58);
-    this.game.load.spritesheet('info_icon', '/images/ui/icons/info.png', 58, 58);
+    this.game.load.spritesheet('delete_icon', '/images/beaver/ui/icons/delete.png', 58, 58);
+    this.game.load.spritesheet('info_icon', '/images/beaver/ui/icons/info.png', 58, 58);
 
-    this.game.load.image('ui_mockup', '/images/ui/background.jpg');
+    this.game.load.image('ui_mockup', '/images/beaver/ui/background.jpg');
     this.game.load.bitmapFont('arimo', '/fonts/arimo.png', '/fonts/arimo.fnt');
     this.game.load.bitmapFont('arimo_bold_16', '/fonts/arimo_bold_16.png', '/fonts/arimo_bold_16.fnt');
 
     //cabinets 
-    this.game.load.image('cabinet_600_1800', '/images/products/cabinet_600_1800.jpg');
-    this.game.load.image('cabinet_900_900', '/images/products/cabinet_900_900.jpg');
-    this.game.load.image('cabinet_900_1800', '/images/products/cabinet_900_1800.jpg');
-    this.game.load.image('cabinet_1800_1005', '/images/products/cabinet_1800_1005.jpg');
+    this.game.load.image('cabinet_600_1800', '/images/beaver/products/cabinet_600_1800.jpg');
+    this.game.load.image('cabinet_900_900', '/images/beaver/products/cabinet_900_900.jpg');
+    this.game.load.image('cabinet_900_1800', '/images/beaver/products/cabinet_900_1800.jpg');
+    this.game.load.image('cabinet_1800_1005', '/images/beaver/products/cabinet_1800_1005.jpg');
 
     //wall bays and pillars
-    this.game.load.image('wall_bay_450_2400', '/images/products/wall_bay_450_2400.jpg');
-    this.game.load.image('wall_bay_600_2400', '/images/products/wall_bay_600_2400.jpg');
-    this.game.load.image('wall_bay_900_2400', '/images/products/wall_bay_900_2400.jpg');
-    this.game.load.image('pillar_cover_450_2400', '/images/products/pillar_cover_450_2400.jpg');
-    this.game.load.image('pillar_cover_600_2400', '/images/products/pillar_cover_600_2400.jpg');
-    this.game.load.image('pillar', '/images/objects/pillar.jpg');
-    this.game.load.image('door_820_2040', '/images/objects/door_820_2040.jpg');
+    this.game.load.image('wall_bay_450_2400', '/images/beaver/products/wall_bay_450_2400.jpg');
+    this.game.load.image('wall_bay_600_2400', '/images/beaver/products/wall_bay_600_2400.jpg');
+    this.game.load.image('wall_bay_900_2400', '/images/beaver/products/wall_bay_900_2400.jpg');
+    this.game.load.image('pillar_cover_450_2400', '/images/beaver/products/pillar_cover_450_2400.jpg');
+    this.game.load.image('pillar_cover_600_2400', '/images/beaver/products/pillar_cover_600_2400.jpg');
+    this.game.load.image('pillar', '/images/beaver/objects/pillar.jpg');
+    this.game.load.image('door_820_2040', '/images/beaver/objects/door_820_2040.jpg');
 
 }
