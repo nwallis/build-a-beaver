@@ -103,9 +103,9 @@ ItemVisual.prototype.startItemDrag = function() {
 }
 
 ItemVisual.prototype.stopItemDrag = function() {
-    this.dragging = false;
-    this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
-    this.tintValid();
+    //this.dragging = false;
+    //this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
+    //this.tintValid();
 }
 
 ItemVisual.prototype.enable = function() {
