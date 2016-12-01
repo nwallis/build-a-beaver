@@ -61,9 +61,8 @@ ItemVisual.prototype.itemOver = function() {
     this.engine.measureItem(this);
 }
 ItemVisual.prototype.itemOut = function() {
-    console.log("item out");
-    //this.tintValid();
-    //this.engine.hideMeasure();
+    this.tintValid();
+    this.engine.hideMeasure();
 }
 
 ItemVisual.prototype.deleteClicked = function() {
@@ -104,10 +103,9 @@ ItemVisual.prototype.startItemDrag = function() {
 }
 
 ItemVisual.prototype.stopItemDrag = function() {
-    console.log("stopping item drag");
-    //this.dragging = false;
-    //this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
-    //this.tintValid();
+    this.dragging = false;
+    this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
+    this.tintValid();
 }
 
 ItemVisual.prototype.enable = function() {
