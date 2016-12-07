@@ -1,3 +1,7 @@
+<script>
+    var accordionData = {$accordionData};
+</script>
+
 <script src="js/addons/my_changes/beaver/phaser.min.js"></script>
 <script src="js/addons/my_changes/beaver/classes/Item.js"></script>
 <script src="js/addons/my_changes/beaver/classes/Counter.js"></script>
