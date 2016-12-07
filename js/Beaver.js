@@ -225,133 +225,144 @@ Beaver.prototype.create = function() {
     this.headerStageButtons = [this.headerStage1, this.headerStage2, this.headerStage3];
 
     //Accordion
+
+    if (accordionData == undefined) {
+        var accordionData = [{
+            closedImage: "stage_1_closed",
+            openImage: "stage_1_open",
+            disabledImage: "stage_1_disabled",
+            products: [{
+                name: 'BRICK PILLAR',
+                price: 100.38,
+                realWidth: 230,
+                realHeight: 2500,
+                image: 'pillar',
+                id: -1
+            }, {
+                name: 'DOOR',
+                price: 99.00,
+                realWidth: 820,
+                realHeight: 2040,
+                image: 'door_820_2040',
+                id: -2
+            }]
+        }, {
+            closedImage: "stage_2_closed",
+            openImage: "stage_2_open",
+            disabledImage: "stage_2_disabled",
+            products: [{
+                name: 'PILLAR COVER',
+                price: 100.38,
+                realHeight: 2400,
+                realWidth: 450,
+                image: 'pillar_cover_450_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 725,
+                collapseTypes: [722, 723, 724, 725, 726],
+                compatibleItemOverlaps: [-1],
+                allowedIntersections: [
+                    ITEM_EXTREMITIES_OUTSIDE
+                ]
+            }, {
+                name: 'PILLAR COVER',
+                price: 100.38,
+                realHeight: 2400,
+                realWidth: 600,
+                image: 'pillar_cover_600_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 726,
+                collapseTypes: [722, 723, 724, 725, 726],
+                compatibleItemOverlaps: [-1],
+                allowedIntersections: [
+                    ITEM_EXTREMITIES_OUTSIDE
+                ]
+            }, {
+                name: 'WALL BAY',
+                price: 100.38,
+                realWidth: 450,
+                realHeight: 2400,
+                image: 'wall_bay_450_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 722,
+                collapseTypes: [722, 723, 724, 725, 726],
+                itemType: "wall-bay"
+            }, {
+                name: 'WALL BAY',
+                price: 100.38,
+                realWidth: 600,
+                realHeight: 2400,
+                image: 'wall_bay_600_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 723,
+                collapseTypes: [722, 723, 724, 725, 726],
+                itemType: "wall-bay"
+            }, {
+                name: 'WALL BAY',
+                price: 100.38,
+                realWidth: 900,
+                realHeight: 2400,
+                image: 'wall_bay_900_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 724,
+                collapseTypes: [722, 723, 724, 725, 726],
+                itemType: "wall-bay"
+            }]
+        }, {
+            closedImage: "stage_3_closed",
+            openImage: "stage_3_open",
+            disabledImage: "stage_3_disabled",
+            products: [{
+                name: 'CABINET',
+                price: 100.38,
+                realWidth: 600,
+                realHeight: 1800,
+                image: 'cabinet_600_1800',
+                compatibleItems: [723],
+                id: 727
+            }, {
+                name: 'CABINET',
+                price: 100.38,
+                realWidth: 900,
+                realHeight: 1800,
+                image: 'cabinet_900_1800',
+                compatibleItems: [724],
+                id: 728
+            }, {
+                name: 'CABINET',
+                price: 100.38,
+                realWidth: 900,
+                realHeight: 900,
+                image: 'cabinet_900_900',
+                compatibleItems: [724],
+                id: 729
+            }, {
+                name: 'CABINET',
+                price: 100.38,
+                realWidth: 1800,
+                realHeight: 1005,
+                image: 'cabinet_1800_1005',
+                compatibleItems: [724],
+                id: 730,
+                additionalCompatibleItems: 1,
+            }]
+        }];
+    }
+
     var accordionSection;
     this.productAccordion = new Accordion(this.game, this, this.uiContainer);
-    accordionSection = this.productAccordion.addSection('stage_1_closed', 'stage_1_open', 'stage_1_disabled', BEAVER_STEP_1);
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'BRICK PILLAR',
-        price: 100.38,
-        realWidth: 230,
-        realHeight: 2500,
-        image: 'pillar',
-        id: -1
-    }));
 
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'DOOR',
-        price: 99.00,
-        realWidth: 820,
-        realHeight: 2040,
-        image: 'door_820_2040',
-        id: -2 
-    }));
-
-    accordionSection = this.productAccordion.addSection('stage_2_closed', 'stage_2_open', 'stage_2_disabled', BEAVER_STEP_2);
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'PILLAR COVER',
-        price: 100.38,
-        realHeight: 2400,
-        realWidth: 450,
-        image: 'pillar_cover_450_2400',
-        marginRight: 15,
-        marginLeft: 15,
-        id: 725,
-        collapseTypes: [722,723,724,725,726],
-        compatibleItemOverlaps: [-1],
-        allowedIntersections: [
-            ITEM_EXTREMITIES_OUTSIDE
-        ]
-    }));
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'PILLAR COVER',
-        price: 100.38,
-        realHeight: 2400,
-        realWidth: 600,
-        image: 'pillar_cover_600_2400',
-        marginRight: 15,
-        marginLeft: 15,
-        id: 726,
-        collapseTypes: [722,723,724,725,726],
-        compatibleItemOverlaps: [-1],
-        allowedIntersections: [
-            ITEM_EXTREMITIES_OUTSIDE
-        ]
-    }));
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'WALL BAY',
-        price: 100.38,
-        realWidth: 450,
-        realHeight: 2400,
-        image: 'wall_bay_450_2400',
-        marginRight: 15,
-        marginLeft: 15,
-        id: 722,
-        collapseTypes: [722,723,724,725,726],
-        itemType: "wall-bay"
-    }));
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'WALL BAY',
-        price: 100.38,
-        realWidth: 600,
-        realHeight: 2400,
-        image: 'wall_bay_600_2400',
-        marginRight: 15,
-        marginLeft: 15,
-        id: 723,
-        collapseTypes: [722,723,724,725,726],
-        itemType: "wall-bay"
-    }));
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'WALL BAY',
-        price: 100.38,
-        realWidth: 900,
-        realHeight: 2400,
-        image: 'wall_bay_900_2400',
-        marginRight: 15,
-        marginLeft: 15,
-        id: 724,
-        collapseTypes: [722,723,724,725,726],
-        itemType: "wall-bay"
-    }));
-
-    accordionSection = this.productAccordion.addSection('stage_3_closed', 'stage_3_open', 'stage_3_disabled', BEAVER_STEP_3);
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'CABINET',
-        price: 100.38,
-        realWidth: 600,
-        realHeight: 1800,
-        image: 'cabinet_600_1800',
-        compatibleItems: [723],
-        id:727 
-    }));
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'CABINET',
-        price: 100.38,
-        realWidth: 900,
-        realHeight: 1800,
-        image: 'cabinet_900_1800',
-        compatibleItems: [724],
-        id:728 
-    }));
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'CABINET',
-        price: 100.38,
-        realWidth: 900,
-        realHeight: 900,
-        image: 'cabinet_900_900',
-        compatibleItems: [724],
-        id:729 
-    }));
-    accordionSection.addContent(new ProductVisual(this.game, this, {
-        name: 'CABINET',
-        price: 100.38,
-        realWidth: 1800,
-        realHeight: 1005,
-        image: 'cabinet_1800_1005',
-        compatibleItems: [724],
-        id: 730,
-        additionalCompatibleItems: 1,
-    }));
+    for (var stageCount = BEAVER_STEP_1; stageCount <= BEAVER_STEP_3; stageCount++) {
+        var sectionData = accordionData[stageCount];
+        accordionSection = this.productAccordion.addSection(sectionData.closedImage, sectionData.openImage, sectionData.disabledImage, stageCount);
+        sectionData.products.forEach(function(product) {
+            accordionSection.addContent(new ProductVisual(this.game, this, product));
+        }, this);
+    }
 
     //Icons
     this.deleteIcon = this.game.add.button(0, 0, 'delete_icon', this.deleteItem, this, 0, 0, 0);
@@ -393,7 +404,7 @@ Beaver.prototype.create = function() {
     this.uiContainer.addChild(this.priceCounter);
 
     //Create a slider for the dialog
-    this.wallWidthSlider = new Slider(this.game, this, 300,1000,9000,50);
+    this.wallWidthSlider = new Slider(this.game, this, 300, 1000, 9000, 50);
 
     this.showError(['Move the slider left and right to change your wall width.\nAfter you selecting OK, you can drag products onto your wall.'], ['How wide is your wall?'], this.setupWall, this.wallWidthSlider);
 
