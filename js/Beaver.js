@@ -233,14 +233,14 @@ Beaver.prototype.create = function() {
             disabledImage: "stage_1_disabled",
             products: [{
                 name: 'BRICK PILLAR',
-                price: 100.38,
+                price: 0,
                 realWidth: 230,
                 realHeight: 2500,
                 image: 'pillar',
                 id: -1
             }, {
                 name: 'DOOR',
-                price: 99.00,
+                price: 0,
                 realWidth: 820,
                 realHeight: 2040,
                 image: 'door_820_2040',
