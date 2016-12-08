@@ -653,9 +653,23 @@ Beaver.prototype.update = function() {
     if (this.createdItem) this.cursorContainer.x += this.createdItem.itemVisual.width / 2;
 }
 
+WebFontConfig = {
+
+    active: function() {
+        game.time.events.add(Phaser.Timer.SECOND, createText, this);
+    },
+
+    google: {
+        families: ['Lato']
+    }
+
+};
+
 Beaver.prototype.render = function() {}
 Beaver.prototype.init = function() {}
 Beaver.prototype.preload = function() {
+
+    this.game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
     //accordion images
     this.game.load.image('stage_1_closed', '/images/beaver/accordion/stage_1_closed.jpg');
