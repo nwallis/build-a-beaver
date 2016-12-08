@@ -655,10 +655,6 @@ Beaver.prototype.update = function() {
 
 WebFontConfig = {
 
-    active: function() {
-        arranger.game.time.events.add(Phaser.Timer.SECOND, createText, this);
-    },
-
     google: {
         families: ['Lato']
     }
