@@ -656,7 +656,7 @@ Beaver.prototype.update = function() {
 WebFontConfig = {
 
     active: function() {
-        game.time.events.add(Phaser.Timer.SECOND, createText, this);
+        arranger.game.time.events.add(Phaser.Timer.SECOND, createText, this);
     },
 
     google: {
@@ -669,6 +669,7 @@ Beaver.prototype.render = function() {}
 Beaver.prototype.init = function() {}
 Beaver.prototype.preload = function() {
 
+    //required for google fonts
     this.game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
     //accordion images
