@@ -1,5 +1,5 @@
 <script>
-    var accordionData = {$accordionData};
+    var accordionData = {include file="addons/my_changes/beaverPricing.tpl"};
 </script>
 
 <script src="js/addons/my_changes/beaver/phaser.min.js"></script>
