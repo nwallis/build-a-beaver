@@ -59,7 +59,7 @@
     });
 </script>
 <div id="design-container">
-    <form action="/" class="cm-ajax" method="post">
+    <form action="/" class="cm-ajax cm-ajax-full-render" method="post">
         <input type="hidden" name="dispatch" value="checkout.add"> 
         <div id="beaver-products">
         </div>
