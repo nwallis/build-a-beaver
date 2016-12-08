@@ -58,7 +58,14 @@
 
     });
 </script>
-<div id="design-container"></div>
+<div id="design-container">
+    <form action="/" class="cm-ajax" method="post">
+        <input type="hidden" name="dispatch" value="checkout.add"> 
+        <div id="beaver-products">
+        </div>
+        <input type="submit" value="add to cart" style="position:absolute; left:0; top:0;">
+    </form>
+</div>
 <div style="float:left; padding:20px; width:200px; display:none;">
     <p>Options</p>
     <div id="options">

@@ -226,6 +226,134 @@ Beaver.prototype.create = function() {
 
     //Accordion
     var accordionSection;
+
+    if (accordionData == undefined) {
+        var accordionData = [{
+            closedImage: "stage_1_closed",
+            openImage: "stage_1_open",
+            disabledImage: "stage_1_disabled",
+            products: [{
+                name: 'BRICK PILLAR',
+                price: 0,
+                realWidth: 230,
+                realHeight: 2500,
+                image: 'pillar',
+                id: -1
+            }, {
+                name: 'DOOR',
+                price: 0,
+                realWidth: 820,
+                realHeight: 2040,
+                image: 'door_820_2040',
+                id: -2
+            }]
+        }, {
+            closedImage: "stage_2_closed",
+            openImage: "stage_2_open",
+            disabledImage: "stage_2_disabled",
+            products: [{
+                name: 'PILLAR COVER',
+                price: 100.38,
+                realHeight: 2400,
+                realWidth: 450,
+                image: 'pillar_cover_450_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 725,
+                collapseTypes: [722, 723, 724, 725, 726],
+                compatibleItemOverlaps: [-1],
+                allowedIntersections: [
+                    ITEM_EXTREMITIES_OUTSIDE
+                ]
+            }, {
+                name: 'PILLAR COVER',
+                price: 100.38,
+                realHeight: 2400,
+                realWidth: 600,
+                image: 'pillar_cover_600_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 726,
+                collapseTypes: [722, 723, 724, 725, 726],
+                compatibleItemOverlaps: [-1],
+                allowedIntersections: [
+                    ITEM_EXTREMITIES_OUTSIDE
+                ]
+            }, {
+                name: 'WALL BAY',
+                price: 100.38,
+                realWidth: 450,
+                realHeight: 2400,
+                image: 'wall_bay_450_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 722,
+                collapseTypes: [722, 723, 724, 725, 726],
+                itemType: "wall-bay"
+            }, {
+                name: 'WALL BAY',
+                price: 100.38,
+                realWidth: 600,
+                realHeight: 2400,
+                image: 'wall_bay_600_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 723,
+                collapseTypes: [722, 723, 724, 725, 726],
+                itemType: "wall-bay"
+            }, {
+                name: 'WALL BAY',
+                price: 100.38,
+                realWidth: 900,
+                realHeight: 2400,
+                image: 'wall_bay_900_2400',
+                marginRight: 15,
+                marginLeft: 15,
+                id: 724,
+                collapseTypes: [722, 723, 724, 725, 726],
+                itemType: "wall-bay"
+            }]
+        }, {
+            closedImage: "stage_3_closed",
+            openImage: "stage_3_open",
+            disabledImage: "stage_3_disabled",
+            products: [{
+                name: 'CABINET',
+                price: 100.38,
+                realWidth: 600,
+                realHeight: 1800,
+                image: 'cabinet_600_1800',
+                compatibleItems: [723],
+                id: 727
+            }, {
+                name: 'CABINET',
+                price: 100.38,
+                realWidth: 900,
+                realHeight: 1800,
+                image: 'cabinet_900_1800',
+                compatibleItems: [724],
+                id: 728
+            }, {
+                name: 'CABINET',
+                price: 100.38,
+                realWidth: 900,
+                realHeight: 900,
+                image: 'cabinet_900_900',
+                compatibleItems: [724],
+                id: 729
+            }, {
+                name: 'CABINET',
+                price: 100.38,
+                realWidth: 1800,
+                realHeight: 1005,
+                image: 'cabinet_1800_1005',
+                compatibleItems: [724],
+                id: 730,
+                additionalCompatibleItems: 1,
+            }]
+        }];
+    }
+
     this.productAccordion = new Accordion(this.game, this, this.uiContainer);
 
     for (var stageCount = BEAVER_STEP_1; stageCount <= BEAVER_STEP_3; stageCount++) {
@@ -400,6 +528,7 @@ Beaver.prototype.finishProductPlacement = function() {
         this.removeItem(this.createdItem);
         this.hideIcons();
     } else {
+        this.buildHTML();
         this.showIcons(this.createdItem);
         this.priceCounter.increment(this.createdItem.model.price);
     }
@@ -414,6 +543,43 @@ Beaver.prototype.finishProductPlacement = function() {
 
 Beaver.prototype.removeItem = function(item) {
     this.currentWallLayer().removeItem(item);
+    this.buildHTML();
+}
+
+Beaver.prototype.buildHTML = function() {
+    var htmlItems = {};
+    this.wallLayers.forEach(function(layer) {
+        layer.model.children.forEach(function(child) {
+            if (child.id > 0) {
+
+                var id = child.id;
+
+                //determine the correct id if its a wall bay
+                if (child.itemType == 'wall-bay' && (child.itemSnappedToLeft && child.itemSnappedRight) || (child.itemSnappedToLeft && !child.itemSnappedRight)) {
+                    switch (id) {
+                        case 722:
+                            id = 848;
+                            break;
+                        case 723:
+                            id = 799;
+                            break;
+                        case 724:
+                            id = 798;
+                            break;
+                    }
+                }
+
+                if (!htmlItems[id]) htmlItems[id] = 0;
+                htmlItems[id]++;
+            }
+        });
+    });
+
+    $("#beaver-products").empty();
+
+    for (var productId in htmlItems){
+        $("#beaver-products").append('<input type="hidden" name="[product_data][' + productId + '][amount]" value="'+htmlItems[productId]+'">'); 
+    }
 }
 
 Beaver.prototype.deleteWallLayer = function() {

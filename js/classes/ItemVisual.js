@@ -106,6 +106,7 @@ ItemVisual.prototype.stopItemDrag = function() {
     this.dragging = false;
     this.x = (this.moveResult.valid) ? this.engine.mmToPixels(this.moveResult.position) : this.dragStartPosition;
     this.tintValid();
+    this.engine.buildHTML();
 }
 
 ItemVisual.prototype.enable = function() {
