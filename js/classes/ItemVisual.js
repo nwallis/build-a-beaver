@@ -26,7 +26,7 @@ ItemVisual = function(game, engine, model, startPos, container) {
 
     //debug text
     var style = {
-        font: "30px Arimo",
+        font: "30px Lato",
         fill: "#ff0044",
         wordWrap: true,
         wordWrapWidth: this.itemVisual.width,

@@ -2,6 +2,7 @@
     var accordionData = {include file="addons/my_changes/beaverPricing.tpl"};
 </script>
 
+<link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
 <script src="js/addons/my_changes/beaver/phaser.min.js"></script>
 <script src="js/addons/my_changes/beaver/classes/Item.js"></script>
 <script src="js/addons/my_changes/beaver/classes/Counter.js"></script>
@@ -17,8 +18,6 @@
 <script src="js/addons/my_changes/beaver/classes/AccordionSection.js"></script>
 <script src="js/addons/my_changes/beaver/Beaver.js"></script>
 <script src="js/addons/my_changes/beaver/Boot.js"></script>
-<link href="https://fonts.googleapis.com/css?family=Arimo:400,400i" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
 
 <style type="text/css">
     #design-container {}
