@@ -228,7 +228,7 @@ Beaver.prototype.create = function() {
     var accordionSection;
 
     if (accordionData.length == 0) {
-        var accordionData = [{
+        accordionData = [{
             closedImage: "stage_1_closed",
             openImage: "stage_1_open",
             disabledImage: "stage_1_disabled",
