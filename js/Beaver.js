@@ -578,6 +578,7 @@ Beaver.prototype.buildHTML = function() {
     $("#beaver-products").empty();
 
     for (var productId in htmlItems){
+        $("#beaver-products").append('<input type="hidden" name="[product_data][' + productId + '][product_id]" value="'+productId+'">'); 
         $("#beaver-products").append('<input type="hidden" name="[product_data][' + productId + '][amount]" value="'+htmlItems[productId]+'">'); 
     }
 }
