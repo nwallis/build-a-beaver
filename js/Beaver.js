@@ -369,7 +369,7 @@ Beaver.prototype.create = function() {
     this.infoIcon = this.game.add.button(0, 0, 'info_icon', this.displayItemInfo, this, 0, 0, 0);
     this.infoIcon.scale.x = this.infoIcon.scale.y = this.deleteIcon.scale.x = this.deleteIcon.scale.y = .5;
     this.deleteIcon.visible = this.infoIcon.visible = false;
-    this.icons = [this.deleteIcon, this.infoIcon];
+    this.icons = [this.deleteIcon];//, this.infoIcon];
 
     //Dialog boxes
     this.dialogContainer = this.game.add.group();
