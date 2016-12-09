@@ -2,6 +2,7 @@ const DIALOG_DISPLAY_Y_PX = 79;
 const DIALOG_TWEEN_TIME = 500;
 const DIALOG_EASE_FUNCTION = Phaser.Easing.Quadratic.Out;
 const DIALOG_TEXT_MAX_WIDTH_PX = 370;
+const BUTTON_MARGIN = 20;
 
 Dialog = function(game, engine, container, showCancel, cancelCallback, cancelContext, showOk, okCallback, okContext) {
 
@@ -12,7 +13,7 @@ Dialog = function(game, engine, container, showCancel, cancelCallback, cancelCon
 
     this.dialogBackground = this.game.add.sprite(0,0,'dialog_background');
     this.add(this.dialogBackground);
-    this.buttonsContainer = this.game.add.sprite(60, 210);
+    this.buttonsContainer = this.game.add.group();
     this.cancelCallback = cancelCallback;
     this.okCallback = okCallback;
     this.cancelContext = cancelContext;
@@ -28,6 +29,14 @@ Dialog = function(game, engine, container, showCancel, cancelCallback, cancelCon
         this.cancelButton.input.useHandCursor = true;
         this.buttonsContainer.addChild(this.cancelButton);
     }
+
+    var position = 0;
+    this.buttonsContainer.children.forEach(function(child){
+        child.x = position;
+        position += child.width + BUTTON_MARGIN; 
+    });
+    this.buttonsContainer.x = (440 - this.buttonsContainer.width) / 2;
+    this.buttonsContainer.y = 220;
 
     this.warningText = this.game.add.bitmapText(40, 40, 'arimo', '', 18);
     this.warningText.maxWidth = DIALOG_TEXT_MAX_WIDTH_PX;
