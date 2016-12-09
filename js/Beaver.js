@@ -404,7 +404,7 @@ Beaver.prototype.create = function() {
     this.uiContainer.addChild(this.priceCounter);
 
     //Create a slider for the dialog
-    this.wallWidthSlider = new Slider(this.game, this, 300, 1000, 9000, 50);
+    this.wallWidthSlider = new Slider(this.game, this, 300, 1000, 9000, 100);
 
     this.showError(['Move the slider left and right to change your wall width.\nAfter you selecting OK, you can drag products onto your wall.'], ['How wide is your wall?'], this.setupWall, this.wallWidthSlider);
 
