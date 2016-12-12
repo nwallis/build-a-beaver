@@ -18,7 +18,7 @@
 <script src="js/addons/my_changes/beaver/Beaver.js"></script>
 <script src="js/addons/my_changes/beaver/Boot.js"></script>
 
-    <style type="text/css">
+    <style type="text/css" media="screen">
         #design-container {}
         
         .hide-mouse {
@@ -28,6 +28,9 @@
         .printable-content{
             display:none;
         }
+
+    </style>
+    <style type="text/css" media="print">
 
         @media print{
 
@@ -129,9 +132,3 @@
             </tbody>
         </table>   
     </div>
-<div style="float:left; padding:20px; width:200px; display:none;">
-    <p>Options</p>
-    <div id="options">
-        <p id="start-full-screen"><a href="#">Enter full screen</a></p>
-    </div>
-</div>
