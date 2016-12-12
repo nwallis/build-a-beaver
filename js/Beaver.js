@@ -320,7 +320,7 @@ Beaver.prototype.create = function() {
                 itemType: "wall-bay"
             }, {
                 name: 'WALL BAY',
-                price: 100.38,
+                price: 95,
                 realWidth: 600,
                 realHeight: 2400,
                 image: 'wall_bay_600_2400',
@@ -330,6 +330,8 @@ Beaver.prototype.create = function() {
                 alternatePrice:50.00,
                 alternateSku:"ALTERNATESKU",
                 alternateProductName:"Alternate name",
+                productName:"Original name",
+                sku:"SKUME",
                 collapseTypes: [722, 723, 724, 725, 726],
                 itemType: "wall-bay"
             }, {
@@ -612,32 +614,32 @@ Beaver.prototype.buildHTML = function() {
             if (child.id > 0) {
 
                 var id = child.id;
-                var prouductName = child.productName;
+                var name = child.productName;
                 var sku = child.sku;
                 var price = child.price;
 
                 //determine the correct id if its a wall bay
                 if (child.itemType == 'wall-bay' && (child.itemSnappedToLeft && child.itemSnappedRight) || (child.itemSnappedToLeft && !child.itemSnappedRight)) {
-                    $switched = false;
+                    var switched = false;
                     switch (id) {
                         case 722:
                             id = 848;
-                            $switched = true;
+                            switched = true;
                             break;
                         case 723:
                             id = 799;
-                            $switched = true;
+                            switched = true;
                             break;
                         case 724:
                             id = 798;
-                            $switched = true;
+                            switched = true;
                             break;
                     }
 
-                    if ($switched){
+                    if (switched){
                         price = child.alternatePrice; 
                         sku = child.alternateSku; 
-                        productName = child.alternateProductName; 
+                        name = child.alternateProductName; 
                     }
 
                 }
@@ -645,7 +647,7 @@ Beaver.prototype.buildHTML = function() {
                 if (!htmlItems[id]){
                     htmlItems[id] = {
                         amount:0,
-                        productName:sku, 
+                        name:name, 
                         price:price,
                         sku:sku
                     };
@@ -665,7 +667,7 @@ Beaver.prototype.buildHTML = function() {
         $("#beaver-products").append('<input type="hidden" name="product_data[' + productId + '][amount]" value="' + htmlItems[productId]['amount'] + '">');
 
         //Build HTML for printable table
-        $("#inventory tbody").append('<tr class="inventory-row"> <td>'+htmlItems[productId]['productName']+'</td> <td>'+htmlItems[productId]['sku']+'</td> <td>'+htmlItems[productId]['amount']+'</td> <td>$'+(htmlItems[productId]['price'] * htmlItems[productId]['amount']).toFixed(2)+'</td> </tr> ');
+        $("#inventory tbody").append('<tr class="inventory-row"> <td>'+htmlItems[productId]['name']+'</td> <td>'+htmlItems[productId]['sku']+'</td> <td>'+htmlItems[productId]['amount']+'</td> <td>$'+(htmlItems[productId]['price'] * htmlItems[productId]['amount']).toFixed(2)+'</td> </tr> ');
     }
 }
 
