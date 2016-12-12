@@ -24,6 +24,12 @@ const MARKER_COLOR = 0xc27843;
 const MARKER_COLOR_HTML = "#aa662e";
 const MM_SUFFIX = " mm";
 const MARKER_LINE_THICKNESS = 4;
+const INFO_TEXT_COLOR_HTML = "#ffffff";
+const INFO_TEXT_STROKE_COLOR_HTML = "#ffffff";
+const INFO_TEXT_SIZE = 14;
+const INFO_TEXT_DISPLAY_DURATION = 3000;
+const INFO_TEXT_EASE_DURATION = 400;
+const INFO_TEXT_EASE_FUNCTION = Phaser.Easing.Bounce.Out;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -224,6 +230,26 @@ Beaver.prototype.create = function() {
 
     this.headerStageButtons = [this.headerStage1, this.headerStage2, this.headerStage3];
 
+    //Info text
+   
+    this.infoTextContainer = this.game.add.group(); 
+    this.infoTextContainer.y = 583;
+    this.infoText = this.game.add.text(0, 0, '', {
+        font: "14px Lato",
+        fontStyle: "",
+        boundsAlignH:"center",
+        boundsAlignV:"middle",
+        fontWeight: "300",
+        fill: INFO_TEXT_COLOR_HTML,
+        stroke: INFO_TEXT_STROKE_COLOR_HTML,
+        strokeThickness: 1
+    });
+    this.infoTextContainer.add(this.infoText);
+    this.infoText.setTextBounds(0,0,1270,50);
+    this.infoTextBeaver = this.game.make.sprite(0,5,'info_text_beaver');
+    this.infoTextContainer.add(this.infoTextBeaver);
+    this.infoTextContainer.visible = false;
+
     //Accordion
     var accordionSection;
 
@@ -406,7 +432,9 @@ Beaver.prototype.create = function() {
     //Create a slider for the dialog
     this.wallWidthSlider = new Slider(this.game, this, 300, 1000, 9000, 100);
 
-    this.showError(['Move the slider left and right to change your wall width.\nAfter you selecting OK, you can drag products onto your wall.'], ['How wide is your wall?'], this.setupWall, this.wallWidthSlider);
+    this.wallWidthDialog = new Dialog(this.game, this, this.dialogBoxContainer, false, null, this, true, null, this);
+    this.prepareDialog();
+    this.wallWidthDialog.show(['Move the slider left and right to change your wall width.\nAfter you selecting OK, you can drag products onto your wall.'], ['How wide is your wall?'], this.setupWall, this.wallWidthSlider);
 
     $("#start-full-screen").click(function() {
         arranger.startFullScreen();
@@ -417,6 +445,32 @@ Beaver.prototype.create = function() {
     this.game.scale.pageAlignHorizontally = true;
     this.game.scale.setShowAll();
     this.game.scale.refresh();
+}
+
+Beaver.prototype.displayInfo = function(message){
+
+    this.infoText.text = message;
+    this.infoTextBeaver.x = (APP_WIDTH_PX / 2) + (this.infoText.width / 2);
+    this.infoTextContainer.x -= this.infoTextBeaver.width / 2;
+    this.infoTextContainer.y = APP_HEIGHT_PX;
+    this.infoTextContainer.visible = true;
+
+    var showTween = this.game.add.tween(this.infoTextContainer).to({
+        y:583 
+    }, INFO_TEXT_EASE_DURATION, INFO_TEXT_EASE_FUNCTION, true);
+
+    if(this.hideInfoInterval) clearInterval(this.hideInfoInterval);
+    this.hideInfoInterval = setInterval((function(self){
+       return function(){
+          self.hideInfo();
+       } 
+    })(this), INFO_TEXT_DISPLAY_DURATION, this);
+}
+
+Beaver.prototype.hideInfo = function(){
+    var hideTween = this.game.add.tween(this.infoTextContainer).to({
+        y:APP_HEIGHT_PX
+    }, INFO_TEXT_DISPLAY_DURATION, DIALOG_EASE_FUNCTION, true);
 }
 
 Beaver.prototype.setupWall = function() {
@@ -723,6 +777,7 @@ Beaver.prototype.preload = function() {
 
     //dialog images
     this.game.load.image('dialog_background', '/images/beaver/ui/dialog/dialog_background.png');
+    this.game.load.image('info_text_beaver', '/images/beaver/ui/dialog/info_text_beaver.png');
 
     //buttons
     this.game.load.spritesheet('button_ok', '/images/beaver/ui/buttons/ok.png', 113, 31);
