@@ -680,6 +680,7 @@ Beaver.prototype.buildHTML = function() {
 Beaver.prototype.deleteWallLayer = function() {
     var deletedLayer = this.wallLayers.pop();
     if (deletedLayer) deletedLayer.destroy();
+    this.buildHTML();
 }
 
 Beaver.prototype.deleteWallLayersAbove = function(index) {
@@ -691,6 +692,7 @@ Beaver.prototype.deleteWallLayersAbove = function(index) {
     }
 
     this.wallLayers[this.wallLayers.length - 1].enable();
+    this.buildHTML();
 }
 
 Beaver.prototype.addWallLayer = function() {
