@@ -286,8 +286,8 @@ Beaver.prototype.create = function() {
                 marginRight: 15,
                 marginLeft: 15,
                 id: 725,
-                productName:"pillar cover product name",
-                sku:"PC001",
+                productName: "pillar cover product name",
+                sku: "PC001",
                 collapseTypes: [722, 723, 724, 725, 726],
                 compatibleItemOverlaps: [-1],
                 allowedIntersections: [
@@ -327,11 +327,11 @@ Beaver.prototype.create = function() {
                 marginRight: 15,
                 marginLeft: 15,
                 id: 723,
-                alternatePrice:50.00,
-                alternateSku:"ALTERNATESKU",
-                alternateProductName:"Alternate name",
-                productName:"Original name",
-                sku:"SKUME",
+                alternatePrice: 50.00,
+                alternateSku: "ALTERNATESKU",
+                alternateProductName: "Alternate name",
+                productName: "Original name",
+                sku: "SKUME",
                 collapseTypes: [722, 723, 724, 725, 726],
                 itemType: "wall-bay"
             }, {
@@ -538,9 +538,9 @@ Beaver.prototype.hideIcons = function() {
 }
 
 Beaver.prototype.deleteItem = function() {
-    this.priceCounter.decrement(this.selectedItem.model.price);
     this.currentWallLayer().removeItem(this.selectedItem);
     this.hideIcons();
+    this.buildHTML();
 }
 
 Beaver.prototype.displayItemInfo = function(itemVisual) {
@@ -581,6 +581,23 @@ Beaver.prototype.addItem = function(itemData, startPosPx) {
     return this.currentWallLayer().addItem(itemData, this.pixelsToMM(startPosPx));
 }
 
+Beaver.prototype.checkAlternateProduct = function(child) {
+    if (child.itemType == 'wall-bay' && (child.itemSnappedToLeft && child.itemSnappedRight) || (child.itemSnappedToLeft && !child.itemSnappedRight)) {
+        switch (child.id) {
+            case 722:
+                return 848;
+                break;
+            case 723:
+                return 799;
+                break;
+            case 724:
+                return 798;
+                break;
+        }
+    }
+    return false;
+}
+
 Beaver.prototype.finishProductPlacement = function() {
 
     this.createdItem.dragging = false;
@@ -591,7 +608,6 @@ Beaver.prototype.finishProductPlacement = function() {
     } else {
         this.buildHTML();
         this.showIcons(this.createdItem);
-        this.priceCounter.increment(this.createdItem.model.price);
     }
 
     this.hideMeasure();
@@ -609,54 +625,39 @@ Beaver.prototype.removeItem = function(item) {
 
 Beaver.prototype.buildHTML = function() {
     var htmlItems = {};
+    var totalPrice = 0;
     this.wallLayers.forEach(function(layer) {
         layer.model.children.forEach(function(child) {
-            if (child.id > 0) {
 
+            if (child.id > 0) {
                 var id = child.id;
                 var name = child.productName;
                 var sku = child.sku;
                 var price = child.price;
 
-                //determine the correct id if its a wall bay
-                if (child.itemType == 'wall-bay' && (child.itemSnappedToLeft && child.itemSnappedRight) || (child.itemSnappedToLeft && !child.itemSnappedRight)) {
-                    var switched = false;
-                    switch (id) {
-                        case 722:
-                            id = 848;
-                            switched = true;
-                            break;
-                        case 723:
-                            id = 799;
-                            switched = true;
-                            break;
-                        case 724:
-                            id = 798;
-                            switched = true;
-                            break;
-                    }
-
-                    if (switched){
-                        price = child.alternatePrice; 
-                        sku = child.alternateSku; 
-                        name = child.alternateProductName; 
-                    }
-
+                var possibleAlternateId = this.checkAlternateProduct(child);
+                if (possibleAlternateId) {
+                    id = possibleAlternateId;
+                    price = child.alternatePrice
+                    sku = child.alternateSku;
+                    name = child.alternateProductName;
                 }
-
-                if (!htmlItems[id]){
-                    htmlItems[id] = {
-                        amount:0,
-                        name:name, 
-                        price:price,
-                        sku:sku
-                    };
-                }
-
-                htmlItems[id]['amount']++;
             }
-        });
-    });
+
+            if (!htmlItems[id]) {
+                htmlItems[id] = {
+                    amount: 0,
+                    name: name,
+                    price: price,
+                    sku: sku
+                };
+            }
+
+            htmlItems[id]['amount']++;
+            totalPrice += price;
+
+        }, this);
+    }, this);
 
     $("#beaver-products").empty();
     $("#inventory .inventory-row").remove();
@@ -667,8 +668,13 @@ Beaver.prototype.buildHTML = function() {
         $("#beaver-products").append('<input type="hidden" name="product_data[' + productId + '][amount]" value="' + htmlItems[productId]['amount'] + '">');
 
         //Build HTML for printable table
-        $("#inventory tbody").append('<tr class="inventory-row"> <td>'+htmlItems[productId]['name']+'</td> <td>'+htmlItems[productId]['sku']+'</td> <td>'+htmlItems[productId]['amount']+'</td> <td>$'+(htmlItems[productId]['price'] * htmlItems[productId]['amount']).toFixed(2)+'</td> </tr> ');
+        $("#inventory tbody").append('<tr class="inventory-row"> <td>' + htmlItems[productId]['name'] + '</td> <td>' + htmlItems[productId]['sku'] + '</td> <td>' + htmlItems[productId]['amount'] + '</td> <td>$' + (htmlItems[productId]['price'] * htmlItems[productId]['amount']).toFixed(2) + '</td> </tr> ');
     }
+
+    //Transition to the correct price
+    this.priceCounter.transitionTo(totalPrice);
+
+    
 }
 
 Beaver.prototype.deleteWallLayer = function() {
