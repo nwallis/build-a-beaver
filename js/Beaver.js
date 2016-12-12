@@ -279,13 +279,15 @@ Beaver.prototype.create = function() {
             disabledImage: "stage_2_disabled",
             products: [{
                 name: 'PILLAR COVER',
-                price: 100.38,
+                price: 95,
                 realHeight: 2400,
                 realWidth: 450,
                 image: 'pillar_cover_450_2400',
                 marginRight: 15,
                 marginLeft: 15,
                 id: 725,
+                productName:"pillar cover product name",
+                sku:"PC001",
                 collapseTypes: [722, 723, 724, 725, 726],
                 compatibleItemOverlaps: [-1],
                 allowedIntersections: [
@@ -630,6 +632,7 @@ Beaver.prototype.buildHTML = function() {
                         price:child.price,
                         sku:child.sku
                     };
+                    console.log(child);
                 }
 
                 htmlItems[id]['amount']++;
