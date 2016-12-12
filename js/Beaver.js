@@ -626,7 +626,7 @@ Beaver.prototype.buildHTML = function() {
                 if (!htmlItems[id]){
                     htmlItems[id] = {
                         amount:0,
-                        name:child.name, 
+                        productName:child.productName, 
                         price:child.price,
                         sku:child.sku
                     };
@@ -646,7 +646,7 @@ Beaver.prototype.buildHTML = function() {
         $("#beaver-products").append('<input type="hidden" name="product_data[' + productId + '][amount]" value="' + htmlItems[productId]['amount'] + '">');
 
         //Build HTML for printable table
-        $("#inventory tbody").append('<tr class="inventory-row"> <td>'+htmlItems[productId]['name']+'</td> <td>'+htmlItems[productId]['sku']+'</td> <td>'+htmlItems[productId]['amount']+'</td> <td>$'+(htmlItems[productId]['price'] * htmlItems[productId]['amount'])+'</td> </tr> ');
+        $("#inventory tbody").append('<tr class="inventory-row"> <td>'+htmlItems[productId]['productName']+'</td> <td>'+htmlItems[productId]['sku']+'</td> <td>'+htmlItems[productId]['amount']+'</td> <td>$'+(htmlItems[productId]['price'] * htmlItems[productId]['amount'])+'</td> </tr> ');
     }
 }
 
