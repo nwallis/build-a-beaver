@@ -25,45 +25,47 @@
             cursor: none !important;
         }
 
+
         .printable-content{
             /*display:none;*/
         }
 
-        .pagebreak{
-            page-break-before:always;
-        }
-
-        #inventory{
-            border:0;
-            width:100%;
-            margin-top:20px;
-        }
-
-        #inventory th{
-            color:white; 
-            background-color:#707070;
-            -webkit-print-color-adjust: exact; 
-        }
-
-        #inventory tr:nth-child(odd){
-            background-color:#d8d8d8;
-        }
-
-        #inventory tr{
-            background-color:white;
-            color:#7D7D7D; 
-            font-family:Lato;
-            -webkit-print-color-adjust: exact; 
-        }
-
-        #inventory td, #inventory th{
-            padding:10px 20px;
-            text-align:left;
-        }
-
         @media print{
+
             .printable-content{
                 display:block;
+            }
+
+            .pagebreak{
+                page-break-before:always;
+            }
+
+            #inventory{
+                border:0;
+                width:100%;
+                margin-top:20px;
+            }
+
+            #inventory th{
+                color:white; 
+                background-color:#707070;
+                -webkit-print-color-adjust: exact; 
+            }
+
+            #inventory tr:nth-child(odd){
+                background-color:#d8d8d8;
+            }
+
+            #inventory tr{
+                background-color:white;
+                color:#7D7D7D; 
+                font-family:Lato;
+                -webkit-print-color-adjust: exact; 
+            }
+
+            #inventory td, #inventory th{
+                padding:10px 20px;
+                text-align:left;
             }
         }
 
