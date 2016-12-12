@@ -609,6 +609,9 @@ Beaver.prototype.buildHTML = function() {
             if (child.id > 0) {
 
                 var id = child.id;
+                var prouductName = child.productName;
+                var sku = child.sku;
+                var price = child.price;
 
                 //determine the correct id if its a wall bay
                 if (child.itemType == 'wall-bay' && (child.itemSnappedToLeft && child.itemSnappedRight) || (child.itemSnappedToLeft && !child.itemSnappedRight)) {
@@ -623,16 +626,22 @@ Beaver.prototype.buildHTML = function() {
                             id = 798;
                             break;
                     }
+
+                    if (id == 722 || id == 723 || id == 724){
+                        price = child.alternatePrice; 
+                        sku = child.alternateSku; 
+                        productName = child.alternateProductName; 
+                    }
+
                 }
 
                 if (!htmlItems[id]){
                     htmlItems[id] = {
                         amount:0,
-                        productName:child.productName, 
-                        price:child.price,
-                        sku:child.sku
+                        productName:sku, 
+                        price:price,
+                        sku:sku
                     };
-                    console.log(child);
                 }
 
                 htmlItems[id]['amount']++;
