@@ -327,6 +327,9 @@ Beaver.prototype.create = function() {
                 marginRight: 15,
                 marginLeft: 15,
                 id: 723,
+                alternatePrice:50.00,
+                alternateSku:"ALTERNATESKU",
+                alternateProductName:"Alternate name",
                 collapseTypes: [722, 723, 724, 725, 726],
                 itemType: "wall-bay"
             }, {
@@ -615,19 +618,23 @@ Beaver.prototype.buildHTML = function() {
 
                 //determine the correct id if its a wall bay
                 if (child.itemType == 'wall-bay' && (child.itemSnappedToLeft && child.itemSnappedRight) || (child.itemSnappedToLeft && !child.itemSnappedRight)) {
+                    $switched = false;
                     switch (id) {
                         case 722:
                             id = 848;
+                            $switched = true;
                             break;
                         case 723:
                             id = 799;
+                            $switched = true;
                             break;
                         case 724:
                             id = 798;
+                            $switched = true;
                             break;
                     }
 
-                    if (id == 722 || id == 723 || id == 724){
+                    if ($switched){
                         price = child.alternatePrice; 
                         sku = child.alternateSku; 
                         productName = child.alternateProductName; 
@@ -658,7 +665,7 @@ Beaver.prototype.buildHTML = function() {
         $("#beaver-products").append('<input type="hidden" name="product_data[' + productId + '][amount]" value="' + htmlItems[productId]['amount'] + '">');
 
         //Build HTML for printable table
-        $("#inventory tbody").append('<tr class="inventory-row"> <td>'+htmlItems[productId]['productName']+'</td> <td>'+htmlItems[productId]['sku']+'</td> <td>'+htmlItems[productId]['amount']+'</td> <td>$'+(htmlItems[productId]['price'] * htmlItems[productId]['amount'])+'</td> </tr> ');
+        $("#inventory tbody").append('<tr class="inventory-row"> <td>'+htmlItems[productId]['productName']+'</td> <td>'+htmlItems[productId]['sku']+'</td> <td>'+htmlItems[productId]['amount']+'</td> <td>$'+(htmlItems[productId]['price'] * htmlItems[productId]['amount']).toFixed(2)+'</td> </tr> ');
     }
 }
 
