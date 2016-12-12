@@ -33,6 +33,49 @@
         .hide-mouse {
             cursor: none !important;
         }
+
+        .printable-content{
+            /*display:none;*/
+        }
+
+        .pagebreak{
+            page-break-before:always;
+        }
+
+        #inventory{
+            border:0;
+            width:100%;
+            margin-top:20px;
+        }
+
+        #inventory th{
+            color:white; 
+            background-color:#707070;
+            -webkit-print-color-adjust: exact; 
+        }
+
+        #inventory tr:nth-child(odd){
+            background-color:#d8d8d8;
+        }
+
+        #inventory tr{
+            background-color:white;
+            color:#7D7D7D; 
+            font-family:Lato;
+            -webkit-print-color-adjust: exact; 
+        }
+
+        #inventory td, #inventory th{
+            padding:10px 20px;
+            text-align:left;
+        }
+
+        @media print{
+            .printable-content{
+                display:block;
+            }
+        }
+
     </style>
     <script>
         var accordionData = [];
@@ -75,11 +118,24 @@
             <input type="submit" value="add to cart" style="position:absolute; left:0; top:0;">
         </form>
     </div>
-    <div style="float:left; padding:20px; width:200px; display:none;">
-        <p>Options</p>
-        <div id="options">
-            <p id="start-full-screen"><a href="#">Enter full screen</a></p>
-        </div>
+    <div class="pagebreak"></div>
+    <div class="printable-content">
+        <table id="inventory" >
+            <tbody>
+                <tr class="inventory-header">
+                    <th>Item Name</th>
+                    <th>SKU</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+                <tr class="inventory-row">
+                    <td>Wall bay 2400x600</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>$500.00</td>
+                </tr>
+            </tbody>
+        </table>   
     </div>
 </body>
 

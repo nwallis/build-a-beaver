@@ -231,22 +231,22 @@ Beaver.prototype.create = function() {
     this.headerStageButtons = [this.headerStage1, this.headerStage2, this.headerStage3];
 
     //Info text
-   
-    this.infoTextContainer = this.game.add.group(); 
+
+    this.infoTextContainer = this.game.add.group();
     this.infoTextContainer.y = 583;
     this.infoText = this.game.add.text(0, 0, '', {
         font: "14px Lato",
         fontStyle: "",
-        boundsAlignH:"center",
-        boundsAlignV:"middle",
+        boundsAlignH: "center",
+        boundsAlignV: "middle",
         fontWeight: "300",
         fill: INFO_TEXT_COLOR_HTML,
         stroke: INFO_TEXT_STROKE_COLOR_HTML,
         strokeThickness: 1
     });
     this.infoTextContainer.add(this.infoText);
-    this.infoText.setTextBounds(0,0,1270,50);
-    this.infoTextBeaver = this.game.make.sprite(0,5,'info_text_beaver');
+    this.infoText.setTextBounds(0, 0, 1270, 50);
+    this.infoTextBeaver = this.game.make.sprite(0, 5, 'info_text_beaver');
     this.infoTextContainer.add(this.infoTextBeaver);
     this.infoTextContainer.visible = false;
 
@@ -395,7 +395,7 @@ Beaver.prototype.create = function() {
     this.infoIcon = this.game.add.button(0, 0, 'info_icon', this.displayItemInfo, this, 0, 0, 0);
     this.infoIcon.scale.x = this.infoIcon.scale.y = this.deleteIcon.scale.x = this.deleteIcon.scale.y = .5;
     this.deleteIcon.visible = this.infoIcon.visible = false;
-    this.icons = [this.deleteIcon];//, this.infoIcon];
+    this.icons = [this.deleteIcon]; //, this.infoIcon];
 
     //Dialog boxes
     this.dialogContainer = this.game.add.group();
@@ -447,7 +447,7 @@ Beaver.prototype.create = function() {
     this.game.scale.refresh();
 }
 
-Beaver.prototype.displayInfo = function(message){
+Beaver.prototype.displayInfo = function(message) {
 
     this.infoText.text = message;
     this.infoTextBeaver.x = (APP_WIDTH_PX / 2) + (this.infoText.width / 2);
@@ -456,20 +456,20 @@ Beaver.prototype.displayInfo = function(message){
     this.infoTextContainer.visible = true;
 
     var showTween = this.game.add.tween(this.infoTextContainer).to({
-        y:583 
+        y: 583
     }, INFO_TEXT_EASE_DURATION, INFO_TEXT_EASE_FUNCTION, true);
 
-    if(this.hideInfoInterval) clearInterval(this.hideInfoInterval);
-    this.hideInfoInterval = setInterval((function(self){
-       return function(){
-          self.hideInfo();
-       } 
+    if (this.hideInfoInterval) clearInterval(this.hideInfoInterval);
+    this.hideInfoInterval = setInterval((function(self) {
+        return function() {
+            self.hideInfo();
+        }
     })(this), INFO_TEXT_DISPLAY_DURATION, this);
 }
 
-Beaver.prototype.hideInfo = function(){
+Beaver.prototype.hideInfo = function() {
     var hideTween = this.game.add.tween(this.infoTextContainer).to({
-        y:APP_HEIGHT_PX
+        y: APP_HEIGHT_PX
     }, INFO_TEXT_DISPLAY_DURATION, DIALOG_EASE_FUNCTION, true);
 }
 
@@ -623,17 +623,30 @@ Beaver.prototype.buildHTML = function() {
                     }
                 }
 
-                if (!htmlItems[id]) htmlItems[id] = 0;
-                htmlItems[id]++;
+                if (!htmlItems[id]){
+                    htmlItems[id] = {
+                        amount:0,
+                        name:child.name, 
+                        price:child.price,
+                        sku:child.sku
+                    };
+                }
+
+                htmlItems[id]['amount']++;
             }
         });
     });
 
     $("#beaver-products").empty();
+    $("#inventory .inventory-row").remove();
 
-    for (var productId in htmlItems){
-        $("#beaver-products").append('<input type="hidden" name="product_data[' + productId + '][product_id]" value="'+productId+'">'); 
-        $("#beaver-products").append('<input type="hidden" name="product_data[' + productId + '][amount]" value="'+htmlItems[productId]+'">'); 
+    for (var productId in htmlItems) {
+        //Build html to be sent to CS-CART
+        $("#beaver-products").append('<input type="hidden" name="product_data[' + productId + '][product_id]" value="' + productId + '">');
+        $("#beaver-products").append('<input type="hidden" name="product_data[' + productId + '][amount]" value="' + htmlItems[productId]['amount'] + '">');
+
+        //Build HTML for printable table
+        $("#inventory tbody").append('<tr class="inventory-row"> <td>'+htmlItems[productId]['name']+'</td> <td>'+htmlItems[productId]['sku']+'</td> <td>'+htmlItems[productId]['amount']+'</td> <td>$'+(htmlItems[productId]['price'] * htmlItems[productId]['amount'])+'</td> </tr> ');
     }
 }
 
