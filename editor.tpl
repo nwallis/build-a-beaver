@@ -25,9 +25,8 @@
             cursor: none !important;
         }
 
-
         .printable-content{
-            /*display:none;*/
+            display:none;
         }
 
         @media print{
