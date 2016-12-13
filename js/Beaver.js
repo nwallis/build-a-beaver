@@ -144,9 +144,9 @@ Beaver.prototype.prepareDialog = function() {
     }, DIALOG_TWEEN_TIME, DIALOG_EASE_FUNCTION, true);
 }
 
-Beaver.prototype.showDialog = function(reasons, warnings) {
+Beaver.prototype.showDialog = function(reasons, warnings, okCallback, uiElements) {
     this.prepareDialog();
-    if (this.dialogBox) this.dialogBox.show(reasons, warnings);
+    if (this.dialogBox) this.dialogBox.show(reasons, warnings, okCallback, uiElements);
 }
 
 Beaver.prototype.showError = function(reasons, warnings, okCallback, uiElements) {
@@ -184,8 +184,6 @@ Beaver.prototype.hideCustomCursor = function(cursor) {
 }
 
 Beaver.prototype.create = function() {
-
-    console.log("starting");
 
     //Create cursor images
     this.cursorContainer = this.game.add.group();
@@ -242,7 +240,7 @@ Beaver.prototype.create = function() {
     this.resetButton.x = ACCORDION_X;
 
     this.checkoutButton = this.game.add.button(0, 0, 'button_checkout', function() {
-        console.log("checking out");
+        this.checkout();
     }, this, 1, 0, 1);
     this.checkoutButton.y = FOOTER_BUTTON_Y_PX;
     this.checkoutButton.x = APP_WIDTH_PX - ((ACCORDION_X + this.checkoutButton.width) * 1);
@@ -478,6 +476,13 @@ Beaver.prototype.create = function() {
     this.game.scale.pageAlignHorizontally = true;
     this.game.scale.setShowAll();
     this.game.scale.refresh();
+}
+
+Beaver.prototype.checkout = function(){
+    this.showDialog(['Clicking OK will end your designing session and take you to the checkout. \n\nHave you printed your design yet?'],['You are about to checkout!'], this.checkoutConfirmed,null);
+}
+
+Beaver.prototype.checkoutConfirmed = function(){
 }
 
 Beaver.prototype.displayInfo = function(message) {
