@@ -483,11 +483,10 @@ Beaver.prototype.checkout = function(){
 }
 
 Beaver.prototype.checkoutConfirmed = function(){
-    $("#beaver-checkout").submit();
+    $("form").submit();
 }
 
 Beaver.prototype.displayInfo = function(message) {
-
     this.infoText.text = message;
     this.infoTextBeaver.x = (APP_WIDTH_PX / 2) + (this.infoText.width / 2) + 10;
     this.infoTextContainer.x = this.infoTextBeaver.width / 2;
