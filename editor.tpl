@@ -116,6 +116,12 @@
     <div class="printable-content">
         <table id="inventory" >
             <tbody>
+                <tr class="inventory-header">
+                    <th>Item Name</th>
+                    <th>SKU</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
             </tbody>
         </table>   
     </div>
