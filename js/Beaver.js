@@ -483,6 +483,7 @@ Beaver.prototype.checkout = function(){
 }
 
 Beaver.prototype.checkoutConfirmed = function(){
+
 }
 
 Beaver.prototype.displayInfo = function(message) {
