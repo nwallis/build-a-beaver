@@ -9,7 +9,7 @@ Boot.prototype.preload = function() {
 }
 
 Boot.prototype.create = function() {
-
+    this.game.stage.backgroundColor = 0xB5A99D;
     this.game.state.start("Beaver");
 
 }

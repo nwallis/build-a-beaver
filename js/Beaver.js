@@ -31,6 +31,8 @@ const INFO_TEXT_DISPLAY_DURATION = 3000;
 const INFO_TEXT_EASE_DURATION = 400;
 const INFO_TEXT_EASE_FUNCTION = Phaser.Easing.Bounce.Out;
 const FOOTER_BUTTON_Y_PX = 591;
+const PRELOAD_TEXT_COLOR_HTML = "#000000";
+const PRELOAD_TEXT_STROKE_COLOR_HTML = "#000000";
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -183,6 +185,8 @@ Beaver.prototype.hideCustomCursor = function(cursor) {
 
 Beaver.prototype.create = function() {
 
+    console.log("starting");
+
     //Create cursor images
     this.cursorContainer = this.game.add.group();
     this.positionProductCursor = this.game.add.sprite(0, 0, 'position_product_cursor');
@@ -231,25 +235,25 @@ Beaver.prototype.create = function() {
 
     this.headerStageButtons = [this.headerStage1, this.headerStage2, this.headerStage3];
 
-    this.resetButton = this.game.add.button(0,0,'button_clear', function(){
+    this.resetButton = this.game.add.button(0, 0, 'button_clear', function() {
         location.reload();
-    },this, 1, 0, 1);
+    }, this, 1, 0, 1);
     this.resetButton.y = FOOTER_BUTTON_Y_PX;
     this.resetButton.x = ACCORDION_X;
 
-    this.checkoutButton = this.game.add.button(0,0,'button_checkout', function(){
+    this.checkoutButton = this.game.add.button(0, 0, 'button_checkout', function() {
         console.log("checking out");
-    },this, 1, 0, 1);
+    }, this, 1, 0, 1);
     this.checkoutButton.y = FOOTER_BUTTON_Y_PX;
     this.checkoutButton.x = APP_WIDTH_PX - ((ACCORDION_X + this.checkoutButton.width) * 1);
 
-    this.printButton = this.game.add.button(0,0,'button_print', function(){
+    this.printButton = this.game.add.button(0, 0, 'button_print', function() {
         window.print();
-    },this, 1, 0, 1);
+    }, this, 1, 0, 1);
     this.printButton.y = FOOTER_BUTTON_Y_PX;
     this.printButton.x = APP_WIDTH_PX - ((ACCORDION_X + this.printButton.width) * 2);
 
-    
+
     //Info text
 
     this.infoTextContainer = this.game.add.group();
@@ -393,11 +397,11 @@ Beaver.prototype.create = function() {
                 realHeight: 900,
                 image: 'cabinet_900_900',
                 compatibleItems: [724],
-                itemType:"cabinet",
+                itemType: "cabinet",
                 id: 729
             }, {
                 name: 'CABINET',
-                itemType:"cabinet",
+                itemType: "cabinet",
                 price: 100.38,
                 realWidth: 1800,
                 realHeight: 1005,
@@ -696,7 +700,7 @@ Beaver.prototype.buildHTML = function() {
     //Transition to the correct price
     this.priceCounter.transitionTo(totalPrice);
 
-    
+
 }
 
 Beaver.prototype.deleteWallLayer = function() {
@@ -818,13 +822,36 @@ WebFontConfig = {
 
 };
 
-Beaver.prototype.findWallBay = function (wallBayWidth){
+Beaver.prototype.findWallBay = function(wallBayWidth) {
     return false;
+}
+
+Beaver.prototype.fileComplete = function(progress, cacheKey, success, totalLoaded, totalFiles) {
+    this.preloadText.text = progress + "%";
+}
+
+Beaver.prototype.loadComplete = function() {
+    this.preloadText.destroy();
 }
 
 Beaver.prototype.render = function() {}
 Beaver.prototype.init = function() {}
 Beaver.prototype.preload = function() {
+
+    this.preloadText = this.game.add.text(0, 0, '', {
+        font: "24px Lato",
+        fontStyle: "",
+        boundsAlignH: "center",
+        boundsAlignV: "middle",
+        fontWeight: "700",
+        fill: PRELOAD_TEXT_COLOR_HTML,
+        stroke: PRELOAD_TEXT_STROKE_COLOR_HTML,
+        strokeThickness: 1
+    });
+    this.preloadText.setTextBounds(0, 0, APP_WIDTH_PX, APP_HEIGHT_PX);
+
+    this.game.load.onLoadComplete.add(this.loadComplete, this);
+    this.game.load.onFileComplete.add(this.fileComplete, this);
 
     //required for google fonts
     this.game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
