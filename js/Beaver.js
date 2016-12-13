@@ -822,8 +822,11 @@ Beaver.prototype.preload = function() {
     this.game.load.image('info_text_beaver', '/images/beaver/ui/dialog/info_text_beaver.png');
 
     //buttons
-    this.game.load.spritesheet('button_ok', '/images/beaver/ui/buttons/ok.png', 113, 31);
-    this.game.load.spritesheet('button_cancel', '/images/beaver/ui/buttons/cancel.png', 113, 31);
+    this.game.load.spritesheet('button_print', '/images/beaver/ui/buttons/print.jpg', 113, 31);
+    this.game.load.spritesheet('button_clear', '/images/beaver/ui/buttons/clear.jpg', 113, 31);
+    this.game.load.spritesheet('button_cancel', '/images/beaver/ui/buttons/cancel.jpg', 113, 31);
+    this.game.load.spritesheet('button_ok', '/images/beaver/ui/buttons/ok.jpg', 113, 31);
+
     this.game.load.spritesheet('header_stage_1', '/images/beaver/ui/buttons/header_stage_1.png', 112, 20);
     this.game.load.spritesheet('header_stage_2', '/images/beaver/ui/buttons/header_stage_2.png', 112, 20);
     this.game.load.spritesheet('header_stage_3', '/images/beaver/ui/buttons/header_stage_3.png', 112, 20);

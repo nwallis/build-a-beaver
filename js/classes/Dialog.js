@@ -20,12 +20,12 @@ Dialog = function(game, engine, container, showCancel, cancelCallback, cancelCon
     this.okContext = okContext;
 
     if (showOk) {
-        this.okButton = this.game.add.button(0, 0, 'button_ok', this.okClicked, this, 0, 0, 0);
+        this.okButton = this.game.add.button(0, 0, 'button_ok', this.okClicked, this, 1, 0, 1);
         this.buttonsContainer.addChild(this.okButton);
     }
 
     if (showCancel) {
-        this.cancelButton = this.game.add.button(200, 0, 'button_cancel', this.cancelClicked, this, 0, 0, 0);
+        this.cancelButton = this.game.add.button(200, 0, 'button_cancel', this.cancelClicked, this, 1, 0, 1);
         this.cancelButton.input.useHandCursor = true;
         this.buttonsContainer.addChild(this.cancelButton);
     }
