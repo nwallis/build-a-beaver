@@ -30,6 +30,7 @@ const INFO_TEXT_SIZE = 14;
 const INFO_TEXT_DISPLAY_DURATION = 3000;
 const INFO_TEXT_EASE_DURATION = 400;
 const INFO_TEXT_EASE_FUNCTION = Phaser.Easing.Bounce.Out;
+const FOOTER_BUTTON_Y_PX = 591;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -230,6 +231,25 @@ Beaver.prototype.create = function() {
 
     this.headerStageButtons = [this.headerStage1, this.headerStage2, this.headerStage3];
 
+    this.resetButton = this.game.add.button(0,0,'button_clear', function(){
+        location.reload();
+    },this, 1, 0, 1);
+    this.resetButton.y = FOOTER_BUTTON_Y_PX;
+    this.resetButton.x = ACCORDION_X;
+
+    this.checkoutButton = this.game.add.button(0,0,'button_checkout', function(){
+        console.log("checking out");
+    },this, 1, 0, 1);
+    this.checkoutButton.y = FOOTER_BUTTON_Y_PX;
+    this.checkoutButton.x = APP_WIDTH_PX - ((ACCORDION_X + this.checkoutButton.width) * 1);
+
+    this.printButton = this.game.add.button(0,0,'button_print', function(){
+        window.print();
+    },this, 1, 0, 1);
+    this.printButton.y = FOOTER_BUTTON_Y_PX;
+    this.printButton.x = APP_WIDTH_PX - ((ACCORDION_X + this.printButton.width) * 2);
+
+    
     //Info text
 
     this.infoTextContainer = this.game.add.group();
@@ -246,7 +266,7 @@ Beaver.prototype.create = function() {
     });
     this.infoTextContainer.add(this.infoText);
     this.infoText.setTextBounds(0, 0, 1270, 50);
-    this.infoTextBeaver = this.game.make.sprite(0, 5, 'info_text_beaver');
+    this.infoTextBeaver = this.game.make.sprite(0, -40, 'info_text_beaver');
     this.infoTextContainer.add(this.infoTextBeaver);
     this.infoTextContainer.visible = false;
 
@@ -373,9 +393,11 @@ Beaver.prototype.create = function() {
                 realHeight: 900,
                 image: 'cabinet_900_900',
                 compatibleItems: [724],
+                itemType:"cabinet",
                 id: 729
             }, {
                 name: 'CABINET',
+                itemType:"cabinet",
                 price: 100.38,
                 realWidth: 1800,
                 realHeight: 1005,
@@ -457,8 +479,8 @@ Beaver.prototype.create = function() {
 Beaver.prototype.displayInfo = function(message) {
 
     this.infoText.text = message;
-    this.infoTextBeaver.x = (APP_WIDTH_PX / 2) + (this.infoText.width / 2);
-    this.infoTextContainer.x -= this.infoTextBeaver.width / 2;
+    this.infoTextBeaver.x = (APP_WIDTH_PX / 2) + (this.infoText.width / 2) + 10;
+    this.infoTextContainer.x = this.infoTextBeaver.width / 2;
     this.infoTextContainer.y = APP_HEIGHT_PX;
     this.infoTextContainer.visible = true;
 
@@ -476,8 +498,8 @@ Beaver.prototype.displayInfo = function(message) {
 
 Beaver.prototype.hideInfo = function() {
     var hideTween = this.game.add.tween(this.infoTextContainer).to({
-        y: APP_HEIGHT_PX
-    }, INFO_TEXT_DISPLAY_DURATION, DIALOG_EASE_FUNCTION, true);
+        y: APP_HEIGHT_PX + Math.abs(this.infoTextBeaver.y)
+    }, INFO_TEXT_EASE_DURATION, INFO_TEXT_EASE_FUNCTION, true);
 }
 
 Beaver.prototype.setupWall = function() {
@@ -796,6 +818,10 @@ WebFontConfig = {
 
 };
 
+Beaver.prototype.findWallBay = function (wallBayWidth){
+    return false;
+}
+
 Beaver.prototype.render = function() {}
 Beaver.prototype.init = function() {}
 Beaver.prototype.preload = function() {
@@ -826,6 +852,7 @@ Beaver.prototype.preload = function() {
     this.game.load.spritesheet('button_clear', '/images/beaver/ui/buttons/clear.jpg', 113, 31);
     this.game.load.spritesheet('button_cancel', '/images/beaver/ui/buttons/cancel.jpg', 113, 31);
     this.game.load.spritesheet('button_ok', '/images/beaver/ui/buttons/ok.jpg', 113, 31);
+    this.game.load.spritesheet('button_checkout', '/images/beaver/ui/buttons/checkout.jpg', 113, 31);
 
     this.game.load.spritesheet('header_stage_1', '/images/beaver/ui/buttons/header_stage_1.png', 112, 20);
     this.game.load.spritesheet('header_stage_2', '/images/beaver/ui/buttons/header_stage_2.png', 112, 20);

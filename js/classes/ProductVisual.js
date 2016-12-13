@@ -34,7 +34,7 @@ var ProductVisual = function(game, engine, productData) {
     this.productImage.y = PRODUCT_BG_HEIGHT_PX / 2;
     this.productBackground.addChild(this.productImage);
 
-    this.productText = this.game.add.text(100, 15, this.productData.name + '\n' +this.productData.realWidth+' x '+this.productData.realHeight + 'mm' + ((this.productData.price > 0) ? '\n$' + Number(this.productData.price).toFixed(2) : ''), {
+    this.productText = this.game.add.text(100, 15, this.productData.name + '\n' + this.productData.realWidth + ' x ' + this.productData.realHeight + 'mm' + ((this.productData.price > 0) ? '\n$' + Number(this.productData.price).toFixed(2) : ''), {
         font: "12px Lato",
         fontStyle: "",
         align: "left",
@@ -55,5 +55,20 @@ ProductVisual.prototype = Object.create(Phaser.Sprite.prototype);
 ProductVisual.prototype.constructor = ProductVisual;
 
 ProductVisual.prototype.registerMouseDown = function() {
-    this.engine.startProductPlacement(this.productData);
+
+    var numberWordMap = [
+        'one',
+        'two',
+        'three'
+    ];
+
+    if (this.productData.itemType == 'cabinet' && !this.engine.findWallBay(this.productData.realWidth)) {
+        if (this.productData.additionalCompatibleItems > 0) {
+            this.engine.displayInfo("You need " + numberWordMap[this.productData.additionalCompatibleItems] + " vacant " + (this.productData.realWidth /  (this.productData.additionalCompatibleItems + 1)) + "mm wall bays next to each other to fit this cabinet");
+        } else {
+            this.engine.displayInfo("There are no vacant " + this.productData.realWidth + "mm wall bays");
+        }
+    } else {
+        this.engine.startProductPlacement(this.productData);
+    }
 }

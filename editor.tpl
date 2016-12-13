@@ -106,29 +106,16 @@
     });
 </script>
 <div id="design-container">
-    <form action="/" class="cm-ajax cm-ajax-full-render" method="post">
+    <form id="beaver-checkout" action="/" class="cm-ajax cm-ajax-full-render" method="post">
         <input type="hidden" name="dispatch" value="checkout.add"> 
         <div id="beaver-products">
         </div>
-        <input type="submit" value="add to cart" style="position:absolute; left:0; top:0;">
     </form>
 </div>
     <div class="pagebreak"></div>
     <div class="printable-content">
         <table id="inventory" >
             <tbody>
-                <tr class="inventory-header">
-                    <th>Item Name</th>
-                    <th>SKU</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                </tr>
-                <tr class="inventory-row">
-                    <td>Wall bay 2400x600</td>
-                    <td>2</td>
-                    <td>2</td>
-                    <td>$500.00</td>
-                </tr>
             </tbody>
         </table>   
     </div>
