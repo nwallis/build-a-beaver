@@ -14,7 +14,6 @@ Counter.prototype = Object.create(Phaser.Group.prototype);
 Counter.prototype.constructor = Counter;
 
 Counter.prototype.transitionTo = function(number) {
-    console.log("transitioning to ", number);
     this.countObject = {
         "amount": this.currentTotal
     };
