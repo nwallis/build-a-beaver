@@ -108,7 +108,7 @@
 <div id="design-container">
     <form id="beaver-checkout" action="/" class="" method="post">
         <input type="hidden" name="dispatch" value="checkout.add"> 
-            <input type="hidden" name="redirect_url" value="dispatch=categories.view&category_id=394"> 
+            <input type="hidden" name="redirect_url" value="categories.view&category_id=394"> 
         <div id="beaver-products">
         </div>
     </form>
