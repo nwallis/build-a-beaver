@@ -221,6 +221,8 @@ Beaver.prototype.create = function() {
     this.uiContainer = this.game.add.group();
 
     //Header buttons
+    this.headerButtonContainer = this.game.add.group();
+    this.uiContainer.add(this.headerButtonContainer);
     this.headerStage1 = this.game.add.button(396, 13, 'header_stage_1', function() {
         this.changeStep(BEAVER_STEP_1);
     }, this, 1, 0, 1);
@@ -230,6 +232,9 @@ Beaver.prototype.create = function() {
     this.headerStage3 = this.game.add.button(642, 13, 'header_stage_3', function() {
         this.changeStep(BEAVER_STEP_3);
     }, this, 1, 0, 1);
+    this.headerButtonContainer.add(this.headerStage1);
+    this.headerButtonContainer.add(this.headerStage2);
+    this.headerButtonContainer.add(this.headerStage3);
 
     this.headerStageButtons = [this.headerStage1, this.headerStage2, this.headerStage3];
 
@@ -422,11 +427,14 @@ Beaver.prototype.create = function() {
     }
 
     //Icons
+    this.iconContainer = this.game.add.group();
     this.deleteIcon = this.game.add.button(0, 0, 'delete_icon', this.deleteItem, this, 0, 0, 0);
     this.infoIcon = this.game.add.button(0, 0, 'info_icon', this.displayItemInfo, this, 0, 0, 0);
     this.infoIcon.scale.x = this.infoIcon.scale.y = this.deleteIcon.scale.x = this.deleteIcon.scale.y = .5;
     this.deleteIcon.visible = this.infoIcon.visible = false;
     this.icons = [this.deleteIcon]; //, this.infoIcon];
+    this.iconContainer.add(this.deleteIcon);
+    this.uiContainer.add(this.iconContainer);
 
     //Dialog boxes
     this.dialogContainer = this.game.add.group();
