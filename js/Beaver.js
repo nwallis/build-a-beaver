@@ -383,6 +383,7 @@ Beaver.prototype.create = function() {
                 realWidth: 600,
                 realHeight: 1800,
                 image: 'cabinet_600_1800',
+                itemType: "cabinet",
                 compatibleItems: [723],
                 id: 727
             }, {
@@ -391,6 +392,7 @@ Beaver.prototype.create = function() {
                 realWidth: 900,
                 realHeight: 1800,
                 image: 'cabinet_900_1800',
+                itemType: "cabinet",
                 compatibleItems: [724],
                 id: 728
             }, {
@@ -486,11 +488,11 @@ Beaver.prototype.create = function() {
     this.game.scale.refresh();
 }
 
-Beaver.prototype.checkout = function(){
-    this.showDialog(['Clicking OK will end your designing session and take you to the checkout. \n\nHave you printed your design yet?'],['You are about to checkout!'], this.checkoutConfirmed,null);
+Beaver.prototype.checkout = function() {
+    this.showDialog(['Clicking OK will end your designing session and take you to the checkout. \n\nHave you printed your design yet?'], ['You are about to checkout!'], this.checkoutConfirmed, null);
 }
 
-Beaver.prototype.checkoutConfirmed = function(){
+Beaver.prototype.checkoutConfirmed = function() {
     $("form").submit();
 }
 
@@ -835,8 +837,46 @@ WebFontConfig = {
 
 };
 
-Beaver.prototype.findWallBay = function(wallBayWidth) {
-    return false;
+Beaver.prototype.findWallBay = function(wallBayWidth, baysRequired) {
+
+    baysRequired = baysRequired + 1 || 1;
+    wallBayWidth /= baysRequired;
+
+    var items = [];
+    var potentialChildren = this.wallLayers[BEAVER_STEP_2].model.getChildren('wall-bay');
+
+    console.log(potentialChildren);
+
+    for (var childCount = 0; childCount < potentialChildren.length; childCount++) {
+        var potentialChild = potentialChildren[childCount];
+        if (potentialChild.realWidth == wallBayWidth && !potentialChild.snappedChild) {
+
+            var potentialItems = [potentialChild];
+            var previousChild = potentialChild;
+            for (var sequentialCount = 1; sequentialCount < baysRequired; sequentialCount++) {
+                var sequentialChild = potentialChildren[childCount + sequentialCount];
+
+                if (sequentialChild.realWidth == wallBayWidth && sequentialChild.itemSnappedToLeft == previousChild) {
+                    potentialItems.push(potentialChild);
+                } else {
+                    potentialItems = null;
+                    childCount = childCount + sequentialCount;
+                    break;
+                }
+
+                previousChild = sequentialChild;
+
+            }
+        }
+
+        if (potentialItems) {
+            items.push(potentialItems);
+            childCount += potentialItems.length - 1;
+        }
+
+    }
+
+    return (items.length > 0) ? items : false;
 }
 
 Beaver.prototype.fileComplete = function(progress, cacheKey, success, totalLoaded, totalFiles) {
