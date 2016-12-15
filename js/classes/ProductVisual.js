@@ -48,7 +48,6 @@ var ProductVisual = function(game, engine, productData) {
     this.inputEnabled = true;
     this.input.useHandCursor = true;
     this.events.onInputDown.add(this.registerMouseDown, this);
-
 }
 
 ProductVisual.prototype = Object.create(Phaser.Sprite.prototype);

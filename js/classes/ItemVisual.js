@@ -35,7 +35,7 @@ ItemVisual = function(game, engine, model, startPos, container) {
     };
 
     this.debugText = this.game.make.text(20, (this.model.itemType == "wall-bay") ? 20 : 200, 'testing', style);
-    //this.addChild(this.debugText);
+    this.addChild(this.debugText);
 
     this.enable();
 }

@@ -52,13 +52,29 @@ Beaver.prototype.hideMeasure = function() {
     this.measureContainer.visible = false;
 }
 
-Beaver.prototype.confirmStepChange = function() {
+Beaver.prototype.changeHeaderButtons = function(stepNumber) {
 
     //highlight correct header button
     this.headerStageButtons.forEach(function(stageButton) {
-        stageButton.setFrames(1, 0, 1);
+        stageButton.setFrames(0, 0, 0);
     });
-    this.headerStageButtons[this.desiredStepNumber].setFrames(1, 1, 1);
+    this.headerStageButtons[stepNumber].setFrames(1, 1, 1);
+
+    //put padlocks on all invalid steps
+    this.padlockContainer.destroy();
+    this.padlockContainer = this.game.add.group();
+    this.headerButtonContainer.add(this.padlockContainer);
+    for (var stepCount = 0; stepCount < stepNumber; stepCount++) {
+        var padlock = this.game.add.sprite(0, 0, 'padlock_icon');
+        padlock.x = this.headerStageButtons[stepCount].x + 5;
+        padlock.y = this.headerStageButtons[stepCount].y + ((this.headerStageButtons[stepCount].height - padlock.height) / 2);
+        this.padlockContainer.add(padlock);
+    }
+}
+
+Beaver.prototype.confirmStepChange = function() {
+
+    this.changeHeaderButtons(this.desiredStepNumber);
 
     //hide the icons
     this.hideIcons();
@@ -233,9 +249,11 @@ Beaver.prototype.create = function() {
     this.headerStage3 = this.game.add.button(642, 13, 'header_stage_3', function() {
         this.changeStep(BEAVER_STEP_3);
     }, this, 1, 0, 1);
+    this.padlockContainer = this.game.add.group();
     this.headerButtonContainer.add(this.headerStage1);
     this.headerButtonContainer.add(this.headerStage2);
     this.headerButtonContainer.add(this.headerStage3);
+    this.headerButtonContainer.add(this.padlockContainer);
 
     this.headerStageButtons = [this.headerStage1, this.headerStage2, this.headerStage3];
 
@@ -644,19 +662,23 @@ Beaver.prototype.checkAlternateProduct = function(child) {
 
 Beaver.prototype.finishProductPlacement = function() {
 
-    this.createdItem.dragging = false;
+    //Check that item was created as its possible that they may start but not create a product
+    if (this.createdItem) {
+        this.createdItem.dragging = false;
 
-    if (!this.placementMoveResult.valid) {
-        this.removeItem(this.createdItem);
-        this.hideIcons();
-    } else {
-        this.buildHTML();
-        this.showIcons(this.createdItem);
+        if (!this.placementMoveResult.valid) {
+            this.removeItem(this.createdItem);
+            this.hideIcons();
+        } else {
+            this.buildHTML();
+            this.showIcons(this.createdItem);
+        }
     }
 
     this.hideMeasure();
     this.hideCustomCursor();
     $("#design-container canvas").removeClass('hide-mouse');
+
     this.createdItem = null;
     this.placingProduct = false;
     this.game.input.onUp.remove(this.finishProductPlacement, this);
@@ -942,6 +964,7 @@ Beaver.prototype.preload = function() {
     //icons
     this.game.load.spritesheet('delete_icon', '/images/beaver/ui/icons/delete.png', 58, 58);
     this.game.load.spritesheet('info_icon', '/images/beaver/ui/icons/info.png', 58, 58);
+    this.game.load.image('padlock_icon', '/images/beaver/ui/icons/padlock.png');
 
     this.game.load.image('ui_mockup', '/images/beaver/ui/background.jpg');
     this.game.load.bitmapFont('arimo', '/images/beaver/fonts/arimo.png', '/images/beaver/fonts/arimo.fnt');
