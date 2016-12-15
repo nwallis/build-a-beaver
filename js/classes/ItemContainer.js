@@ -123,7 +123,6 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
     var moveTo = 0;
     var snapAmount = 0;
     var isCompatible = false;
-    //var compatibleChild;
     var collapsedItems = [];
 
     //It may not have an x position as moveItem is also called by addItem
@@ -141,6 +140,13 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
     }
 
     this.children.forEach(function(child) {
+        //clear snapping between item and parents before each move
+        if (item.snappedParent) {
+            item.snappedParent.forEach(function(parent) {
+                parent.snappedChild = undefined;
+            });
+            item.snappedParent = undefined;
+        }
         if (child != item) {
             if (child.checkRightSnap(item.getBounds().left)) {
                 if (item.checkCollapse(child) && child.checkCollapse(item)) {
@@ -178,6 +184,7 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
     if (item.getBounds().left >= 0 && item.getBounds().right <= this.realWidth) {
 
         var combinedCollisions = this.layerCollisions.concat(this.children);
+
         combinedCollisions.forEach(function(child) {
             if (child != item) {
 
@@ -190,13 +197,12 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
                         if (item.compatibleItems.length) {
 
                             item.compatibleItems.forEach(function(itemID) {
-                                if (child.id == itemID && child.id != item.id && intersections.lookFor(ITEM_LEFT_SIDE)) {
-
+                                if (child.id == itemID && child.id != item.id && intersections.onlyLookFor(ITEM_LEFT_SIDE)) {
                                     isCompatible = true;
+                                    var compatibleParents = [child];
 
                                     if (!child.snappedChild) {
                                         var nextChild = child;
-                                        var compatibleParents = [child];
                                         for (var additionalCount = 0; additionalCount < item.additionalCompatibleItems; additionalCount++) {
                                             if (nextChild) {
                                                 nextChild = nextChild.itemSnappedToRight;
@@ -205,30 +211,16 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
 
                                             if (!nextChild || nextChild.id != itemID || nextChild.snappedChild) isCompatible = false;
                                         }
-                                    } else if (child.snappedChild != item) {
+                                    } else if (child.snappedChild && child.snappedChild != item) {
                                         isCompatible = false;
                                     }
 
                                     if (isCompatible) {
                                         snapAmount = -(item.getBounds().left - child.getInnerBounds().left);
-                                        //Delete snap references
-                                        if (item.snappedParent) {
-                                            item.snappedParent.forEach(function(parent) {
-                                                delete parent.snappedChild;
-                                            });
-                                        }
-                                        //Setup new references
-                                        item.snappedParent = compatibleParents;
                                         compatibleParents.forEach(function(parent) {
                                             parent.snappedChild = item;
                                         });
-                                    } else {
-                                        //Delete snap references
-                                        if (item.snappedParent) {
-                                            item.snappedParent.forEach(function(parent) {
-                                                delete parent.snappedChild;
-                                            });
-                                        }
+                                        item.snappedParent = compatibleParents;
                                     }
                                 }
                             });

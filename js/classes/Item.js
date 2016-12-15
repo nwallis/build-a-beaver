@@ -33,13 +33,16 @@ var Item = function(params) {
 };
 
 Item.prototype.destroy = function() {
+
     this.previousItemSnappedToRight = undefined;
     this.previousItemSnappedToLeft = undefined;
     this.previousSnappedParent = undefined;
-    if (this.itemSnappedToRight)this.itemSnappedToRight.itemSnappedToLeft = undefined;
-    if (this.itemSnappedToLeft)this.itemSnappedToLeft.itemSnappedToRight = undefined;
+
+    if (this.itemSnappedToRight) this.itemSnappedToRight.itemSnappedToLeft = undefined;
+    if (this.itemSnappedToLeft) this.itemSnappedToLeft.itemSnappedToRight = undefined;
     this.itemSnappedToRight = undefined;
     this.itemSnappedToLeft = undefined;
+
     if (this.snappedParent) {
         this.snappedParent.forEach(function(parent) {
             parent.snappedChild = undefined;
@@ -49,13 +52,6 @@ Item.prototype.destroy = function() {
 }
 
 Item.prototype.saveSnapReferences = function() {
-    /*if (this.snappedParent) {
-        this.previousSnappedParent = this.snappedParent;
-        this.snappedParent.forEach(function(parent) {
-            delete parent.snappedChild;
-        });
-        delete this.snappedParent;
-    }*/
     if (this.itemSnappedToLeft) {
         this.previousItemSnappedToLeft = this.itemSnappedToLeft;
         delete this.itemSnappedToLeft.itemSnappedToRight;
@@ -79,13 +75,6 @@ Item.prototype.restoreSnapReferences = function() {
         this.previousItemSnappedToRight.itemSnappedToLeft = this;
         delete this.previousItemSnappedToRight;
     }
-    /*if (this.previousSnappedParent) {
-        this.snappedParent = this.previousSnappedParent;
-        this.snappedParent.forEach(function(parent) {
-            parent.snappedChild = this;
-        }, this);
-        delete this.previousSnappedParent;
-    }*/
 }
 
 Item.prototype.checkCollapse = function(item) {

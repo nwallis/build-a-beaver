@@ -33,6 +33,7 @@ const INFO_TEXT_EASE_FUNCTION = Phaser.Easing.Bounce.Out;
 const FOOTER_BUTTON_Y_PX = 591;
 const PRELOAD_TEXT_COLOR_HTML = "#000000";
 const PRELOAD_TEXT_STROKE_COLOR_HTML = "#000000";
+const POSITIONING_INCREMENT_MM = 50;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -582,6 +583,7 @@ Beaver.prototype.deleteItem = function() {
     this.currentWallLayer().removeItem(this.selectedItem);
     this.hideIcons();
     this.buildHTML();
+    this.hideMeasure();
 }
 
 Beaver.prototype.displayItemInfo = function(itemVisual) {
@@ -605,13 +607,14 @@ Beaver.prototype.moveProductPlacement = function() {
     if (this.placingProduct) {
         var layerPointerX = activePointer.x - this.layerContainer.x;
         var layerPointerY = activePointer.y - this.layerContainer.y;
+        var halfWidth = this.mmToPixels(this.placingProduct.realWidth / 2);
         if (!this.createdItem && this.layerContainer.getBounds().contains(activePointer.x, activePointer.y)) {
-            this.createdItem = this.addItem(this.placingProduct, layerPointerX);
+            this.createdItem = this.addItem(this.placingProduct, layerPointerX - halfWidth);
             this.createdItem.dragging = true;
         } else if (this.createdItem) {
             var modifiedBounds = this.layerContainer.getBounds();
             modifiedBounds = new Phaser.Rectangle(modifiedBounds.x, 0, modifiedBounds.width, APP_HEIGHT_PX);
-            if (modifiedBounds.contains(activePointer.x, activePointer.y)) this.placementMoveResult = this.createdItem.move(layerPointerX);
+            if (modifiedBounds.contains(activePointer.x, activePointer.y)) this.placementMoveResult = this.createdItem.move(layerPointerX - halfWidth);
         }
 
         this.showIcons(this.createdItem);
@@ -787,7 +790,6 @@ Beaver.prototype.mmToPixels = function(distance) {
 Beaver.prototype.update = function() {
 
     if (this.itemToMeasure) {
-
         var itemMeasurement = this.itemToMeasure.model.measure();
         var itemLeftPixels = this.mmToPixels(itemMeasurement.left);
         var itemRightPixels = this.mmToPixels(itemMeasurement.right);
@@ -826,7 +828,6 @@ Beaver.prototype.update = function() {
     this.layerContainer.update();
     this.cursorContainer.x = this.game.input.activePointer.x;
     this.cursorContainer.y = this.game.input.activePointer.y;
-    if (this.createdItem) this.cursorContainer.x += this.createdItem.itemVisual.width / 2;
 }
 
 WebFontConfig = {
@@ -844,8 +845,6 @@ Beaver.prototype.findWallBay = function(wallBayWidth, baysRequired) {
 
     var items = [];
     var potentialChildren = this.wallLayers[BEAVER_STEP_2].model.getChildren('wall-bay');
-
-    console.log(potentialChildren);
 
     for (var childCount = 0; childCount < potentialChildren.length; childCount++) {
         var potentialChild = potentialChildren[childCount];

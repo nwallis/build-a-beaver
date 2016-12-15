@@ -62,7 +62,7 @@ ProductVisual.prototype.registerMouseDown = function() {
         'three'
     ];
 
-    if (this.productData.itemType == 'cabinet' && !this.engine.findWallBay(this.productData.realWidth)) {
+    if (this.productData.itemType == 'cabinet' && !this.engine.findWallBay(this.productData.realWidth, this.productData.additionalCompatibleItems)) {
         if (this.productData.additionalCompatibleItems > 0) {
             this.engine.displayInfo("You need " + numberWordMap[this.productData.additionalCompatibleItems] + " vacant " + (this.productData.realWidth /  (this.productData.additionalCompatibleItems + 1)) + "mm wall bays next to each other to fit this cabinet");
         } else {

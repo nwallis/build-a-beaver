@@ -26,7 +26,7 @@ ItemVisual = function(game, engine, model, startPos, container) {
 
     //debug text
     var style = {
-        font: "30px Lato",
+        font: "14px Lato",
         fill: "#ff0044",
         wordWrap: true,
         wordWrapWidth: this.itemVisual.width,
@@ -57,7 +57,7 @@ ItemVisual.prototype.update = function() {
 }
 
 ItemVisual.prototype.itemOver = function() {
-    if(!this.dragging) this.itemVisual.tint = TINT_COLOR_HOVER;
+    if (!this.dragging) this.itemVisual.tint = TINT_COLOR_HOVER;
     this.engine.measureItem(this);
 }
 ItemVisual.prototype.itemOut = function() {
@@ -71,13 +71,14 @@ ItemVisual.prototype.deleteClicked = function() {
 }
 
 ItemVisual.prototype.itemDragUpdate = function() {
-    this.engine.showIcons(this);
     this.move(this.x);
 }
 
 ItemVisual.prototype.move = function(xPosition) {
     this.engine.measureItem(this);
-    this.moveResult = this.container.moveItem(this.model, this.engine.pixelsToMM(xPosition));
+    var movePositionMM = this.engine.pixelsToMM(xPosition);
+    movePositionMM = movePositionMM - (movePositionMM % POSITIONING_INCREMENT_MM);
+    this.moveResult = this.container.moveItem(this.model, movePositionMM);
     if (this.moveResult.valid) {
         this.x = this.engine.mmToPixels(this.moveResult.position);
         this.tintValid();
@@ -85,6 +86,7 @@ ItemVisual.prototype.move = function(xPosition) {
         this.x = xPosition;
         this.tintInvalid();
     }
+    this.engine.showIcons(this);
     return this.moveResult;
 }
 
