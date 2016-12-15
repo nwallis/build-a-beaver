@@ -280,7 +280,7 @@ Beaver.prototype.create = function() {
 
     this.infoTextContainer = this.game.add.group();
     this.infoTextContainer.y = 583;
-    this.infoText = this.game.add.text(0, 0, '', {
+    this.infoText = this.game.add.text(0, 15, '', {
         font: "14px Lato",
         fontStyle: "",
         boundsAlignH: "center",
@@ -291,7 +291,6 @@ Beaver.prototype.create = function() {
         strokeThickness: 1
     });
     this.infoTextContainer.add(this.infoText);
-    this.infoText.setTextBounds(0, 0, 1270, 50);
     this.infoTextBeaver = this.game.make.sprite(0, -40, 'info_text_beaver');
     this.infoTextContainer.add(this.infoTextBeaver);
     this.infoTextContainer.visible = false;
@@ -517,10 +516,10 @@ Beaver.prototype.checkoutConfirmed = function() {
 
 Beaver.prototype.displayInfo = function(message) {
     this.infoText.text = message;
-    this.infoTextBeaver.x = (APP_WIDTH_PX / 2) + (this.infoText.width / 2) + 10;
-    this.infoTextContainer.x = this.infoTextBeaver.width / 2;
+    this.infoTextBeaver.x = this.infoText.width + 10;
     this.infoTextContainer.y = APP_HEIGHT_PX;
     this.infoTextContainer.visible = true;
+    this.infoTextContainer.x = 557 - (this.infoTextContainer.width/ 2);
 
     var showTween = this.game.add.tween(this.infoTextContainer).to({
         y: 583
@@ -877,7 +876,7 @@ Beaver.prototype.findWallBay = function(wallBayWidth, baysRequired) {
             for (var sequentialCount = 1; sequentialCount < baysRequired; sequentialCount++) {
                 var sequentialChild = potentialChildren[childCount + sequentialCount];
 
-                if (sequentialChild.realWidth == wallBayWidth && sequentialChild.itemSnappedToLeft == previousChild) {
+                if (sequentialChild && sequentialChild.realWidth == wallBayWidth && sequentialChild.itemSnappedToLeft == previousChild) {
                     potentialItems.push(potentialChild);
                 } else {
                     potentialItems = null;
