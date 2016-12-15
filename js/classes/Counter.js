@@ -48,6 +48,6 @@ Counter.prototype.update = function() {
         return number;
     }
 
-    this.counterText.text = RoundNum(this.countObject.amount,2);
+    this.counterText.text = this.countObject.amount.toFixed(2);//RoundNum(this.countObject.amount,2);
     Phaser.Group.prototype.update.call(this);
 }
