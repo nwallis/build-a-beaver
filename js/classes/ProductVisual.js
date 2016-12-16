@@ -69,7 +69,9 @@ ProductVisual.prototype.registerMouseDown = function() {
         } else {
             this.engine.displayInfo("There are no vacant " + this.productData.realWidth + "mm wall bays");
         }
-    } else {
+    } else if (this.productData.itemType == 'cabinet') {
         this.engine.startProductPlacement(this.productData, availableWallBays);
+    }else{
+        this.engine.startProductPlacement(this.productData);
     }
 }

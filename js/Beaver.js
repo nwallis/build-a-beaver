@@ -34,7 +34,7 @@ const FOOTER_BUTTON_Y_PX = 591;
 const PRELOAD_TEXT_COLOR_HTML = "#000000";
 const PRELOAD_TEXT_STROKE_COLOR_HTML = "#000000";
 const POSITIONING_INCREMENT_MM = 50;
-const ZONE_COLOR = 0x00FF00;
+const ZONE_COLOR = 0;//0x00FF00;
 const ZONE_LINE_THICKNESS = 2;
 
 var Beaver = function() {
@@ -252,7 +252,6 @@ Beaver.prototype.create = function() {
 
     //Zones
     this.zoneGraphics = this.game.add.graphics();
-    this.layerContainer.add(this.zoneGraphics);
 
     //Background image for the wall
     this.wallOutline = this.game.add.graphics(0, 0);
@@ -260,6 +259,8 @@ Beaver.prototype.create = function() {
 
     //Mask the layer container
     this.layerContainer.mask = this.designAreaMask;
+
+    this.layerContainer.add(this.zoneGraphics);
 
     //create container for ui
     this.uiContainer = this.game.add.group();
@@ -577,8 +578,8 @@ Beaver.prototype.setupWall = function() {
     this.wallOutline.drawRect(0, 0, this.mmToPixels(this.desiredWallWidth), DESIGN_AREA_HEIGHT_PX);
 
     //Position and center the layer container
-    this.zoneGraphics.y = this.layerContainer.y = DESIGN_AREA_Y;
-    this.zoneGraphics.x = this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
+    this.layerContainer.y = DESIGN_AREA_Y;
+    this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
 
     var measureStyling = {
         font: "12px Lato",
@@ -642,15 +643,16 @@ Beaver.prototype.startFullScreen = function() {
 
 Beaver.prototype.startProductPlacement = function(productData, zones) {
 
-    /*if (zones) {
+    if (zones) {
         this.displayInfo("You can place this cabinet in the highlighted locations");
         zones.forEach(function(zone) {
             var firstItemMeasure = zone[0].measure();
             var lastItemMeasure = zone[zone.length - 1].measure();
             this.zoneGraphics.lineStyle(ZONE_LINE_THICKNESS, ZONE_COLOR, 1);
-            this.zoneGraphics.drawRect(this.mmToPixels(firstItemMeasure.left) + ZONE_LINE_THICKNESS,DESIGN_AREA_HEIGHT_PX - ZONE_LINE_THICKNESS,this.mmToPixels(lastItemMeasure.right - firstItemMeasure.left) - ZONE_LINE_THICKNESS,-(this.mmToPixels(zone[0].realHeight) + ZONE_LINE_THICKNESS));
+            this.zoneGraphics.drawRect(this.mmToPixels(firstItemMeasure.left) + ZONE_LINE_THICKNESS, DESIGN_AREA_HEIGHT_PX - ZONE_LINE_THICKNESS, this.mmToPixels(lastItemMeasure.right - firstItemMeasure.left) - ZONE_LINE_THICKNESS, -(this.mmToPixels(zone[0].realHeight) - ZONE_LINE_THICKNESS));
+
         }, this);
-    }*/
+    }
 
     $("#design-container canvas").addClass('hide-mouse');
     this.showCustomCursor(this.positionProductCursor);
