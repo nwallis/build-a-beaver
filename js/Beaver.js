@@ -122,6 +122,8 @@ Beaver.prototype.changeStep = function(stepNumber) {
             }
         }
 
+        callback = this.confirmStepChange;
+
     } else if (stepNumber > this.stepNumber) {
 
         if (stepNumber == BEAVER_STEP_3 && this.countItems(BEAVER_STEP_2) == 0) {
@@ -260,10 +262,10 @@ Beaver.prototype.create = function() {
     //Mask the layer container
     this.layerContainer.mask = this.designAreaMask;
 
-    this.layerContainer.add(this.zoneGraphics);
 
     //create container for ui
     this.uiContainer = this.game.add.group();
+    this.uiContainer.add(this.zoneGraphics);
 
     //Header buttons
     this.headerButtonContainer = this.game.add.group();
@@ -578,8 +580,8 @@ Beaver.prototype.setupWall = function() {
     this.wallOutline.drawRect(0, 0, this.mmToPixels(this.desiredWallWidth), DESIGN_AREA_HEIGHT_PX);
 
     //Position and center the layer container
-    this.layerContainer.y = DESIGN_AREA_Y;
-    this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
+    this.zoneGraphics.y = this.layerContainer.y = DESIGN_AREA_Y;
+    this.zoneGraphics.x = this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
 
     var measureStyling = {
         font: "12px Lato",
@@ -793,6 +795,7 @@ Beaver.prototype.deleteWallLayer = function() {
 }
 
 Beaver.prototype.deleteWallLayersAbove = function(index) {
+
     var deletedLayers = this.wallLayers.splice(index + 1);
     if (deletedLayers) {
         deletedLayers.forEach(function(layer) {
@@ -805,6 +808,8 @@ Beaver.prototype.deleteWallLayersAbove = function(index) {
 }
 
 Beaver.prototype.addWallLayer = function() {
+
+    console.log("adding wall layer");
 
     var layerCollisions = [];
     var noGoZones = [];

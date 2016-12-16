@@ -52,7 +52,7 @@ Dialog.prototype = Object.create(Phaser.Group.prototype);
 Dialog.prototype.constructor = Dialog;
 
 Dialog.prototype.show = function(reasons, warnings, okCallback, uiElements) {
-    if (okCallback) this.okCallback = okCallback;
+    this.okCallback = okCallback;
     this.visible = true;
     this.warningText.text = warnings[0];
     this.reasonsText.text = reasons.join('\n');
