@@ -134,46 +134,47 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
     //save any snap references on item and left and right of item
     item.saveSnapReferences();
 
-    //check snapping
-    if (item.getBounds().right >= this.realWidth - this.snapDistance) {
-        snapAmount = this.realWidth - item.getBounds().right;
-    }
-
-    this.children.forEach(function(child) {
-        //clear snapping between item and parents before each move
-        if (item.snappedParent) {
-            item.snappedParent.forEach(function(parent) {
-                parent.snappedChild = undefined;
-            });
-            item.snappedParent = undefined;
+    //check snapping only if position is inside wall
+    if (xPosition >= 0 && xPosition <= this.realWidth) {
+        if (item.getBounds().right >= this.realWidth - this.snapDistance) {
+            snapAmount = this.realWidth - item.getBounds().right;
         }
-        if (child != item) {
-            if (child.checkRightSnap(item.getBounds().left)) {
-                if (item.checkCollapse(child) && child.checkCollapse(item)) {
-                    snapAmount = -(item.getInnerBounds().left - child.getInnerBounds().right);
-                    collapsedItems.push(child);
-                } else {
-                    snapAmount = -(item.getBounds().left - child.getBounds().right);
-                }
-                item.itemSnappedToLeft = child;
-                child.itemSnappedToRight = item;
-            }
 
-            if (child.checkLeftSnap(item.getBounds().right)) {
-                if (item.checkCollapse(child) && child.checkCollapse(item)) {
-                    snapAmount = child.getInnerBounds().left - item.getInnerBounds().right;
-                    collapsedItems.push(child);
-                } else {
-                    snapAmount = child.getBounds().left - item.getBounds().right;
-                }
-                item.itemSnappedToRight = child;
-                child.itemSnappedToLeft = item;
+        this.children.forEach(function(child) {
+            if (item.snappedParent) {
+                item.snappedParent.forEach(function(parent) {
+                    parent.snappedChild = undefined;
+                });
+                item.snappedParent = undefined;
             }
+            if (child != item) {
+                if (child.checkRightSnap(item.getBounds().left)) {
+                    if (item.checkCollapse(child) && child.checkCollapse(item)) {
+                        snapAmount = -(item.getInnerBounds().left - child.getInnerBounds().right);
+                        collapsedItems.push(child);
+                    } else {
+                        snapAmount = -(item.getBounds().left - child.getBounds().right);
+                    }
+                    item.itemSnappedToLeft = child;
+                    child.itemSnappedToRight = item;
+                }
+
+                if (child.checkLeftSnap(item.getBounds().right)) {
+                    if (item.checkCollapse(child) && child.checkCollapse(item)) {
+                        snapAmount = child.getInnerBounds().left - item.getInnerBounds().right;
+                        collapsedItems.push(child);
+                    } else {
+                        snapAmount = child.getBounds().left - item.getBounds().right;
+                    }
+                    item.itemSnappedToRight = child;
+                    child.itemSnappedToLeft = item;
+                }
+            }
+        });
+
+        if (item.getBounds().left < this.snapDistance) {
+            snapAmount = -item.getBounds().left;
         }
-    });
-
-    if (item.getBounds().left < this.snapDistance) {
-        snapAmount = -item.getBounds().left;
     }
 
     //Move the item based on the snap amount
@@ -254,11 +255,7 @@ ItemContainer.prototype.moveItem = function(item, xPosition) {
     }
 
     if (!moveResult) {
-
-        //Put item back where it was
         item.realX = originalX;
-
-        //put all snap references back if move is not valid
         item.restoreSnapReferences();
     }
 
