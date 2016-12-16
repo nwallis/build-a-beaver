@@ -765,7 +765,7 @@ Beaver.prototype.buildHTML = function() {
             }
 
             htmlItems[id]['amount']++;
-            totalPrice += price;
+            if (price) totalPrice += price;
 
         }, this);
     }, this);
