@@ -142,7 +142,7 @@ Beaver.prototype.changeStep = function(stepNumber) {
                 callback = this.confirmNextStep;
                 this.stepMessages[BEAVER_STEP_3] = true;
                 warnings.push("You are going to stage 3");
-                reasons.push("In stage 3 you can place your cabinets. After you hace placed all your cabinets, print your design before checking out.\nBefore payment you will be taken to our accessories page where you can add shelving and storage bins.");
+                reasons.push("In stage 3 you can place your cabinets. After you have placed all your cabinets, print your design before checking out.\nBefore payment you will be taken to our accessories page where you can add shelving and storage bins.");
             }
         }
 
