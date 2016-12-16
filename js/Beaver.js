@@ -34,8 +34,8 @@ const FOOTER_BUTTON_Y_PX = 591;
 const PRELOAD_TEXT_COLOR_HTML = "#000000";
 const PRELOAD_TEXT_STROKE_COLOR_HTML = "#000000";
 const POSITIONING_INCREMENT_MM = 50;
-const ZONE_COLOR = 0;//0x00FF00;
-const ZONE_LINE_THICKNESS = 2;
+const ZONE_COLOR = 0x54b225;
+const ZONE_LINE_THICKNESS = 4;
 
 var Beaver = function() {
     this.wallLayers = [];
@@ -651,7 +651,7 @@ Beaver.prototype.startProductPlacement = function(productData, zones) {
             var firstItemMeasure = zone[0].measure();
             var lastItemMeasure = zone[zone.length - 1].measure();
             this.zoneGraphics.lineStyle(ZONE_LINE_THICKNESS, ZONE_COLOR, 1);
-            this.zoneGraphics.drawRect(this.mmToPixels(firstItemMeasure.left) + ZONE_LINE_THICKNESS, DESIGN_AREA_HEIGHT_PX - ZONE_LINE_THICKNESS, this.mmToPixels(lastItemMeasure.right - firstItemMeasure.left) - ZONE_LINE_THICKNESS, -(this.mmToPixels(zone[0].realHeight) - ZONE_LINE_THICKNESS));
+            this.zoneGraphics.drawRect(this.mmToPixels(firstItemMeasure.left) + (ZONE_LINE_THICKNESS / 2), DESIGN_AREA_HEIGHT_PX - (ZONE_LINE_THICKNESS / 2), this.mmToPixels(lastItemMeasure.right - firstItemMeasure.left) - (ZONE_LINE_THICKNESS/2), -(this.mmToPixels(zone[0].realHeight) - (ZONE_LINE_THICKNESS/2)));
 
         }, this);
     }
@@ -808,8 +808,6 @@ Beaver.prototype.deleteWallLayersAbove = function(index) {
 }
 
 Beaver.prototype.addWallLayer = function() {
-
-    console.log("adding wall layer");
 
     var layerCollisions = [];
     var noGoZones = [];
