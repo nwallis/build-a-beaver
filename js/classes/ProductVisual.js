@@ -61,13 +61,15 @@ ProductVisual.prototype.registerMouseDown = function() {
         'three'
     ];
 
-    if (this.productData.itemType == 'cabinet' && !this.engine.findWallBay(this.productData.realWidth, this.productData.additionalCompatibleItems)) {
+    var availableWallBays = this.engine.findWallBay(this.productData.realWidth, this.productData.additionalCompatibleItems);
+
+    if (this.productData.itemType == 'cabinet' && !availableWallBays) {
         if (this.productData.additionalCompatibleItems > 0) {
-            this.engine.displayInfo("You need " + numberWordMap[this.productData.additionalCompatibleItems] + " vacant " + (this.productData.realWidth /  (this.productData.additionalCompatibleItems + 1)) + "mm wall bays next to each other to fit this cabinet");
+            this.engine.displayInfo("You need " + numberWordMap[this.productData.additionalCompatibleItems] + " vacant " + (this.productData.realWidth / (this.productData.additionalCompatibleItems + 1)) + "mm wall bays next to each other to fit this cabinet");
         } else {
             this.engine.displayInfo("There are no vacant " + this.productData.realWidth + "mm wall bays");
         }
     } else {
-        this.engine.startProductPlacement(this.productData);
+        this.engine.startProductPlacement(this.productData, availableWallBays);
     }
 }

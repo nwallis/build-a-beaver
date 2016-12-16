@@ -34,12 +34,15 @@ const FOOTER_BUTTON_Y_PX = 591;
 const PRELOAD_TEXT_COLOR_HTML = "#000000";
 const PRELOAD_TEXT_STROKE_COLOR_HTML = "#000000";
 const POSITIONING_INCREMENT_MM = 50;
+const ZONE_COLOR = 0x00FF00;
+const ZONE_LINE_THICKNESS = 2;
 
 var Beaver = function() {
     this.wallLayers = [];
     this.stepNumber = -1;
     this.placingProduct = false;
     this.placementCount = [];
+    this.stepMessages = [false, false, false];
 }
 
 Beaver.prototype.measureItem = function(item) {
@@ -72,6 +75,11 @@ Beaver.prototype.changeHeaderButtons = function(stepNumber) {
     }
 }
 
+Beaver.prototype.confirmNextStep = function() {
+    this.confirmStepChange();
+    this.addWallLayer();
+}
+
 Beaver.prototype.confirmStepChange = function() {
 
     this.changeHeaderButtons(this.desiredStepNumber);
@@ -93,6 +101,7 @@ Beaver.prototype.changeStep = function(stepNumber) {
     var reasons = [];
     var warnings = [];
     var validChange = true;
+    var callback = null;
 
     if (stepNumber < this.stepNumber) {
 
@@ -115,10 +124,24 @@ Beaver.prototype.changeStep = function(stepNumber) {
 
     } else if (stepNumber > this.stepNumber) {
 
-
-        if (stepNumber == 2 && this.countItems(BEAVER_STEP_2) == 0) {
+        if (stepNumber == BEAVER_STEP_3 && this.countItems(BEAVER_STEP_2) == 0) {
             validChange = false;
-            warnings.push("You haven't placed any wall bays. Cabinets can only connect to wall bays, they cannot be freestanding");
+            warnings.push("You haven't placed any wall bays. ");
+            reasons.push("Cabinets can only connect to wall bays, they cannot be freestanding");
+        } else if (stepNumber == BEAVER_STEP_2 && !this.stepMessages[BEAVER_STEP_2]) {
+            if (!this.stepMessages[BEAVER_STEP_2]) {
+                callback = this.confirmNextStep;
+                this.stepMessages[BEAVER_STEP_2] = true;
+                warnings.push("You are going to stage 2");
+                reasons.push("In stage 2 you can place your wall bays.  Wall bays are the foundation for your storage system.  Remember if you placed a pillar in stage 1, you can put a pillar cover over the top of it");
+            }
+        } else if (stepNumber == BEAVER_STEP_3 && !this.stepMessages[BEAVER_STEP_3]) {
+            if (!this.stepMessages[BEAVER_STEP_3]) {
+                callback = this.confirmNextStep;
+                this.stepMessages[BEAVER_STEP_3] = true;
+                warnings.push("You are going to stage 3");
+                reasons.push("In stage 3 you can place your cabinets. After you hace placed all your cabinets, print your design before checking out.\nBefore payment you will be taken to our accessories page where you can add shelving and storage bins.");
+            }
         }
 
         if (warnings.length == 0) {
@@ -132,7 +155,7 @@ Beaver.prototype.changeStep = function(stepNumber) {
         this.stepNumber = stepNumber;
         this.confirmStepChange();
     } else if (validChange && reasons.length > 0) {
-        this.showDialog(reasons, warnings, null, null);
+        this.showDialog(reasons, warnings, callback, null);
     } else if (!validChange) {
         this.showError(reasons, warnings, null, null);
     }
@@ -227,6 +250,10 @@ Beaver.prototype.create = function() {
     //Create group for all layers
     this.layerContainer = this.game.add.group();
 
+    //Zones
+    this.zoneGraphics = this.game.add.graphics();
+    this.layerContainer.add(this.zoneGraphics);
+
     //Background image for the wall
     this.wallOutline = this.game.add.graphics(0, 0);
     this.layerContainer.add(this.wallOutline);
@@ -294,6 +321,7 @@ Beaver.prototype.create = function() {
     this.infoTextBeaver = this.game.make.sprite(0, -40, 'info_text_beaver');
     this.infoTextContainer.add(this.infoTextBeaver);
     this.infoTextContainer.visible = false;
+
 
     //Accordion
     var accordionSection;
@@ -519,7 +547,7 @@ Beaver.prototype.displayInfo = function(message) {
     this.infoTextBeaver.x = this.infoText.width + 10;
     this.infoTextContainer.y = APP_HEIGHT_PX;
     this.infoTextContainer.visible = true;
-    this.infoTextContainer.x = 557 - (this.infoTextContainer.width/ 2);
+    this.infoTextContainer.x = 557 - (this.infoTextContainer.width / 2);
 
     var showTween = this.game.add.tween(this.infoTextContainer).to({
         y: 583
@@ -549,8 +577,8 @@ Beaver.prototype.setupWall = function() {
     this.wallOutline.drawRect(0, 0, this.mmToPixels(this.desiredWallWidth), DESIGN_AREA_HEIGHT_PX);
 
     //Position and center the layer container
-    this.layerContainer.y = DESIGN_AREA_Y;
-    this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
+    this.zoneGraphics.y = this.layerContainer.y = DESIGN_AREA_Y;
+    this.zoneGraphics.x = this.layerContainer.x = (APP_WIDTH_PX / 2) - (this.wallOutline.width / 2);
 
     var measureStyling = {
         font: "12px Lato",
@@ -612,7 +640,18 @@ Beaver.prototype.startFullScreen = function() {
     this.game.scale.startFullScreen(false);
 }
 
-Beaver.prototype.startProductPlacement = function(productData) {
+Beaver.prototype.startProductPlacement = function(productData, zones) {
+
+    /*if (zones) {
+        this.displayInfo("You can place this cabinet in the highlighted locations");
+        zones.forEach(function(zone) {
+            var firstItemMeasure = zone[0].measure();
+            var lastItemMeasure = zone[zone.length - 1].measure();
+            this.zoneGraphics.lineStyle(ZONE_LINE_THICKNESS, ZONE_COLOR, 1);
+            this.zoneGraphics.drawRect(this.mmToPixels(firstItemMeasure.left) + ZONE_LINE_THICKNESS,DESIGN_AREA_HEIGHT_PX - ZONE_LINE_THICKNESS,this.mmToPixels(lastItemMeasure.right - firstItemMeasure.left) - ZONE_LINE_THICKNESS,-(this.mmToPixels(zone[0].realHeight) + ZONE_LINE_THICKNESS));
+        }, this);
+    }*/
+
     $("#design-container canvas").addClass('hide-mouse');
     this.showCustomCursor(this.positionProductCursor);
     this.placingProduct = productData;
@@ -660,6 +699,9 @@ Beaver.prototype.checkAlternateProduct = function(child) {
 }
 
 Beaver.prototype.finishProductPlacement = function() {
+
+    //Clear any zone graphics
+    this.zoneGraphics.clear();
 
     //Check that item was created as its possible that they may start but not create a product
     if (this.createdItem) {
@@ -876,8 +918,8 @@ Beaver.prototype.findWallBay = function(wallBayWidth, baysRequired) {
             for (var sequentialCount = 1; sequentialCount < baysRequired; sequentialCount++) {
                 var sequentialChild = potentialChildren[childCount + sequentialCount];
 
-                if (sequentialChild && sequentialChild.realWidth == wallBayWidth && sequentialChild.itemSnappedToLeft == previousChild) {
-                    potentialItems.push(potentialChild);
+                if (sequentialChild && sequentialChild.realWidth == wallBayWidth && sequentialChild.itemSnappedToLeft == previousChild && !sequentialChild.snappedChild) {
+                    potentialItems.push(sequentialChild);
                 } else {
                     potentialItems = null;
                     childCount = childCount + sequentialCount;
@@ -891,7 +933,7 @@ Beaver.prototype.findWallBay = function(wallBayWidth, baysRequired) {
 
         if (potentialItems) {
             items.push(potentialItems);
-            childCount += potentialItems.length - 1;
+            //childCount += potentialItems.length - 1;
         }
 
     }
