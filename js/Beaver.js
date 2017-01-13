@@ -651,7 +651,7 @@ Beaver.prototype.startProductPlacement = function(productData, zones) {
             var firstItemMeasure = zone[0].measure();
             var lastItemMeasure = zone[zone.length - 1].measure();
             this.zoneGraphics.lineStyle(ZONE_LINE_THICKNESS, ZONE_COLOR, 1);
-            this.zoneGraphics.drawRect(this.mmToPixels(firstItemMeasure.left) + (ZONE_LINE_THICKNESS / 2), DESIGN_AREA_HEIGHT_PX - (ZONE_LINE_THICKNESS / 2), this.mmToPixels(lastItemMeasure.right - firstItemMeasure.left) - (ZONE_LINE_THICKNESS/2), -(this.mmToPixels(zone[0].realHeight) - (ZONE_LINE_THICKNESS/2)));
+            this.zoneGraphics.drawRect(this.mmToPixels(firstItemMeasure.left) + (ZONE_LINE_THICKNESS / 2), DESIGN_AREA_HEIGHT_PX - (ZONE_LINE_THICKNESS / 2), this.mmToPixels(lastItemMeasure.right - firstItemMeasure.left) - (ZONE_LINE_THICKNESS / 2), -(this.mmToPixels(zone[0].realHeight) - (ZONE_LINE_THICKNESS / 2)));
 
         }, this);
     }
@@ -753,20 +753,19 @@ Beaver.prototype.buildHTML = function() {
                     sku = child.alternateSku;
                     name = child.alternateProductName;
                 }
+
+                if (!htmlItems[id]) {
+                    htmlItems[id] = {
+                        amount: 0,
+                        name: name,
+                        price: price,
+                        sku: sku
+                    };
+                }
+
+                htmlItems[id]['amount']++;
+                if (price) totalPrice += price;
             }
-
-            if (!htmlItems[id]) {
-                htmlItems[id] = {
-                    amount: 0,
-                    name: name,
-                    price: price,
-                    sku: sku
-                };
-            }
-
-            htmlItems[id]['amount']++;
-            if (price) totalPrice += price;
-
         }, this);
     }, this);
 
